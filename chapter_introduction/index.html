@@ -87,7 +87,6 @@ Show Source
             <nav class="mdl-navigation">
                 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">1. Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#lecture-0-introduction">2. Lecture 0: Introduction</a></li>
 </ul>
 
             </nav>
@@ -116,7 +115,6 @@ Show Source
             <nav class="mdl-navigation">
                 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">1. Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#lecture-0-introduction">2. Lecture 0: Introduction</a></li>
 </ul>
 
             </nav>
@@ -130,9 +128,6 @@ Show Source
         
   <div class="section" id="introduction">
 <span id="chap-introduction"></span><h1><span class="section-number">1. </span>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">¶</a></h1>
-</div>
-<div class="section" id="lecture-0-introduction">
-<h1><span class="section-number">2. </span>Lecture 0: Introduction<a class="headerlink" href="#lecture-0-introduction" title="Permalink to this heading">¶</a></h1>
 <p>Machine learning applications have undoubtedly become ubiquitous. We get
 smart home devices powered by natural language processing and speech
 recognition models, computer vision models serve as backbones in
@@ -165,7 +160,7 @@ different modeling choices and inference/training scenarios add even
 more complexity to the productionisation of machine learning.</p>
 <div class="figure align-default" id="id1">
 <span id="fig-intro-gap"></span><img alt="../_images/intro-gap.png" src="../_images/intro-gap.png" />
-<p class="caption"><span class="caption-number">Fig. 2.1 </span><span class="caption-text">Gap in ML deployment.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-number">Fig. 1.1 </span><span class="caption-text">Gap in ML deployment.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
 </div>
 <p>This course studies the topic of bringing machine learning from the
 development phase to production environments. We will study a collection
@@ -175,7 +170,7 @@ techniques being developed by the machine learning and systems
 community. Nevertheless, we start to see common themes appearing, which
 end up in the theme of this course.</p>
 <div class="section" id="what-is-ml-compilation">
-<h2><span class="section-number">2.1. </span>What is ML Compilation<a class="headerlink" href="#what-is-ml-compilation" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">1.1. </span>What is ML Compilation<a class="headerlink" href="#what-is-ml-compilation" title="Permalink to this heading">¶</a></h2>
 <p>Machine learning compilation (MLC) is the process of transforming and
 optimizing machine learning execution from its development form to its
 deployment form.</p>
@@ -190,7 +185,7 @@ to manage resources (e.g. memory), and interfaces to application
 development environments (e.g. java API for android apps).</p>
 <div class="figure align-default" id="id2">
 <span id="fig-dev-deploy-form"></span><img alt="../_images/dev-deploy-form.png" src="../_images/dev-deploy-form.png" />
-<p class="caption"><span class="caption-number">Fig. 2.1.1 </span><span class="caption-text">Development and Deployment Forms.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-number">Fig. 1.1.1 </span><span class="caption-text">Development and Deployment Forms.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
 </div>
 <p>We use the term “compilation” as the process can be viewed in close
 analogy to what traditional compilers do — a compiler takes our
@@ -242,7 +237,7 @@ native acceleration, machine learning engineers aim to enable additional
 optimizations, and scientists bring in new models.</p>
 </div>
 <div class="section" id="why-study-ml-compilation">
-<h2><span class="section-number">2.2. </span>Why Study ML Compilation<a class="headerlink" href="#why-study-ml-compilation" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">1.2. </span>Why Study ML Compilation<a class="headerlink" href="#why-study-ml-compilation" title="Permalink to this heading">¶</a></h2>
 <p>This course teaches machine learning compilation as a methodology and
 collections of tools that come along with the common methodology. These
 tools can work with or simply work inside common machine learning
@@ -278,10 +273,10 @@ metal. It is really fun to get end to end understanding of what is
 happening here and use them to solve our problems.</p>
 </div>
 <div class="section" id="key-elements-of-ml-compilation">
-<h2><span class="section-number">2.3. </span>Key Elements of ML Compilation<a class="headerlink" href="#key-elements-of-ml-compilation" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">1.3. </span>Key Elements of ML Compilation<a class="headerlink" href="#key-elements-of-ml-compilation" title="Permalink to this heading">¶</a></h2>
 <div class="figure align-default" id="id3">
 <span id="fig-mlc-elements"></span><img alt="../_images/mlc-elements.png" src="../_images/mlc-elements.png" />
-<p class="caption"><span class="caption-number">Fig. 2.3.1 </span><span class="caption-text">MLC Elements.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-number">Fig. 1.3.1 </span><span class="caption-text">MLC Elements.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
 </div>
 <p>In the previous sections, we discussed machine learning compilation at a
 high level. Now, let us dive deeper into some of the key elements of
@@ -304,7 +299,7 @@ network computation. Part of the computation or entire end-to-end
 computation can also be seen as a tensor function.</p>
 <div class="figure align-default" id="id4">
 <span id="fig-mlc-elem-transform"></span><img alt="../_images/mlc-elem-transform.png" src="../_images/mlc-elem-transform.png" />
-<p class="caption"><span class="caption-number">Fig. 2.3.2 </span><span class="caption-text">Example MLC Process as Tensor Function Transformations.</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-number">Fig. 1.3.2 </span><span class="caption-text">Example MLC Process as Tensor Function Transformations.</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
 </div>
 <p>There are multiple ways to implement the model execution in a particular
 environment of interest. The above examples show one example. Notably,
@@ -317,14 +312,14 @@ part of the lecture. MLC is a process of transforming something on the
 left to the right-hand side. In different settings, this might be done
 by hand, with some automatic translation tools, or both.</p>
 <div class="section" id="remark-abstraction-and-implementations">
-<h3><span class="section-number">2.3.1. </span>Remark: Abstraction and Implementations<a class="headerlink" href="#remark-abstraction-and-implementations" title="Permalink to this heading">¶</a></h3>
+<h3><span class="section-number">1.3.1. </span>Remark: Abstraction and Implementations<a class="headerlink" href="#remark-abstraction-and-implementations" title="Permalink to this heading">¶</a></h3>
 <p>One thing that we might notice is that we use several different ways to
 represent a tensor function. For example, <code class="docutils literal notranslate"><span class="pre">linear_relu</span></code> is shown can
 be represented as a compact box in a graph or a loop nest
 representation.</p>
 <div class="figure align-default" id="id5">
 <span id="fig-mlc-abstraction-impl"></span><img alt="../_images/mlc-abstraction-impl.png" src="../_images/mlc-abstraction-impl.png" />
-<p class="caption"><span class="caption-number">Fig. 2.3.3 </span><span class="caption-text">Abstractions and Implementations.</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-number">Fig. 1.3.3 </span><span class="caption-text">Abstractions and Implementations.</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
 </div>
 <p>We use <strong>abstractions</strong> to denote the ways we use to represent the same
 tensor function. Different abstractions may specify some details while
@@ -343,7 +338,7 @@ work together to solve the challenges in machine learning deployment.</p>
 </div>
 </div>
 <div class="section" id="summary">
-<h2><span class="section-number">2.4. </span>Summary<a class="headerlink" href="#summary" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">1.4. </span>Summary<a class="headerlink" href="#summary" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Goals of machine learning compilation</p>
 <ul>
@@ -378,15 +373,14 @@ work together to solve the challenges in machine learning deployment.</p>
       <span class="caption-text">Table Of Contents</span>
     </p>
     <ul>
-<li><a class="reference internal" href="#">1. Introduction</a></li>
-<li><a class="reference internal" href="#lecture-0-introduction">2. Lecture 0: Introduction</a><ul>
-<li><a class="reference internal" href="#what-is-ml-compilation">2.1. What is ML Compilation</a></li>
-<li><a class="reference internal" href="#why-study-ml-compilation">2.2. Why Study ML Compilation</a></li>
-<li><a class="reference internal" href="#key-elements-of-ml-compilation">2.3. Key Elements of ML Compilation</a><ul>
-<li><a class="reference internal" href="#remark-abstraction-and-implementations">2.3.1. Remark: Abstraction and Implementations</a></li>
+<li><a class="reference internal" href="#">1. Introduction</a><ul>
+<li><a class="reference internal" href="#what-is-ml-compilation">1.1. What is ML Compilation</a></li>
+<li><a class="reference internal" href="#why-study-ml-compilation">1.2. Why Study ML Compilation</a></li>
+<li><a class="reference internal" href="#key-elements-of-ml-compilation">1.3. Key Elements of ML Compilation</a><ul>
+<li><a class="reference internal" href="#remark-abstraction-and-implementations">1.3.1. Remark: Abstraction and Implementations</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#summary">2.4. Summary</a></li>
+<li><a class="reference internal" href="#summary">1.4. Summary</a></li>
 </ul>
 </li>
 </ul>
