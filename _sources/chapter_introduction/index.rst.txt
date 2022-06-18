@@ -5,6 +5,9 @@ Introduction
 ============
 
 
+Lecture 0: Introduction
+=======================
+
 Machine learning applications have undoubtedly become ubiquitous. We get
 smart home devices powered by natural language processing and speech
 recognition models, computer vision models serve as backbones in
