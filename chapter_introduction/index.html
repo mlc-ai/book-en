@@ -220,13 +220,13 @@ goals:</p>
 <p><strong>Integration and dependency minimization.</strong> The process of deployment
 usually involves integration — assembling necessary elements together
 for the deployment app. For example, if we want to enable an android
-camera app to detect cats, we will need to assemble the necessary code
-that runs the flower classification models, but not necessarily other
-parts that are not related to the model (e.g. we do not need to include
-an embedding table lookup code for NLP applications). The ability to
-assemble and minimize the necessary dependencies is quite important to
-reduce the overall size and increase the possible number of environments
-that the app can deploy to.</p>
+camera app to classify flowers, we will need to assemble the necessary
+code that runs the flower classification models, but not necessarily
+other parts that are not related to the model (e.g. we do not need to
+include an embedding table lookup code for NLP applications). The
+ability to assemble and minimize the necessary dependencies is quite
+important to reduce the overall size and increase the possible number of
+environments that the app can deploy to.</p>
 <p><strong>Leveraging hardware native acceleration.</strong> Each deployment environment
 comes with its own set of native acceleration techniques, many of which
 are especially development for ML. One goal of the machine learning
