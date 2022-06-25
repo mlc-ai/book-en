@@ -1,0 +1,654 @@
+
+.. _chap_tensor_program:
+
+Tensor Program Abstraction
+==========================
+
+
+In this chapter, we will discuss the abstractions for a single “unit”
+step of computation and possible MLC transformations in these
+abstractions.
+
+Primitive Tensor Function
+-------------------------
+
+The introductory overview showed that the MLC process could be viewed as
+transformations among tensor functions. A typical model execution
+involves several computation steps that transform tensors from input to
+the final prediction, and each unit step is called a primitive tensor
+function.
+
+.. _fig_primitive_tensor_func:
+
+.. figure:: ../img/primitive_tensor_func.png
+
+   Primitive Tensor Function
+
+
+In the above figure, the tensor operator linear, add, relu, and softmax
+are all primitive tensor functions. Notably, many different abstractions
+can represent (and implement) the same primitive tensor function add (as
+shown in the figure below). We can choose to call into pre-built
+framework libraries(e.g. torch.add or numpy.add), and leverage an
+implementation in python. In practice, primitive functions are
+implemented in low-level languages such as C/C++ with sometimes a
+mixture of assembly code.
+
+.. _fig_tensor_func_abstractions:
+
+.. figure:: ../img/tensor_func_abstractions.png
+
+   Different forms of the same primitive tensor function
+
+
+Many frameworks offer machine learning compilation procedures to
+transform primitive tensor functions into more specialized ones for the
+particular workload and deployment environment.
+
+.. _fig_tensor_func_transformation:
+
+.. _tensor-program-abstraction-1:
+
+.. figure:: ../img/tensor_func_transformation.png
+
+   Transformations between primitive tensor functions
+
+
+The above figure shows an example where the implementation of the
+primitive tensor function add gets transformed into a different
+implementation. The particular code on the right is a pseudo-code
+representing possible set optimizations: the loop gets split into units
+of length ``4`` where ``f32x4`` add corresponds to a special vector add
+function that carries out the computation.
+
+
+Tensor Program Abstraction
+--------------------------
+
+The last section talks about the need to transform primitive tensor
+functions. In order for us to effectively do so, we need an effective
+abstraction to represent the programs.
+
+Usually, a typical abstraction for primitive tensor function
+implementation contains the following elements: multi-dimensional
+buffers, loop nests that drive the tensor computations, and finally, the
+compute statements themselves.
+
+.. _fig_tensor_func_elements:
+
+.. figure:: ../img/tensor_func_elements.png
+
+   The typical elements in a primitive tensor function
+
+
+We call this type of abstraction tensor program abstraction. One
+important property of tensor program abstraction is the ability to
+change the program through a sequence of transformations pragmatically.
+
+.. _fig_tensor_func_seq_transform:
+
+.. figure:: ../img/tensor_func_seq_transform.png
+
+   Sequential transformations on a primitive tensor function
+
+
+For example, we should be able to use a set of transformation
+primitives(split, parallelize, vectorize) to take the initial loop
+program and transform it into the program on the right-hand side.
+
+Extra Structure in Tensor Program Abstraction
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Importantly, we cannot perform arbitrary transformations on the program
+as some computations depend on the order of the loop. Luckily, most
+primitive tensor functions we are interested in have good properties
+(such as independence among loop iterations).
+
+Tensor programs can incorporate this extra information as part of the
+program to facilitate program transformations.
+
+.. _fig_tensor_func_iteration:
+
+.. figure:: ../img/tensor_func_iteration.png
+
+   Iteration is the extra information for tensor programs
+
+
+For example, the above program contains the additional
+``T.axis.spatial`` annotation, which shows that the particular variable
+``vi`` is mapped to ``i``, and all the iterations are independent. This
+information is not necessary to execute the particular program but comes
+in handy when we transform the program. In this case, we will know that
+we can safely parallelize or reorder loops related to ``vi`` as long as
+we visit all the index elements from ``0`` to ``128``.
+
+Tensor Program Transformation in Action
+---------------------------------------
+
+Install Packages
+~~~~~~~~~~~~~~~~
+
+For the purpose of this course, we will use some on-going development in
+tvm, which is an open source machine learning compilation framework. We
+provide the following command to install a packaged version for mlc
+course.
+
+.. code:: bash
+
+   python3 -m  pip install mlc-ai-nightly -f https://mlc.ai/wheels
+
+Constructing Tensor Program
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Let us begin by constructing a tensor program that performs addition
+among two vectors.
+
+.. code:: python
+
+    import numpy as np
+    import tvm
+    from tvm.ir.module import IRModule
+    from tvm.script import tir as T
+
+.. code:: python
+
+    @tvm.script.ir_module
+    class MyModule:
+        @T.prim_func
+        def main(A: T.Buffer[128, "float32"],
+                 B: T.Buffer[128, "float32"],
+                 C: T.Buffer[128, "float32"]):
+            # extra annotations for the function
+            T.func_attr({"global_symbol": "main", "tir.noalias": True})
+            for i in range(128):
+                with T.block("C"):
+                    # declare a data parallel iterator on spatial domain
+                    vi = T.axis.spatial(128, i)
+                    C[vi] = A[vi] + B[vi]
+
+TVMScript is a way for us to express tensor program in python ast. Note
+that this code do not actually correspond to a python program, but a
+tensor program that can be used in MLC process. The language is designed
+to align with python syntax with additional structures to facilitate
+analysis and transformation.
+
+.. code:: python
+
+    type(MyModule)
+
+
+
+
+.. parsed-literal::
+    :class: output
+
+    tvm.ir.module.IRModule
+
+
+
+MyModule is an instance of an IRModule data structure, which is used to
+hold a collection of tensor functions.
+
+We can use the script function get a string based representation of the
+IRModule. This function is quite useful for inspecting the module during
+each step of transformation.
+
+.. code:: python
+
+    print(MyModule.script())
+
+
+.. parsed-literal::
+    :class: output
+
+    @tvm.script.ir_module
+    class Module:
+        @tir.prim_func
+        def func(A: tir.Buffer[128, "float32"], B: tir.Buffer[128, "float32"], C: tir.Buffer[128, "float32"]) -> None:
+            # function attr dict
+            tir.func_attr({"global_symbol": "main", "tir.noalias": True})
+            # body
+            # with tir.block("root")
+            for i in tir.serial(128):
+                with tir.block("C"):
+                    vi = tir.axis.spatial(128, i)
+                    tir.reads(A[vi], B[vi])
+                    tir.writes(C[vi])
+                    C[vi] = A[vi] + B[vi]
+        
+
+
+Build and run
+~~~~~~~~~~~~~
+
+Any any time point, we can turn an IRModule to runnable functions by
+calling a build function.
+
+.. code:: python
+
+    rt_mod = tvm.build(MyModule, target="llvm")  # The module for CPU backends.
+    type(rt_mod)
+
+
+
+
+.. parsed-literal::
+    :class: output
+
+    tvm.driver.build_module.OperatorModule
+
+
+
+After build, mod contains a collection of runnable functions. We can
+retrieve each function by its name.
+
+.. code:: python
+
+    func = rt_mod["main"]
+    func
+
+
+
+
+.. parsed-literal::
+    :class: output
+
+    <tvm.runtime.packed_func.PackedFunc at 0x7f6a4844e450>
+
+
+
+.. code:: python
+
+    a = tvm.nd.array(np.arange(128, dtype="float32"))
+    b = tvm.nd.array(np.ones(128, dtype="float32"))
+    c = tvm.nd.empty((128,), dtype="float32")
+
+To invoke the function, we can create three NDArrays in the tvm runtime,
+and then invoke the generated function.
+
+.. code:: python
+
+    func(a, b, c)
+
+.. code:: python
+
+    print(a)
+
+
+.. parsed-literal::
+    :class: output
+
+    [  0.   1.   2.   3.   4.   5.   6.   7.   8.   9.  10.  11.  12.  13.
+      14.  15.  16.  17.  18.  19.  20.  21.  22.  23.  24.  25.  26.  27.
+      28.  29.  30.  31.  32.  33.  34.  35.  36.  37.  38.  39.  40.  41.
+      42.  43.  44.  45.  46.  47.  48.  49.  50.  51.  52.  53.  54.  55.
+      56.  57.  58.  59.  60.  61.  62.  63.  64.  65.  66.  67.  68.  69.
+      70.  71.  72.  73.  74.  75.  76.  77.  78.  79.  80.  81.  82.  83.
+      84.  85.  86.  87.  88.  89.  90.  91.  92.  93.  94.  95.  96.  97.
+      98.  99. 100. 101. 102. 103. 104. 105. 106. 107. 108. 109. 110. 111.
+     112. 113. 114. 115. 116. 117. 118. 119. 120. 121. 122. 123. 124. 125.
+     126. 127.]
+
+
+.. code:: python
+
+    print(b)
+
+
+.. parsed-literal::
+    :class: output
+
+    [1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.
+     1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.
+     1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.
+     1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.
+     1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.
+     1. 1. 1. 1. 1. 1. 1. 1.]
+
+
+.. code:: python
+
+    print(c)
+
+
+.. parsed-literal::
+    :class: output
+
+    [  1.   2.   3.   4.   5.   6.   7.   8.   9.  10.  11.  12.  13.  14.
+      15.  16.  17.  18.  19.  20.  21.  22.  23.  24.  25.  26.  27.  28.
+      29.  30.  31.  32.  33.  34.  35.  36.  37.  38.  39.  40.  41.  42.
+      43.  44.  45.  46.  47.  48.  49.  50.  51.  52.  53.  54.  55.  56.
+      57.  58.  59.  60.  61.  62.  63.  64.  65.  66.  67.  68.  69.  70.
+      71.  72.  73.  74.  75.  76.  77.  78.  79.  80.  81.  82.  83.  84.
+      85.  86.  87.  88.  89.  90.  91.  92.  93.  94.  95.  96.  97.  98.
+      99. 100. 101. 102. 103. 104. 105. 106. 107. 108. 109. 110. 111. 112.
+     113. 114. 115. 116. 117. 118. 119. 120. 121. 122. 123. 124. 125. 126.
+     127. 128.]
+
+
+Transform the Tensor Program
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Now let us start to transform the Tensor Program. A tensor program can
+be transformed using an auxiliary data structure called schedule.
+
+.. code:: python
+
+    sch = tvm.tir.Schedule(MyModule)
+    type(sch)
+
+
+
+
+.. parsed-literal::
+    :class: output
+
+    tvm.tir.schedule.schedule.Schedule
+
+
+
+Let us first try to split the loops
+
+.. code:: python
+
+    # Get block by its name
+    block_c = sch.get_block("C")
+    # Get loops surrounding the block
+    (i,) = sch.get_loops(block_c)
+    # Tile the loop nesting.
+    i_0, i_1, i_2 = sch.split(i, factors=[None, 4, 4])
+    print(sch.mod.script())
+
+
+.. parsed-literal::
+    :class: output
+
+    @tvm.script.ir_module
+    class Module:
+        @tir.prim_func
+        def func(A: tir.Buffer[128, "float32"], B: tir.Buffer[128, "float32"], C: tir.Buffer[128, "float32"]) -> None:
+            # function attr dict
+            tir.func_attr({"global_symbol": "main", "tir.noalias": True})
+            # body
+            # with tir.block("root")
+            for i_0, i_1, i_2 in tir.grid(8, 4, 4):
+                with tir.block("C"):
+                    vi = tir.axis.spatial(128, i_0 * 16 + i_1 * 4 + i_2)
+                    tir.reads(A[vi], B[vi])
+                    tir.writes(C[vi])
+                    C[vi] = A[vi] + B[vi]
+        
+
+
+We can also reorder the loops. Now we move loop i_2 to outside of i_1.
+
+.. code:: python
+
+    sch.reorder(i_0, i_2, i_1)
+    print(sch.mod.script())
+
+
+.. parsed-literal::
+    :class: output
+
+    @tvm.script.ir_module
+    class Module:
+        @tir.prim_func
+        def func(A: tir.Buffer[128, "float32"], B: tir.Buffer[128, "float32"], C: tir.Buffer[128, "float32"]) -> None:
+            # function attr dict
+            tir.func_attr({"global_symbol": "main", "tir.noalias": True})
+            # body
+            # with tir.block("root")
+            for i_0, i_2, i_1 in tir.grid(8, 4, 4):
+                with tir.block("C"):
+                    vi = tir.axis.spatial(128, i_0 * 16 + i_1 * 4 + i_2)
+                    tir.reads(A[vi], B[vi])
+                    tir.writes(C[vi])
+                    C[vi] = A[vi] + B[vi]
+        
+
+
+Finally, we can add hints to the program generator that we want to
+parallel the outer-most loop.
+
+.. code:: python
+
+    sch.parallel(i_0)
+    print(sch.mod.script())
+
+
+.. parsed-literal::
+    :class: output
+
+    @tvm.script.ir_module
+    class Module:
+        @tir.prim_func
+        def func(A: tir.Buffer[128, "float32"], B: tir.Buffer[128, "float32"], C: tir.Buffer[128, "float32"]) -> None:
+            # function attr dict
+            tir.func_attr({"global_symbol": "main", "tir.noalias": True})
+            # body
+            # with tir.block("root")
+            for i_0 in tir.parallel(8):
+                for i_2, i_1 in tir.grid(4, 4):
+                    with tir.block("C"):
+                        vi = tir.axis.spatial(128, i_0 * 16 + i_1 * 4 + i_2)
+                        tir.reads(A[vi], B[vi])
+                        tir.writes(C[vi])
+                        C[vi] = A[vi] + B[vi]
+        
+
+
+We can build and run the transformed program
+
+.. code:: python
+
+    transformed_mod = tvm.build(sch.mod, target="llvm")  # The module for CPU backends.
+    transformed_mod["main"](a, b, c)
+    print(c)
+
+
+.. parsed-literal::
+    :class: output
+
+    [  1.   2.   3.   4.   5.   6.   7.   8.   9.  10.  11.  12.  13.  14.
+      15.  16.  17.  18.  19.  20.  21.  22.  23.  24.  25.  26.  27.  28.
+      29.  30.  31.  32.  33.  34.  35.  36.  37.  38.  39.  40.  41.  42.
+      43.  44.  45.  46.  47.  48.  49.  50.  51.  52.  53.  54.  55.  56.
+      57.  58.  59.  60.  61.  62.  63.  64.  65.  66.  67.  68.  69.  70.
+      71.  72.  73.  74.  75.  76.  77.  78.  79.  80.  81.  82.  83.  84.
+      85.  86.  87.  88.  89.  90.  91.  92.  93.  94.  95.  96.  97.  98.
+      99. 100. 101. 102. 103. 104. 105. 106. 107. 108. 109. 110. 111. 112.
+     113. 114. 115. 116. 117. 118. 119. 120. 121. 122. 123. 124. 125. 126.
+     127. 128.]
+
+
+Constructing Tensor Program using Tensor Expression
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In the previous example, we directly use TVMScript to construct the
+tensor program. In practice, it is usually helpful to construct these
+functions pragmatically from existing definitions. Tensor expression is
+an API that helps us to build some of the expression-like array
+computations.
+
+.. code:: python
+
+    # namespace for tensor expression utility
+    from tvm import te
+    
+    # declare the computation using the expression API
+    A = te.placeholder((128, ), name="A")
+    B = te.placeholder((128, ), name="B")
+    C = te.compute((128,), lambda i: A[i] + B[i], name="C")
+    
+    # create a function with the specified list of arguments.
+    func = te.create_prim_func([A, B, C])
+    # mark that the function name is main
+    func = func.with_attr("global_symbol", "main")
+    ir_mod_from_te = IRModule({"main": func})
+    
+    print(ir_mod_from_te.script())
+
+
+.. parsed-literal::
+    :class: output
+
+    @tvm.script.ir_module
+    class Module:
+        @tir.prim_func
+        def func(A: tir.Buffer[128, "float32"], B: tir.Buffer[128, "float32"], C: tir.Buffer[128, "float32"]) -> None:
+            # function attr dict
+            tir.func_attr({"global_symbol": "main", "tir.noalias": True})
+            # body
+            # with tir.block("root")
+            for i0 in tir.serial(128):
+                with tir.block("C"):
+                    i = tir.axis.spatial(128, i0)
+                    tir.reads(A[i], B[i])
+                    tir.writes(C[i])
+                    C[i] = A[i] + B[i]
+        
+
+
+Transforming a matrix multiplication program
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In the above example, we showed how to transform an vector add. Now let
+us try to apply that to a slightly more complicated program(matrix
+multiplication). Let us first try to build the initial code using the
+tensor expression API.
+
+.. code:: python
+
+    from tvm import te
+    
+    M = 1024
+    K = 1024
+    N = 1024
+    
+    # The default tensor type in tvm
+    dtype = "float32"
+    
+    target = "llvm"
+    dev = tvm.device(target, 0)
+    
+    # Algorithm
+    k = te.reduce_axis((0, K), "k")
+    A = te.placeholder((M, K), name="A")
+    B = te.placeholder((K, N), name="B")
+    C = te.compute((M, N), lambda m, n: te.sum(A[m, k] * B[k, n], axis=k), name="C")
+    
+    # Default schedule
+    func = te.create_prim_func([A, B, C])
+    func = func.with_attr("global_symbol", "main")
+    ir_module = IRModule({"main": func})
+    print(ir_module.script())
+    
+    
+    func = tvm.build(ir_module, target="llvm")  # The module for CPU backends.
+    
+    a = tvm.nd.array(np.random.rand(M, K).astype(dtype), dev)
+    b = tvm.nd.array(np.random.rand(K, N).astype(dtype), dev)
+    c = tvm.nd.array(np.zeros((M, N), dtype=dtype), dev)
+    func(a, b, c)
+    
+    evaluator = func.time_evaluator(func.entry_name, dev, number=1)
+    print("Baseline: %f" % evaluator(a, b, c).mean)
+
+
+.. parsed-literal::
+    :class: output
+
+    @tvm.script.ir_module
+    class Module:
+        @tir.prim_func
+        def func(A: tir.Buffer[(1024, 1024), "float32"], B: tir.Buffer[(1024, 1024), "float32"], C: tir.Buffer[(1024, 1024), "float32"]) -> None:
+            # function attr dict
+            tir.func_attr({"global_symbol": "main", "tir.noalias": True})
+            # body
+            # with tir.block("root")
+            for i0, i1, i2 in tir.grid(1024, 1024, 1024):
+                with tir.block("C"):
+                    m, n, k = tir.axis.remap("SSR", [i0, i1, i2])
+                    tir.reads(A[m, k], B[k, n])
+                    tir.writes(C[m, n])
+                    with tir.init():
+                        C[m, n] = tir.float32(0)
+                    C[m, n] = C[m, n] + A[m, k] * B[k, n]
+        
+    Baseline: 2.529775
+
+
+We can transform the loop access pattern to make it more cache friendly.
+Let us use the following schedule.
+
+.. code:: python
+
+    sch = tvm.tir.Schedule(ir_module)
+    type(sch)
+    block_c = sch.get_block("C")
+    # Get loops surrounding the block
+    (y, x, k) = sch.get_loops(block_c)
+    block_size = 32
+    yo, yi = sch.split(y, [None, block_size])
+    xo, xi = sch.split(x, [None, block_size])
+    
+    sch.reorder(yo, xo, k, yi, xi)
+    print(sch.mod.script())
+    
+    func = tvm.build(sch.mod, target="llvm")  # The module for CPU backends.
+    
+    c = tvm.nd.array(np.zeros((M, N), dtype=dtype), dev)
+    func(a, b, c)
+    
+    evaluator = func.time_evaluator(func.entry_name, dev, number=1)
+    print("after transformation: %f" % evaluator(a, b, c).mean)
+
+
+.. parsed-literal::
+    :class: output
+
+    @tvm.script.ir_module
+    class Module:
+        @tir.prim_func
+        def func(A: tir.Buffer[(1024, 1024), "float32"], B: tir.Buffer[(1024, 1024), "float32"], C: tir.Buffer[(1024, 1024), "float32"]) -> None:
+            # function attr dict
+            tir.func_attr({"global_symbol": "main", "tir.noalias": True})
+            # body
+            # with tir.block("root")
+            for i0_0, i1_0, i2, i0_1, i1_1 in tir.grid(32, 32, 1024, 32, 32):
+                with tir.block("C"):
+                    m = tir.axis.spatial(1024, i0_0 * 32 + i0_1)
+                    n = tir.axis.spatial(1024, i1_0 * 32 + i1_1)
+                    k = tir.axis.reduce(1024, i2)
+                    tir.reads(A[m, k], B[k, n])
+                    tir.writes(C[m, n])
+                    with tir.init():
+                        C[m, n] = tir.float32(0)
+                    C[m, n] = C[m, n] + A[m, k] * B[k, n]
+        
+    after transformation: 0.284223
+
+
+Try to change the value of bn to see what performance you can get. In
+practice, we will leverage an automated system to search over a set of
+possible transformations to find an optimal one.
+
+Summary
+-------
+
+-  Primitive tensor function refers to the single unit of computation in
+   model execution.
+
+   -  A MLC process can choose to transform implementation of primitive
+      tensor functions.
+
+-  Tensor program is an effective abstraction to represent primitive
+   tensor functions.
+
+   -  Key elements include: multi-dimensional buffer, loop nests,
+      computation statement.
+   -  Program-based transformations can be used to optimize tensor
+      programs.
+   -  Extra structure can help to provide more information to the
+      transformations.
