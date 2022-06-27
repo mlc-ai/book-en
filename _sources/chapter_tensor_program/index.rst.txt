@@ -253,7 +253,7 @@ retrieve each function by its name.
 .. parsed-literal::
     :class: output
 
-    <tvm.runtime.packed_func.PackedFunc at 0x7f6a4844e450>
+    <tvm.runtime.packed_func.PackedFunc at 0x7f6aace38ef0>
 
 
 
@@ -576,7 +576,7 @@ tensor expression API.
                         C[m, n] = tir.float32(0)
                     C[m, n] = C[m, n] + A[m, k] * B[k, n]
         
-    Baseline: 2.529775
+    Baseline: 3.637988
 
 
 We can transform the loop access pattern to make it more cache friendly.
@@ -627,7 +627,7 @@ Let us use the following schedule.
                         C[m, n] = tir.float32(0)
                     C[m, n] = C[m, n] + A[m, k] * B[k, n]
         
-    after transformation: 0.284223
+    after transformation: 0.215932
 
 
 Try to change the value of bn to see what performance you can get. In
