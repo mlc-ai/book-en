@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    
+    <title>2.5. Exercises for TensorIR &#8212; Machine Learing Compilation 0.0.1 documentation</title>
+
+    <link rel="stylesheet" href="../_static/material-design-lite-1.3.0/material.blue-deep_orange.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_materialdesign_theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/fontawesome/all.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/fonts.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/d2l.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/d2l.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="shortcut icon" href="../_static/mlc-favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="2.4. TensorIR: Tensor Program Abstraction Case Study" href="case_study.html" /> 
+  </head>
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer"><header class="mdl-layout__header mdl-layout__header--waterfall ">
+    <div class="mdl-layout__header-row">
+        
+        <nav class="mdl-navigation breadcrumb">
+            <a class="mdl-navigation__link" href="index.html"><span class="section-number">2. </span>Tensor Program Abstraction</a><i class="material-icons">navigate_next</i>
+            <a class="mdl-navigation__link is-active"><span class="section-number">2.5. </span>Exercises for TensorIR</a>
+        </nav>
+        <div class="mdl-layout-spacer"></div>
+        <nav class="mdl-navigation">
+        
+<form class="form-inline pull-sm-right" action="../search.html" method="get">
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right">
+        <label id="quick-search-icon" class="mdl-button mdl-js-button mdl-button--icon"  for="waterfall-exp">
+          <i class="material-icons">search</i>
+        </label>
+        <div class="mdl-textfield__expandable-holder">
+          <input class="mdl-textfield__input" type="text" name="q"  id="waterfall-exp" placeholder="Search" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </div>
+      </div>
+      <div class="mdl-tooltip" data-mdl-for="quick-search-icon">
+      Quick search
+      </div>
+</form>
+        
+<a id="button-show-source"
+    class="mdl-button mdl-js-button mdl-button--icon"
+    href="../_sources/chapter_tensor_program/tensorir_exercises.rst.txt" rel="nofollow">
+  <i class="material-icons">code</i>
+</a>
+<div class="mdl-tooltip" data-mdl-for="button-show-source">
+Show Source
+</div>
+        </nav>
+    </div>
+    <div class="mdl-layout__header-row header-links">
+      <div class="mdl-layout-spacer"></div>
+      <nav class="mdl-navigation">
+          
+              <a  class="mdl-navigation__link" href="https://mlc.ai/summer22">
+                  <i class="fas fa-user-graduate"></i>
+                  Course
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://github.com/mlc-ai/mlc-en">
+                  <i class="fab fa-github"></i>
+                  GitHub
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://mlc.ai/zh">
+                  <i class="fas fa-external-link-alt"></i>
+                  中文版
+              </a>
+      </nav>
+    </div>
+</header><header class="mdl-layout__drawer">
+    
+          <!-- Title -->
+      <span class="mdl-layout-title">
+          <a class="title" href="../index.html">
+              <img class="logo" src="../_static/mlc-logo-with-text-landscape.svg" alt="Machine Learing Compilation"/>
+          </a>
+      </span>
+    
+    
+      <div class="globaltoc">
+        <span class="mdl-layout-title toc">Table Of Contents</span>
+        
+        
+            
+            <nav class="mdl-navigation">
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_introduction/index.html">1. Introduction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Tensor Program Abstraction</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tensor_program.html">2.1. Primitive Tensor Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tensor_program.html#tensor-program-abstraction">2.2. Tensor Program Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tensor_program.html#summary">2.3. Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="case_study.html">2.4. TensorIR: Tensor Program Abstraction Case Study</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.5. Exercises for TensorIR</a></li>
+</ul>
+</li>
+</ul>
+
+            </nav>
+        
+        </div>
+    
+</header>
+        <main class="mdl-layout__content" tabIndex="0">
+
+	<script type="text/javascript" src="../_static/sphinx_materialdesign_theme.js "></script>
+    <header class="mdl-layout__drawer">
+    
+          <!-- Title -->
+      <span class="mdl-layout-title">
+          <a class="title" href="../index.html">
+              <img class="logo" src="../_static/mlc-logo-with-text-landscape.svg" alt="Machine Learing Compilation"/>
+          </a>
+      </span>
+    
+    
+      <div class="globaltoc">
+        <span class="mdl-layout-title toc">Table Of Contents</span>
+        
+        
+            
+            <nav class="mdl-navigation">
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_introduction/index.html">1. Introduction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Tensor Program Abstraction</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="tensor_program.html">2.1. Primitive Tensor Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tensor_program.html#tensor-program-abstraction">2.2. Tensor Program Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tensor_program.html#summary">2.3. Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="case_study.html">2.4. TensorIR: Tensor Program Abstraction Case Study</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.5. Exercises for TensorIR</a></li>
+</ul>
+</li>
+</ul>
+
+            </nav>
+        
+        </div>
+    
+</header>
+
+    <div class="document">
+        <div class="page-content" role="main">
+        
+  <div class="section" id="exercises-for-tensorir">
+<h1><span class="section-number">2.5. </span>Exercises for TensorIR<a class="headerlink" href="#exercises-for-tensorir" title="Permalink to this heading">¶</a></h1>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">IPython</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tvm</span>
+<span class="kn">from</span> <span class="nn">tvm.ir.module</span> <span class="kn">import</span> <span class="n">IRModule</span>
+<span class="kn">from</span> <span class="nn">tvm.script</span> <span class="kn">import</span> <span class="n">tir</span> <span class="k">as</span> <span class="n">T</span>
+</pre></div>
+</div>
+<div class="section" id="section-1-how-to-write-tensorir">
+<h2><span class="section-number">2.5.1. </span>Section 1: How to Write TensorIR<a class="headerlink" href="#section-1-how-to-write-tensorir" title="Permalink to this heading">¶</a></h2>
+<p>In this section, let’s try to write TensorIR manually according to
+high-level instructions (e.g., Numpy or Torch). First, we give an
+example of element-wise add function, to show what should we do to write
+a TensorIR function.</p>
+<div class="section" id="example-element-wise-add">
+<h3><span class="section-number">2.5.1.1. </span>Example: Element-wise Add<a class="headerlink" href="#example-element-wise-add" title="Permalink to this heading">¶</a></h3>
+<p>First, let’s try to use Numpy to write an element-wise add function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># init data</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># numpy version</span>
+<span class="n">c_np</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+<span class="n">c_np</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span>
+       <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span>
+       <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span>
+       <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">]])</span>
+</pre></div>
+</div>
+<p>Before we directly write TensorIR, we should first translate high-level
+computation abstraction (e.g., <code class="docutils literal notranslate"><span class="pre">ndarray</span> <span class="pre">+</span> <span class="pre">ndarray</span></code>) to low-level
+python implementation (standard for loops with element access and
+operation)</p>
+<p>Notably, the initial value of the o utput array (or buffer) is not
+always <code class="docutils literal notranslate"><span class="pre">0</span></code>. We need to write or initialize it in our implementation,
+which is important for reduction operator (e.g. matmul and conv)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># low-level numpy version</span>
+<span class="k">def</span> <span class="nf">lnumpy_add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+      <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+<span class="n">c_lnumpy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+<span class="n">lnumpy_add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c_lnumpy</span><span class="p">)</span>
+<span class="n">c_lnumpy</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span>
+       <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span>
+       <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">],</span>
+       <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">]])</span>
+</pre></div>
+</div>
+<p>Now, let’s take a further step: translate low-level NumPy implementation
+into TensorIR. And compare the result with it comes from NumPy.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># TensorIR version</span>
+<span class="nd">@tvm</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">ir_module</span>
+<span class="k">class</span> <span class="nc">MyAdd</span><span class="p">:</span>
+  <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
+  <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">],</span>
+          <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">],</span>
+          <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">]):</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;add&quot;</span><span class="p">})</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+      <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">):</span>
+        <span class="n">vi</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+        <span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">+</span> <span class="n">B</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span>
+
+<span class="n">rt_lib</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">MyAdd</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;llvm&quot;</span><span class="p">)</span>
+<span class="n">a_tvm</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="n">b_tvm</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="n">c_tvm</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">))</span>
+<span class="n">rt_lib</span><span class="p">[</span><span class="s2">&quot;add&quot;</span><span class="p">](</span><span class="n">a_tvm</span><span class="p">,</span> <span class="n">b_tvm</span><span class="p">,</span> <span class="n">c_tvm</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">c_tvm</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">c_np</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here, we have finished the TensorIR function. Please take your time to
+finish the following exercises</p>
+</div>
+<div class="section" id="exercise-1-broadcast-add">
+<h3><span class="section-number">2.5.1.2. </span>Exercise 1: Broadcast Add<a class="headerlink" href="#exercise-1-broadcast-add" title="Permalink to this heading">¶</a></h3>
+<p>Please write a TensorIR function that adds two arrays with broadcasting.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># init data</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">16</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># numpy version</span>
+<span class="n">c_np</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+<span class="n">c_np</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[</span> <span class="mi">4</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">4</span><span class="p">],</span>
+       <span class="p">[</span> <span class="mi">8</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span>  <span class="mi">8</span><span class="p">],</span>
+       <span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">],</span>
+       <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">]])</span>
+</pre></div>
+</div>
+<p>Please complete the following Module <code class="docutils literal notranslate"><span class="pre">MyAdd</span></code> and run the code to check
+your implementation.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@tvm</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">ir_module</span>
+<span class="k">class</span> <span class="nc">MyAdd</span><span class="p">:</span>
+  <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
+  <span class="k">def</span> <span class="nf">add</span><span class="p">():</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;add&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+    <span class="c1"># TODO</span>
+    <span class="o">...</span>
+
+<span class="n">rt_lib</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">MyAdd</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;llvm&quot;</span><span class="p">)</span>
+<span class="n">a_tvm</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="n">b_tvm</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="n">c_tvm</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">))</span>
+<span class="n">rt_lib</span><span class="p">[</span><span class="s2">&quot;add&quot;</span><span class="p">](</span><span class="n">a_tvm</span><span class="p">,</span> <span class="n">b_tvm</span><span class="p">,</span> <span class="n">c_tvm</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">c_tvm</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">c_np</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="exercise-2-2d-convolution">
+<h3><span class="section-number">2.5.1.3. </span>Exercise 2: 2D Convolution<a class="headerlink" href="#exercise-2-2d-convolution" title="Permalink to this heading">¶</a></h3>
+<p>Then, let’s try to do something challenging: 2D convolution, which is a
+common operation in image processing.</p>
+<p>Here is the mathematical definition of convolution with NCHW layout:</p>
+<div class="math notranslate nohighlight" id="equation-chapter-tensor-program-tensorir-exercises-0">
+<span class="eqno">(2.5.1)<a class="headerlink" href="#equation-chapter-tensor-program-tensorir-exercises-0" title="Permalink to this equation">¶</a></span>\[Conv[b, k, i, j] =
+    \sum_{di, dj, q} A[b, q, strides * i + di, strides * j + dj] * W[k, q, di, dj]\]</div>
+<p>, where, <code class="docutils literal notranslate"><span class="pre">A</span></code> is the input tensor, <code class="docutils literal notranslate"><span class="pre">W</span></code> is the weight tensor, <code class="docutils literal notranslate"><span class="pre">b</span></code> is
+the batch index, <code class="docutils literal notranslate"><span class="pre">k</span></code> is the out channels, <code class="docutils literal notranslate"><span class="pre">i</span></code> and <code class="docutils literal notranslate"><span class="pre">j</span></code> are indices
+for image hight and width, <code class="docutils literal notranslate"><span class="pre">di</span></code> and <code class="docutils literal notranslate"><span class="pre">dj</span></code> are the indices of the
+weight, <code class="docutils literal notranslate"><span class="pre">q</span></code> is the input channel, and <code class="docutils literal notranslate"><span class="pre">strides</span></code> is the stride of the
+filter window.</p>
+<p>In the exercise, we pick a small and simple case with
+<code class="docutils literal notranslate"><span class="pre">stride=1,</span> <span class="pre">padding=0</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">N</span><span class="p">,</span> <span class="n">CI</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">,</span> <span class="n">CO</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span>
+<span class="n">OUT_H</span><span class="p">,</span> <span class="n">OUT_W</span> <span class="o">=</span> <span class="n">H</span> <span class="o">-</span> <span class="n">K</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">W</span> <span class="o">-</span> <span class="n">K</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">N</span><span class="o">*</span><span class="n">CI</span><span class="o">*</span><span class="n">H</span><span class="o">*</span><span class="n">W</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">CI</span><span class="p">,</span> <span class="n">H</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span>
+<span class="n">weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">CO</span><span class="o">*</span><span class="n">CI</span><span class="o">*</span><span class="n">K</span><span class="o">*</span><span class="n">K</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">CO</span><span class="p">,</span> <span class="n">CI</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># torch version</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="n">data_torch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">weight_torch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
+<span class="n">conv_torch</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">conv2d</span><span class="p">(</span><span class="n">data_torch</span><span class="p">,</span> <span class="n">weight_torch</span><span class="p">)</span>
+<span class="n">conv_torch</span> <span class="o">=</span> <span class="n">conv_torch</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+<span class="n">conv_torch</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">array</span><span class="p">([[[[</span> <span class="mi">474</span><span class="p">,</span>  <span class="mi">510</span><span class="p">,</span>  <span class="mi">546</span><span class="p">,</span>  <span class="mi">582</span><span class="p">,</span>  <span class="mi">618</span><span class="p">,</span>  <span class="mi">654</span><span class="p">],</span>
+         <span class="p">[</span> <span class="mi">762</span><span class="p">,</span>  <span class="mi">798</span><span class="p">,</span>  <span class="mi">834</span><span class="p">,</span>  <span class="mi">870</span><span class="p">,</span>  <span class="mi">906</span><span class="p">,</span>  <span class="mi">942</span><span class="p">],</span>
+         <span class="p">[</span><span class="mi">1050</span><span class="p">,</span> <span class="mi">1086</span><span class="p">,</span> <span class="mi">1122</span><span class="p">,</span> <span class="mi">1158</span><span class="p">,</span> <span class="mi">1194</span><span class="p">,</span> <span class="mi">1230</span><span class="p">],</span>
+         <span class="p">[</span><span class="mi">1338</span><span class="p">,</span> <span class="mi">1374</span><span class="p">,</span> <span class="mi">1410</span><span class="p">,</span> <span class="mi">1446</span><span class="p">,</span> <span class="mi">1482</span><span class="p">,</span> <span class="mi">1518</span><span class="p">],</span>
+         <span class="p">[</span><span class="mi">1626</span><span class="p">,</span> <span class="mi">1662</span><span class="p">,</span> <span class="mi">1698</span><span class="p">,</span> <span class="mi">1734</span><span class="p">,</span> <span class="mi">1770</span><span class="p">,</span> <span class="mi">1806</span><span class="p">],</span>
+         <span class="p">[</span><span class="mi">1914</span><span class="p">,</span> <span class="mi">1950</span><span class="p">,</span> <span class="mi">1986</span><span class="p">,</span> <span class="mi">2022</span><span class="p">,</span> <span class="mi">2058</span><span class="p">,</span> <span class="mi">2094</span><span class="p">]],</span>
+
+        <span class="p">[[</span><span class="mi">1203</span><span class="p">,</span> <span class="mi">1320</span><span class="p">,</span> <span class="mi">1437</span><span class="p">,</span> <span class="mi">1554</span><span class="p">,</span> <span class="mi">1671</span><span class="p">,</span> <span class="mi">1788</span><span class="p">],</span>
+         <span class="p">[</span><span class="mi">2139</span><span class="p">,</span> <span class="mi">2256</span><span class="p">,</span> <span class="mi">2373</span><span class="p">,</span> <span class="mi">2490</span><span class="p">,</span> <span class="mi">2607</span><span class="p">,</span> <span class="mi">2724</span><span class="p">],</span>
+         <span class="p">[</span><span class="mi">3075</span><span class="p">,</span> <span class="mi">3192</span><span class="p">,</span> <span class="mi">3309</span><span class="p">,</span> <span class="mi">3426</span><span class="p">,</span> <span class="mi">3543</span><span class="p">,</span> <span class="mi">3660</span><span class="p">],</span>
+         <span class="p">[</span><span class="mi">4011</span><span class="p">,</span> <span class="mi">4128</span><span class="p">,</span> <span class="mi">4245</span><span class="p">,</span> <span class="mi">4362</span><span class="p">,</span> <span class="mi">4479</span><span class="p">,</span> <span class="mi">4596</span><span class="p">],</span>
+         <span class="p">[</span><span class="mi">4947</span><span class="p">,</span> <span class="mi">5064</span><span class="p">,</span> <span class="mi">5181</span><span class="p">,</span> <span class="mi">5298</span><span class="p">,</span> <span class="mi">5415</span><span class="p">,</span> <span class="mi">5532</span><span class="p">],</span>
+         <span class="p">[</span><span class="mi">5883</span><span class="p">,</span> <span class="mi">6000</span><span class="p">,</span> <span class="mi">6117</span><span class="p">,</span> <span class="mi">6234</span><span class="p">,</span> <span class="mi">6351</span><span class="p">,</span> <span class="mi">6468</span><span class="p">]]]])</span>
+</pre></div>
+</div>
+<p>Please complete the following Module <code class="docutils literal notranslate"><span class="pre">MyConv</span></code> and run the code to
+check your implementation.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@tvm</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">ir_module</span>
+<span class="k">class</span> <span class="nc">MyConv</span><span class="p">:</span>
+  <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
+  <span class="k">def</span> <span class="nf">conv</span><span class="p">():</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;conv&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+    <span class="c1"># TODO</span>
+    <span class="o">...</span>
+
+<span class="n">rt_lib</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">MyConv</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;llvm&quot;</span><span class="p">)</span>
+<span class="n">data_tvm</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="n">weight_tvm</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span>
+<span class="n">conv_tvm</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">N</span><span class="p">,</span> <span class="n">CO</span><span class="p">,</span> <span class="n">OUT_H</span><span class="p">,</span> <span class="n">OUT_W</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">))</span>
+<span class="n">rt_lib</span><span class="p">[</span><span class="s2">&quot;conv&quot;</span><span class="p">](</span><span class="n">data_tvm</span><span class="p">,</span> <span class="n">weight_tvm</span><span class="p">,</span> <span class="n">conv_tvm</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">conv_tvm</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">conv_torch</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="section-2-how-to-transform-tensorir">
+<h2><span class="section-number">2.5.2. </span>Section 2: How to Transform TensorIR<a class="headerlink" href="#section-2-how-to-transform-tensorir" title="Permalink to this heading">¶</a></h2>
+<p>In the lecture, we learned that TensorIR is not only a programming
+language but also an abstraction for program transformation. In this
+section, let’s try to transform the program. We take <code class="docutils literal notranslate"><span class="pre">bmm_relu</span></code>
+(<code class="docutils literal notranslate"><span class="pre">batched_matmul_relu</span></code>) in our studies, which is a variant of
+operations that common appear in models such as transformers.</p>
+<div class="section" id="parallel-vectorize-and-unroll">
+<h3><span class="section-number">2.5.2.1. </span>Parallel, Vectorize and Unroll<a class="headerlink" href="#parallel-vectorize-and-unroll" title="Permalink to this heading">¶</a></h3>
+<p>First, we introduce some new primitives, <code class="docutils literal notranslate"><span class="pre">parallel</span></code>, <code class="docutils literal notranslate"><span class="pre">vectorize</span></code> and
+<code class="docutils literal notranslate"><span class="pre">unroll</span></code>. These three primitives operates on loops to indicate how
+this loop execute. Here is the example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@tvm</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">ir_module</span>
+<span class="k">class</span> <span class="nc">MyAdd</span><span class="p">:</span>
+  <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
+  <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">],</span>
+          <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">],</span>
+          <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">]):</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;add&quot;</span><span class="p">})</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+      <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">):</span>
+        <span class="n">vi</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+        <span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">+</span> <span class="n">B</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span>
+
+<span class="n">sch</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">tir</span><span class="o">.</span><span class="n">Schedule</span><span class="p">(</span><span class="n">MyAdd</span><span class="p">)</span>
+<span class="n">block</span> <span class="o">=</span> <span class="n">sch</span><span class="o">.</span><span class="n">get_block</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;add&quot;</span><span class="p">)</span>
+<span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">sch</span><span class="o">.</span><span class="n">get_loops</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+<span class="n">i0</span><span class="p">,</span> <span class="n">i1</span> <span class="o">=</span> <span class="n">sch</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">factors</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">sch</span><span class="o">.</span><span class="n">parallel</span><span class="p">(</span><span class="n">i0</span><span class="p">)</span>
+<span class="n">sch</span><span class="o">.</span><span class="n">unroll</span><span class="p">(</span><span class="n">i1</span><span class="p">)</span>
+<span class="n">sch</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+<span class="n">IPython</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">Code</span><span class="p">(</span><span class="n">sch</span><span class="o">.</span><span class="n">mod</span><span class="o">.</span><span class="n">script</span><span class="p">(),</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<style>pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.output_html .hll { background-color: #ffffcc }
+.output_html { background: #f8f8f8; }
+.output_html .c { color: #3D7B7B; font-style: italic } /* Comment */
+.output_html .err { border: 1px solid #FF0000 } /* Error */
+.output_html .k { color: #008000; font-weight: bold } /* Keyword */
+.output_html .o { color: #666666 } /* Operator */
+.output_html .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.output_html .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.output_html .cp { color: #9C6500 } /* Comment.Preproc */
+.output_html .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.output_html .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.output_html .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.output_html .gd { color: #A00000 } /* Generic.Deleted */
+.output_html .ge { font-style: italic } /* Generic.Emph */
+.output_html .gr { color: #E40000 } /* Generic.Error */
+.output_html .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.output_html .gi { color: #008400 } /* Generic.Inserted */
+.output_html .go { color: #717171 } /* Generic.Output */
+.output_html .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.output_html .gs { font-weight: bold } /* Generic.Strong */
+.output_html .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.output_html .gt { color: #0044DD } /* Generic.Traceback */
+.output_html .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.output_html .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.output_html .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.output_html .kp { color: #008000 } /* Keyword.Pseudo */
+.output_html .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.output_html .kt { color: #B00040 } /* Keyword.Type */
+.output_html .m { color: #666666 } /* Literal.Number */
+.output_html .s { color: #BA2121 } /* Literal.String */
+.output_html .na { color: #687822 } /* Name.Attribute */
+.output_html .nb { color: #008000 } /* Name.Builtin */
+.output_html .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.output_html .no { color: #880000 } /* Name.Constant */
+.output_html .nd { color: #AA22FF } /* Name.Decorator */
+.output_html .ni { color: #717171; font-weight: bold } /* Name.Entity */
+.output_html .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.output_html .nf { color: #0000FF } /* Name.Function */
+.output_html .nl { color: #767600 } /* Name.Label */
+.output_html .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.output_html .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.output_html .nv { color: #19177C } /* Name.Variable */
+.output_html .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.output_html .w { color: #bbbbbb } /* Text.Whitespace */
+.output_html .mb { color: #666666 } /* Literal.Number.Bin */
+.output_html .mf { color: #666666 } /* Literal.Number.Float */
+.output_html .mh { color: #666666 } /* Literal.Number.Hex */
+.output_html .mi { color: #666666 } /* Literal.Number.Integer */
+.output_html .mo { color: #666666 } /* Literal.Number.Oct */
+.output_html .sa { color: #BA2121 } /* Literal.String.Affix */
+.output_html .sb { color: #BA2121 } /* Literal.String.Backtick */
+.output_html .sc { color: #BA2121 } /* Literal.String.Char */
+.output_html .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.output_html .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.output_html .s2 { color: #BA2121 } /* Literal.String.Double */
+.output_html .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.output_html .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.output_html .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.output_html .sx { color: #008000 } /* Literal.String.Other */
+.output_html .sr { color: #A45A77 } /* Literal.String.Regex */
+.output_html .s1 { color: #BA2121 } /* Literal.String.Single */
+.output_html .ss { color: #19177C } /* Literal.String.Symbol */
+.output_html .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.output_html .fm { color: #0000FF } /* Name.Function.Magic */
+.output_html .vc { color: #19177C } /* Name.Variable.Class */
+.output_html .vg { color: #19177C } /* Name.Variable.Global */
+.output_html .vi { color: #19177C } /* Name.Variable.Instance */
+.output_html .vm { color: #19177C } /* Name.Variable.Magic */
+.output_html .il { color: #666666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="nd">@tvm</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">ir_module</span>
+<span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
+    <span class="nd">@tir</span><span class="o">.</span><span class="n">prim_func</span>
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">tir</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">],</span> <span class="n">B</span><span class="p">:</span> <span class="n">tir</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">],</span> <span class="n">C</span><span class="p">:</span> <span class="n">tir</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># function attr dict</span>
+        <span class="n">tir</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;add&quot;</span><span class="p">})</span>
+        <span class="c1"># body</span>
+        <span class="c1"># with tir.block(&quot;root&quot;)</span>
+        <span class="k">for</span> <span class="n">i_0</span> <span class="ow">in</span> <span class="n">tir</span><span class="o">.</span><span class="n">parallel</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i_1</span> <span class="ow">in</span> <span class="n">tir</span><span class="o">.</span><span class="n">unroll</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">tir</span><span class="o">.</span><span class="n">vectorized</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+                    <span class="k">with</span> <span class="n">tir</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">):</span>
+                        <span class="n">vi</span> <span class="o">=</span> <span class="n">tir</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">i_0</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">i_1</span><span class="p">)</span>
+                        <span class="n">vj</span> <span class="o">=</span> <span class="n">tir</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+                        <span class="n">tir</span><span class="o">.</span><span class="n">reads</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">],</span> <span class="n">B</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
+                        <span class="n">tir</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
+                        <span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">+</span> <span class="n">B</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span>
+
+</pre></div></div>
+<div class="section" id="exercise-3-transform-a-batch-matmul-program">
+<h3><span class="section-number">2.5.2.2. </span>Exercise 3: Transform a batch matmul program<a class="headerlink" href="#exercise-3-transform-a-batch-matmul-program" title="Permalink to this heading">¶</a></h3>
+<p>Now, let’s go back to the <code class="docutils literal notranslate"><span class="pre">bmm_relu</span></code> exercise. First, Let’s see the
+definition of <code class="docutils literal notranslate"><span class="pre">bmm</span></code>: -
+<span class="math notranslate nohighlight">\(Y_{n, i, j} = \sum_k A_{n, i, k} \times B_{n, k, j}\)</span> -
+<span class="math notranslate nohighlight">\(C_{n, i, j} = \mathbb{relu}(Y_{n,i,j}) = \mathbb{max}(Y_{n, i, j}, 0)\)</span></p>
+<p>It’s your time to write the TensorIR for <code class="docutils literal notranslate"><span class="pre">bmm_relu</span></code>. We provide the
+lnumpy func as hint:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">lnumpy_mm_relu_v2</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">C</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">16</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">128</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">128</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">128</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="n">Y</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">A</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">B</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">128</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">128</span><span class="p">):</span>
+                <span class="n">C</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@tvm</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">ir_module</span>
+<span class="k">class</span> <span class="nc">MyBmmRule</span><span class="p">:</span>
+  <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
+  <span class="k">def</span> <span class="nf">bmm_relu</span><span class="p">():</span>
+    <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;bmm_relu&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+    <span class="c1"># TODO</span>
+    <span class="o">...</span>
+
+<span class="n">sch</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">tir</span><span class="o">.</span><span class="n">Schedule</span><span class="p">(</span><span class="n">MyBmmRule</span><span class="p">)</span>
+<span class="n">IPython</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">Code</span><span class="p">(</span><span class="n">sch</span><span class="o">.</span><span class="n">mod</span><span class="o">.</span><span class="n">script</span><span class="p">(),</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
+<span class="c1"># Also please validate your result</span>
+</pre></div>
+</div>
+<p>In this exercise, let’s focus on transform the original program to a
+specific target. Note that the target program may not be the best one
+due to different hardware. But this exercise aims to let students
+understand how to transform the program to a wanted one. Here is the
+target program:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@tvm</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">ir_module</span>
+<span class="k">class</span> <span class="nc">TargetModule</span><span class="p">:</span>
+    <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
+    <span class="k">def</span> <span class="nf">bmm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">],</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">],</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;bmm_relu&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_buffer</span><span class="p">([</span><span class="mi">16</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i0</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">parallel</span><span class="p">(</span><span class="mi">16</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i1</span><span class="p">,</span> <span class="n">i2_0</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">16</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">ax0_init</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">vectorized</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+                    <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;Y_init&quot;</span><span class="p">):</span>
+                        <span class="n">n</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">remap</span><span class="p">(</span><span class="s2">&quot;SS&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">])</span>
+                        <span class="n">j</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">i2_0</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">+</span> <span class="n">ax0_init</span><span class="p">)</span>
+                        <span class="n">Y</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">ax1_0</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">serial</span><span class="p">(</span><span class="mi">32</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">ax1_1</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">unroll</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+                        <span class="k">for</span> <span class="n">ax0</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">serial</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+                            <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;Y_update&quot;</span><span class="p">):</span>
+                                <span class="n">n</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">remap</span><span class="p">(</span><span class="s2">&quot;SS&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">])</span>
+                                <span class="n">j</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">i2_0</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">+</span> <span class="n">ax0</span><span class="p">)</span>
+                                <span class="n">k</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">ax1_0</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">ax1_1</span><span class="p">)</span>
+                                <span class="n">Y</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">A</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">B</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">i2_1</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">vectorized</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+                    <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">):</span>
+                        <span class="n">n</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">remap</span><span class="p">(</span><span class="s2">&quot;SS&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">])</span>
+                        <span class="n">j</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">i2_0</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">+</span> <span class="n">i2_1</span><span class="p">)</span>
+                        <span class="n">C</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Your task is to transform the original program to the target program.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sch</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">tir</span><span class="o">.</span><span class="n">Schedule</span><span class="p">(</span><span class="n">BmmRelu</span><span class="p">)</span>
+<span class="c1"># TODO: transformations</span>
+<span class="c1"># Hints: you can use</span>
+<span class="c1"># `IPython.display.Code(sch.mod.script(), language=&quot;python&quot;)`</span>
+<span class="c1"># or `print(sch.mod.script())`</span>
+<span class="c1"># to show the current program at any time during the transformation.</span>
+
+<span class="c1"># Step 1. Get blocks</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">sch</span><span class="o">.</span><span class="n">get_block</span><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="n">func_name</span><span class="o">=</span><span class="s2">&quot;bmm_relu&quot;</span><span class="p">)</span>
+<span class="o">...</span>
+
+<span class="c1"># Step 2. Get loops</span>
+<span class="n">b</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">sch</span><span class="o">.</span><span class="n">get_loops</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+<span class="o">...</span>
+
+<span class="c1"># Step 3. Organize the loops</span>
+<span class="n">k0</span><span class="p">,</span> <span class="n">k1</span> <span class="o">=</span> <span class="n">sch</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<span class="n">sch</span><span class="o">.</span><span class="n">reorder</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">sch</span><span class="o">.</span><span class="n">compute_at</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="o">...</span>
+
+<span class="c1"># Step 4. decompose reduction</span>
+<span class="n">Y_init</span> <span class="o">=</span> <span class="n">sch</span><span class="o">.</span><span class="n">decompose_reduction</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<span class="o">...</span>
+
+<span class="c1"># Step 5. vectorize / parallel / unroll</span>
+<span class="n">sch</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">sch</span><span class="o">.</span><span class="n">parallel</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">sch</span><span class="o">.</span><span class="n">unroll</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="o">...</span>
+
+<span class="n">IPython</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">Code</span><span class="p">(</span><span class="n">sch</span><span class="o">.</span><span class="n">mod</span><span class="o">.</span><span class="n">script</span><span class="p">(),</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>OPTIONAL</strong> If we want to make sure the transformed program is exactly
+the same as the given target, we can use <code class="docutils literal notranslate"><span class="pre">assert_structural_equal</span></code>.
+Note that this step is an optional step in this exercise. It’s good
+enough if you transformed the program <strong>towards</strong> the target and get
+performance improvement.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tvm</span><span class="o">.</span><span class="n">ir</span><span class="o">.</span><span class="n">assert_structural_equal</span><span class="p">(</span><span class="n">sch</span><span class="o">.</span><span class="n">mod</span><span class="p">,</span> <span class="n">TargetModule</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pass&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="build-and-evaluate">
+<h3><span class="section-number">2.5.2.3. </span>Build and Evaluate<a class="headerlink" href="#build-and-evaluate" title="Permalink to this heading">¶</a></h3>
+<p>Finally we can evaluate the performance of the transformed program.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">before_rt_lib</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">MyBmmRule</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;llvm&quot;</span><span class="p">)</span>
+<span class="n">after_rt_lib</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">sch</span><span class="o">.</span><span class="n">mod</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;llvm&quot;</span><span class="p">)</span>
+<span class="n">a_tvm</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">))</span>
+<span class="n">b_tvm</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">))</span>
+<span class="n">c_tvm</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">))</span>
+<span class="n">after_rt_lib</span><span class="p">[</span><span class="s2">&quot;bmm_relu&quot;</span><span class="p">](</span><span class="n">a_tvm</span><span class="p">,</span> <span class="n">b_tvm</span><span class="p">,</span> <span class="n">c_tvm</span><span class="p">)</span>
+<span class="n">before_timer</span> <span class="o">=</span> <span class="n">before_rt_lib</span><span class="o">.</span><span class="n">time_evaluator</span><span class="p">(</span><span class="s2">&quot;bmm_relu&quot;</span><span class="p">,</span> <span class="n">tvm</span><span class="o">.</span><span class="n">cpu</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Before transformation:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">before_timer</span><span class="p">(</span><span class="n">a_tvm</span><span class="p">,</span> <span class="n">b_tvm</span><span class="p">,</span> <span class="n">c_tvm</span><span class="p">))</span>
+
+<span class="n">f_timer</span> <span class="o">=</span> <span class="n">after_rt_lib</span><span class="o">.</span><span class="n">time_evaluator</span><span class="p">(</span><span class="s2">&quot;bmm_relu&quot;</span><span class="p">,</span> <span class="n">tvm</span><span class="o">.</span><span class="n">cpu</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;After transformation:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">f_timer</span><span class="p">(</span><span class="n">a_tvm</span><span class="p">,</span> <span class="n">b_tvm</span><span class="p">,</span> <span class="n">c_tvm</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+        </div>
+        <div class="side-doc-outline">
+            <div class="side-doc-outline--content"> 
+<div class="localtoc">
+    <p class="caption">
+      <span class="caption-text">Table Of Contents</span>
+    </p>
+    <ul>
+<li><a class="reference internal" href="#">2.5. Exercises for TensorIR</a><ul>
+<li><a class="reference internal" href="#section-1-how-to-write-tensorir">2.5.1. Section 1: How to Write TensorIR</a><ul>
+<li><a class="reference internal" href="#example-element-wise-add">2.5.1.1. Example: Element-wise Add</a></li>
+<li><a class="reference internal" href="#exercise-1-broadcast-add">2.5.1.2. Exercise 1: Broadcast Add</a></li>
+<li><a class="reference internal" href="#exercise-2-2d-convolution">2.5.1.3. Exercise 2: 2D Convolution</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#section-2-how-to-transform-tensorir">2.5.2. Section 2: How to Transform TensorIR</a><ul>
+<li><a class="reference internal" href="#parallel-vectorize-and-unroll">2.5.2.1. Parallel, Vectorize and Unroll</a></li>
+<li><a class="reference internal" href="#exercise-3-transform-a-batch-matmul-program">2.5.2.2. Exercise 3: Transform a batch matmul program</a></li>
+<li><a class="reference internal" href="#build-and-evaluate">2.5.2.3. Build and Evaluate</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+            </div>
+        </div>
+
+      <div class="clearer"></div>
+    </div><div class="pagenation">
+     <a id="button-prev" href="case_study.html" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" role="botton" accesskey="P">
+         <i class="pagenation-arrow-L fas fa-arrow-left fa-lg"></i>
+         <div class="pagenation-text">
+            <span class="pagenation-direction">Previous</span>
+            <div>2.4. TensorIR: Tensor Program Abstraction Case Study</div>
+         </div>
+     </a>
+  </div>
+        
+        </main>
+    </div>
+  </body>
+</html>

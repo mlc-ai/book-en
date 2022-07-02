@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    
+    <title>2.1. Primitive Tensor Function &#8212; Machine Learing Compilation 0.0.1 documentation</title>
+
+    <link rel="stylesheet" href="../_static/material-design-lite-1.3.0/material.blue-deep_orange.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_materialdesign_theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/fontawesome/all.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/fonts.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/d2l.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/d2l.js"></script>
+    <link rel="shortcut icon" href="../_static/mlc-favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2.4. TensorIR: Tensor Program Abstraction Case Study" href="case_study.html" />
+    <link rel="prev" title="2. Tensor Program Abstraction" href="index.html" /> 
+  </head>
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer"><header class="mdl-layout__header mdl-layout__header--waterfall ">
+    <div class="mdl-layout__header-row">
+        
+        <nav class="mdl-navigation breadcrumb">
+            <a class="mdl-navigation__link" href="index.html"><span class="section-number">2. </span>Tensor Program Abstraction</a><i class="material-icons">navigate_next</i>
+            <a class="mdl-navigation__link is-active"><span class="section-number">2.1. </span>Primitive Tensor Function</a>
+        </nav>
+        <div class="mdl-layout-spacer"></div>
+        <nav class="mdl-navigation">
+        
+<form class="form-inline pull-sm-right" action="../search.html" method="get">
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right">
+        <label id="quick-search-icon" class="mdl-button mdl-js-button mdl-button--icon"  for="waterfall-exp">
+          <i class="material-icons">search</i>
+        </label>
+        <div class="mdl-textfield__expandable-holder">
+          <input class="mdl-textfield__input" type="text" name="q"  id="waterfall-exp" placeholder="Search" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </div>
+      </div>
+      <div class="mdl-tooltip" data-mdl-for="quick-search-icon">
+      Quick search
+      </div>
+</form>
+        
+<a id="button-show-source"
+    class="mdl-button mdl-js-button mdl-button--icon"
+    href="../_sources/chapter_tensor_program/tensor_program.rst.txt" rel="nofollow">
+  <i class="material-icons">code</i>
+</a>
+<div class="mdl-tooltip" data-mdl-for="button-show-source">
+Show Source
+</div>
+        </nav>
+    </div>
+    <div class="mdl-layout__header-row header-links">
+      <div class="mdl-layout-spacer"></div>
+      <nav class="mdl-navigation">
+          
+              <a  class="mdl-navigation__link" href="https://mlc.ai/summer22">
+                  <i class="fas fa-user-graduate"></i>
+                  Course
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://github.com/mlc-ai/mlc-en">
+                  <i class="fab fa-github"></i>
+                  GitHub
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://mlc.ai/zh">
+                  <i class="fas fa-external-link-alt"></i>
+                  中文版
+              </a>
+      </nav>
+    </div>
+</header><header class="mdl-layout__drawer">
+    
+          <!-- Title -->
+      <span class="mdl-layout-title">
+          <a class="title" href="../index.html">
+              <img class="logo" src="../_static/mlc-logo-with-text-landscape.svg" alt="Machine Learing Compilation"/>
+          </a>
+      </span>
+    
+    
+      <div class="globaltoc">
+        <span class="mdl-layout-title toc">Table Of Contents</span>
+        
+        
+            
+            <nav class="mdl-navigation">
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_introduction/index.html">1. Introduction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Tensor Program Abstraction</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.1. Primitive Tensor Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tensor-program-abstraction">2.2. Tensor Program Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#summary">2.3. Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="case_study.html">2.4. TensorIR: Tensor Program Abstraction Case Study</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tensorir_exercises.html">2.5. Exercises for TensorIR</a></li>
+</ul>
+</li>
+</ul>
+
+            </nav>
+        
+        </div>
+    
+</header>
+        <main class="mdl-layout__content" tabIndex="0">
+
+	<script type="text/javascript" src="../_static/sphinx_materialdesign_theme.js "></script>
+    <header class="mdl-layout__drawer">
+    
+          <!-- Title -->
+      <span class="mdl-layout-title">
+          <a class="title" href="../index.html">
+              <img class="logo" src="../_static/mlc-logo-with-text-landscape.svg" alt="Machine Learing Compilation"/>
+          </a>
+      </span>
+    
+    
+      <div class="globaltoc">
+        <span class="mdl-layout-title toc">Table Of Contents</span>
+        
+        
+            
+            <nav class="mdl-navigation">
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_introduction/index.html">1. Introduction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Tensor Program Abstraction</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.1. Primitive Tensor Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tensor-program-abstraction">2.2. Tensor Program Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#summary">2.3. Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="case_study.html">2.4. TensorIR: Tensor Program Abstraction Case Study</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tensorir_exercises.html">2.5. Exercises for TensorIR</a></li>
+</ul>
+</li>
+</ul>
+
+            </nav>
+        
+        </div>
+    
+</header>
+
+    <div class="document">
+        <div class="page-content" role="main">
+        
+  <div class="section" id="primitive-tensor-function">
+<h1><span class="section-number">2.1. </span>Primitive Tensor Function<a class="headerlink" href="#primitive-tensor-function" title="Permalink to this heading">¶</a></h1>
+<p>The introductory overview showed that the MLC process could be viewed as
+transformations among tensor functions. A typical model execution
+involves several computation steps that transform tensors from input to
+the final prediction, and each unit step is called a primitive tensor
+function.</p>
+<div class="figure align-default" id="id1">
+<span id="fig-primitive-tensor-func"></span><img alt="../_images/primitive_tensor_func.png" src="../_images/primitive_tensor_func.png" />
+<p class="caption"><span class="caption-number">Fig. 2.1.1 </span><span class="caption-text">Primitive Tensor Function</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+<p>In the above figure, the tensor operator linear, add, relu, and softmax
+are all primitive tensor functions. Notably, many different abstractions
+can represent (and implement) the same primitive tensor function add (as
+shown in the figure below). We can choose to call into pre-built
+framework libraries(e.g. torch.add or numpy.add), and leverage an
+implementation in python. In practice, primitive functions are
+implemented in low-level languages such as C/C++ with sometimes a
+mixture of assembly code.</p>
+<div class="figure align-default" id="id2">
+<span id="fig-tensor-func-abstractions"></span><img alt="../_images/tensor_func_abstractions.png" src="../_images/tensor_func_abstractions.png" />
+<p class="caption"><span class="caption-number">Fig. 2.1.2 </span><span class="caption-text">Different forms of the same primitive tensor function</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</div>
+<p>Many frameworks offer machine learning compilation procedures to
+transform primitive tensor functions into more specialized ones for the
+particular workload and deployment environment.</p>
+<div class="figure align-default" id="id3">
+<span id="fig-tensor-func-transformation"></span><img alt="../_images/tensor_func_transformation.png" src="../_images/tensor_func_transformation.png" />
+<p class="caption"><span class="caption-number">Fig. 2.1.3 </span><span class="caption-text">Transformations between primitive tensor functions</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+<p>The above figure shows an example where the implementation of the
+primitive tensor function add gets transformed into a different
+implementation. The particular code on the right is a pseudo-code
+representing possible set optimizations: the loop gets split into units
+of length <code class="docutils literal notranslate"><span class="pre">4</span></code> where <code class="docutils literal notranslate"><span class="pre">f32x4</span></code> add corresponds to a special vector add
+function that carries out the computation.</p>
+</div>
+<div class="section" id="tensor-program-abstraction">
+<h1><span class="section-number">2.2. </span>Tensor Program Abstraction<a class="headerlink" href="#tensor-program-abstraction" title="Permalink to this heading">¶</a></h1>
+<p>The last section talks about the need to transform primitive tensor
+functions. In order for us to effectively do so, we need an effective
+abstraction to represent the programs.</p>
+<p>Usually, a typical abstraction for primitive tensor function
+implementation contains the following elements: multi-dimensional
+buffers, loop nests that drive the tensor computations, and finally, the
+compute statements themselves.</p>
+<div class="figure align-default" id="id4">
+<span id="fig-tensor-func-elements"></span><img alt="../_images/tensor_func_elements.png" src="../_images/tensor_func_elements.png" />
+<p class="caption"><span class="caption-number">Fig. 2.2.1 </span><span class="caption-text">The typical elements in a primitive tensor function</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</div>
+<p>We call this type of abstraction tensor program abstraction. One
+important property of tensor program abstraction is the ability to
+change the program through a sequence of transformations pragmatically.</p>
+<div class="figure align-default" id="id5">
+<span id="fig-tensor-func-seq-transform"></span><img alt="../_images/tensor_func_seq_transform.png" src="../_images/tensor_func_seq_transform.png" />
+<p class="caption"><span class="caption-number">Fig. 2.2.2 </span><span class="caption-text">Sequential transformations on a primitive tensor function</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+</div>
+<p>For example, we should be able to use a set of transformation
+primitives(split, parallelize, vectorize) to take the initial loop
+program and transform it into the program on the right-hand side.</p>
+<div class="section" id="extra-structure-in-tensor-program-abstraction">
+<h2><span class="section-number">2.2.1. </span>Extra Structure in Tensor Program Abstraction<a class="headerlink" href="#extra-structure-in-tensor-program-abstraction" title="Permalink to this heading">¶</a></h2>
+<p>Importantly, we cannot perform arbitrary transformations on the program
+as some computations depend on the order of the loop. Luckily, most
+primitive tensor functions we are interested in have good properties
+(such as independence among loop iterations).</p>
+<p>Tensor programs can incorporate this extra information as part of the
+program to facilitate program transformations.</p>
+<div class="figure align-default" id="id6">
+<span id="fig-tensor-func-iteration"></span><img alt="../_images/tensor_func_iteration.png" src="../_images/tensor_func_iteration.png" />
+<p class="caption"><span class="caption-number">Fig. 2.2.3 </span><span class="caption-text">Iteration is the extra information for tensor programs</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
+</div>
+<p>For example, the above program contains the additional
+<code class="docutils literal notranslate"><span class="pre">T.axis.spatial</span></code> annotation, which shows that the particular variable
+<code class="docutils literal notranslate"><span class="pre">vi</span></code> is mapped to <code class="docutils literal notranslate"><span class="pre">i</span></code>, and all the iterations are independent. This
+information is not necessary to execute the particular program but comes
+in handy when we transform the program. In this case, we will know that
+we can safely parallelize or reorder loops related to <code class="docutils literal notranslate"><span class="pre">vi</span></code> as long as
+we visit all the index elements from <code class="docutils literal notranslate"><span class="pre">0</span></code> to <code class="docutils literal notranslate"><span class="pre">128</span></code>.</p>
+</div>
+</div>
+<div class="section" id="summary">
+<h1><span class="section-number">2.3. </span>Summary<a class="headerlink" href="#summary" title="Permalink to this heading">¶</a></h1>
+<ul class="simple">
+<li><p>Primitive tensor function refers to the single unit of computation in
+model execution.</p>
+<ul>
+<li><p>A MLC process can choose to transform implementation of primitive
+tensor functions.</p></li>
+</ul>
+</li>
+<li><p>Tensor program is an effective abstraction to represent primitive
+tensor functions.</p>
+<ul>
+<li><p>Key elements include: multi-dimensional buffer, loop nests,
+computation statement.</p></li>
+<li><p>Program-based transformations can be used to optimize tensor
+programs.</p></li>
+<li><p>Extra structure can help to provide more information to the
+transformations.</p></li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+        </div>
+        <div class="side-doc-outline">
+            <div class="side-doc-outline--content"> 
+<div class="localtoc">
+    <p class="caption">
+      <span class="caption-text">Table Of Contents</span>
+    </p>
+    <ul>
+<li><a class="reference internal" href="#">2.1. Primitive Tensor Function</a></li>
+<li><a class="reference internal" href="#tensor-program-abstraction">2.2. Tensor Program Abstraction</a><ul>
+<li><a class="reference internal" href="#extra-structure-in-tensor-program-abstraction">2.2.1. Extra Structure in Tensor Program Abstraction</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#summary">2.3. Summary</a></li>
+</ul>
+
+</div>
+            </div>
+        </div>
+
+      <div class="clearer"></div>
+    </div><div class="pagenation">
+     <a id="button-prev" href="index.html" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" role="botton" accesskey="P">
+         <i class="pagenation-arrow-L fas fa-arrow-left fa-lg"></i>
+         <div class="pagenation-text">
+            <span class="pagenation-direction">Previous</span>
+            <div>2. Tensor Program Abstraction</div>
+         </div>
+     </a>
+     <a id="button-next" href="case_study.html" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" role="botton" accesskey="N">
+         <i class="pagenation-arrow-R fas fa-arrow-right fa-lg"></i>
+        <div class="pagenation-text">
+            <span class="pagenation-direction">Next</span>
+            <div>2.4. TensorIR: Tensor Program Abstraction Case Study</div>
+        </div>
+     </a>
+  </div>
+        
+        </main>
+    </div>
+  </body>
+</html>
