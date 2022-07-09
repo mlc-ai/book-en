@@ -498,14 +498,14 @@ lnumpy func as hint:</p>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@tvm</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">ir_module</span>
-<span class="k">class</span> <span class="nc">MyBmmRule</span><span class="p">:</span>
+<span class="k">class</span> <span class="nc">MyBmmRelu</span><span class="p">:</span>
   <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
   <span class="k">def</span> <span class="nf">bmm_relu</span><span class="p">():</span>
     <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;bmm_relu&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
     <span class="c1"># TODO</span>
     <span class="o">...</span>
 
-<span class="n">sch</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">tir</span><span class="o">.</span><span class="n">Schedule</span><span class="p">(</span><span class="n">MyBmmRule</span><span class="p">)</span>
+<span class="n">sch</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">tir</span><span class="o">.</span><span class="n">Schedule</span><span class="p">(</span><span class="n">MyBmmRelu</span><span class="p">)</span>
 <span class="n">IPython</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">Code</span><span class="p">(</span><span class="n">sch</span><span class="o">.</span><span class="n">mod</span><span class="o">.</span><span class="n">script</span><span class="p">(),</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
 <span class="c1"># Also please validate your result</span>
 </pre></div>
@@ -544,7 +544,7 @@ target program:</p>
 </pre></div>
 </div>
 <p>Your task is to transform the original program to the target program.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sch</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">tir</span><span class="o">.</span><span class="n">Schedule</span><span class="p">(</span><span class="n">BmmRelu</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sch</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">tir</span><span class="o">.</span><span class="n">Schedule</span><span class="p">(</span><span class="n">MyBmmRelu</span><span class="p">)</span>
 <span class="c1"># TODO: transformations</span>
 <span class="c1"># Hints: you can use</span>
 <span class="c1"># `IPython.display.Code(sch.mod.script(), language=&quot;python&quot;)`</span>
@@ -562,7 +562,7 @@ target program:</p>
 <span class="c1"># Step 3. Organize the loops</span>
 <span class="n">k0</span><span class="p">,</span> <span class="n">k1</span> <span class="o">=</span> <span class="n">sch</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
 <span class="n">sch</span><span class="o">.</span><span class="n">reorder</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-<span class="n">sch</span><span class="o">.</span><span class="n">compute_at</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">sch</span><span class="o">.</span><span class="n">compute_at</span><span class="o">/</span><span class="n">reverse_compute_at</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 <span class="o">...</span>
 
 <span class="c1"># Step 4. decompose reduction</span>
@@ -591,7 +591,7 @@ performance improvement.</p>
 <div class="section" id="build-and-evaluate">
 <h3><span class="section-number">2.5.2.3. </span>Build and Evaluate<a class="headerlink" href="#build-and-evaluate" title="Permalink to this heading">¶</a></h3>
 <p>Finally we can evaluate the performance of the transformed program.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">before_rt_lib</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">MyBmmRule</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;llvm&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">before_rt_lib</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">MyBmmRelu</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;llvm&quot;</span><span class="p">)</span>
 <span class="n">after_rt_lib</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">sch</span><span class="o">.</span><span class="n">mod</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;llvm&quot;</span><span class="p">)</span>
 <span class="n">a_tvm</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">))</span>
 <span class="n">b_tvm</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">))</span>
