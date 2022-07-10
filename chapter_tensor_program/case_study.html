@@ -113,6 +113,7 @@ Show Source
 <li class="toctree-l2"><a class="reference internal" href="tensorir_exercises.html">2.5. Exercises for TensorIR</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_end_to_end/index.html">3. End to End Model Execution</a></li>
 </ul>
 
             </nav>
@@ -149,6 +150,7 @@ Show Source
 <li class="toctree-l2"><a class="reference internal" href="tensorir_exercises.html">2.5. Exercises for TensorIR</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_end_to_end/index.html">3. End to End Model Execution</a></li>
 </ul>
 
             </nav>
@@ -175,7 +177,7 @@ course.</p>
 <div class="section" id="prelude">
 <h2><span class="section-number">2.4.2. </span>Prelude<a class="headerlink" href="#prelude" title="Permalink to this heading">¶</a></h2>
 <div class="figure align-default">
-<img alt="../_images/tensor_func_linear_rule.png" src="../_images/tensor_func_linear_rule.png" />
+<img alt="../_images/tensor_func_linear_relu.png" src="../_images/tensor_func_linear_relu.png" />
 </div>
 <p>To begin today’s lecture, let us recap the key principle of the MLC
 process. Most of the MLC process can be viewed as transformation among
@@ -1152,8 +1154,8 @@ compare the running performance of different generated functions.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time cost of transformed sch.mod </span><span class="si">%g</span><span class="s2"> sec&quot;</span> <span class="o">%</span> <span class="n">f_timer_after</span><span class="p">(</span><span class="n">a_nd</span><span class="p">,</span> <span class="n">b_nd</span><span class="p">,</span> <span class="n">c_nd</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">MyModule</span> <span class="mf">0.00206088</span> <span class="n">sec</span>
-<span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">transformed</span> <span class="n">sch</span><span class="o">.</span><span class="n">mod</span> <span class="mf">0.000942611</span> <span class="n">sec</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">MyModule</span> <span class="mf">0.00352375</span> <span class="n">sec</span>
+<span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">transformed</span> <span class="n">sch</span><span class="o">.</span><span class="n">mod</span> <span class="mf">0.00133573</span> <span class="n">sec</span>
 </pre></div>
 </div>
 <p>It is interesting to see the running time difference between the two
@@ -1423,7 +1425,7 @@ affect the code’s performance.</p>
 <span class="n">IPython</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">Code</span><span class="p">(</span><span class="n">mod_transformed</span><span class="o">.</span><span class="n">script</span><span class="p">(),</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">transformed</span> <span class="n">mod_transformed</span> <span class="mf">0.000526841</span> <span class="n">sec</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">transformed</span> <span class="n">mod_transformed</span> <span class="mf">0.000691223</span> <span class="n">sec</span>
 </pre></div>
 </div>
 <style>pre { line-height: 125%; }

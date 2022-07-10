@@ -17,7 +17,7 @@ course.
 Prelude
 ~~~~~~~
 
-.. figure:: ../img/tensor_func_linear_rule.png
+.. figure:: ../img/tensor_func_linear_relu.png
 
 To begin today’s lecture, let us recap the key principle of the MLC
 process. Most of the MLC process can be viewed as transformation among
@@ -1159,8 +1159,8 @@ compare the running performance of different generated functions.
 .. parsed-literal::
     :class: output
 
-    Time cost of MyModule 0.00206088 sec
-    Time cost of transformed sch.mod 0.000942611 sec
+    Time cost of MyModule 0.00352375 sec
+    Time cost of transformed sch.mod 0.00133573 sec
 
 
 It is interesting to see the running time difference between the two
@@ -1463,7 +1463,7 @@ affect the code’s performance.
 .. parsed-literal::
     :class: output
 
-    Time cost of transformed mod_transformed 0.000526841 sec
+    Time cost of transformed mod_transformed 0.000691223 sec
 
 
 
