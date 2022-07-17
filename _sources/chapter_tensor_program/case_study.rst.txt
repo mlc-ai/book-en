@@ -221,12 +221,12 @@ syntactic sugar in TensorIR for us to write multiple nested iterators.
 .. code:: python
 
    # TensorIR
+   for i, j, k in T.grid(128, 128, 128):
+
+   # numpy
    for i in range(128):
        for j in range(128):
            for k in range(128):
-
-   # numpy
-   for i, j, k in T.grid(128, 128, 128):
 
 Computational Block
 ^^^^^^^^^^^^^^^^^^^
@@ -1159,8 +1159,8 @@ compare the running performance of different generated functions.
 .. parsed-literal::
     :class: output
 
-    Time cost of MyModule 0.00352375 sec
-    Time cost of transformed sch.mod 0.00133573 sec
+    Time cost of MyModule 0.00349923 sec
+    Time cost of transformed sch.mod 0.00129433 sec
 
 
 It is interesting to see the running time difference between the two
@@ -1463,7 +1463,7 @@ affect the code’s performance.
 .. parsed-literal::
     :class: output
 
-    Time cost of transformed mod_transformed 0.000691223 sec
+    Time cost of transformed mod_transformed 0.00064966 sec
 
 
 
