@@ -2,6 +2,10 @@
 Exercises for TensorIR
 ----------------------
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     import IPython
@@ -23,11 +27,19 @@ Example: Element-wise Add
 
 First, let’s try to use Numpy to write an element-wise add function.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     # init data
     a = np.arange(16).reshape(4, 4)
     b = np.arange(16, 0, -1).reshape(4, 4)
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -37,6 +49,10 @@ First, let’s try to use Numpy to write an element-wise add function.
 
 
 
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
 
 .. parsed-literal::
     :class: output
@@ -57,6 +73,10 @@ Notably, the initial value of the o utput array (or buffer) is not
 always ``0``. We need to write or initialize it in our implementation,
 which is important for reduction operator (e.g. matmul and conv)
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     # low-level numpy version
@@ -71,6 +91,10 @@ which is important for reduction operator (e.g. matmul and conv)
 
 
 
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
 .. parsed-literal::
     :class: output
 
@@ -83,6 +107,10 @@ which is important for reduction operator (e.g. matmul and conv)
 
 Now, let’s take a further step: translate low-level NumPy implementation
 into TensorIR. And compare the result with it comes from NumPy.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -115,11 +143,19 @@ Exercise 1: Broadcast Add
 
 Please write a TensorIR function that adds two arrays with broadcasting.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     # init data
     a = np.arange(16).reshape(4, 4)
     b = np.arange(4, 0, -1).reshape(4)
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -129,6 +165,10 @@ Please write a TensorIR function that adds two arrays with broadcasting.
 
 
 
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
 
 .. parsed-literal::
     :class: output
@@ -142,6 +182,10 @@ Please write a TensorIR function that adds two arrays with broadcasting.
 
 Please complete the following Module ``MyAdd`` and run the code to check
 your implementation.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -182,12 +226,20 @@ filter window.
 In the exercise, we pick a small and simple case with
 ``stride=1, padding=0``.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     N, CI, H, W, CO, K = 1, 1, 8, 8, 2, 3
     OUT_H, OUT_W = H - K + 1, W - K + 1
     data = np.arange(N*CI*H*W).reshape(N, CI, H, W)
     weight = np.arange(CO*CI*K*K).reshape(CO, CI, K, K)
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -202,6 +254,10 @@ In the exercise, we pick a small and simple case with
 
 
 
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
 
 .. parsed-literal::
     :class: output
@@ -224,6 +280,10 @@ In the exercise, we pick a small and simple case with
 
 Please complete the following Module ``MyConv`` and run the code to
 check your implementation.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -257,6 +317,10 @@ Parallel, Vectorize and Unroll
 First, we introduce some new primitives, ``parallel``, ``vectorize`` and
 ``unroll``. These three primitives operates on loops to indicate how
 this loop execute. Here is the example:
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -394,6 +458,10 @@ definition of ``bmm``: -
 It’s your time to write the TensorIR for ``bmm_relu``. We provide the
 lnumpy func as hint:
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     def lnumpy_mm_relu_v2(A: np.ndarray, B: np.ndarray, C: np.ndarray):
@@ -409,6 +477,10 @@ lnumpy func as hint:
             for i in range(128):
                 for j in range(128):
                     C[n, i, j] = max(Y[n, i, j], 0)
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -429,6 +501,10 @@ specific target. Note that the target program may not be the best one
 due to different hardware. But this exercise aims to let students
 understand how to transform the program to a wanted one. Here is the
 target program:
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -460,6 +536,10 @@ target program:
                             C[n, i, j] = T.max(Y[n, i, j], T.float32(0))
 
 Your task is to transform the original program to the target program.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -502,6 +582,10 @@ Note that this step is an optional step in this exercise. It’s good
 enough if you transformed the program **towards** the target and get
 performance improvement.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
    tvm.ir.assert_structural_equal(sch.mod, TargetModule)
@@ -511,6 +595,10 @@ Build and Evaluate
 ^^^^^^^^^^^^^^^^^^
 
 Finally we can evaluate the performance of the transformed program.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 

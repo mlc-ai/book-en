@@ -22,6 +22,10 @@ Preparations
 To begin with, we will import necessary dependencies and create helper
 functions.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     # This is needed for deferring annotation parsing in TVMScript
@@ -41,6 +45,10 @@ As a concrete example, we will be using a model on the fashion MNIST
 dataset. The following code downloads and prepares the data from
 ``torchvision`` in NumPy array.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     import torch
@@ -59,6 +67,10 @@ dataset. The following code downloads and prepares the data from
     img, label = next(iter(test_loader))
     img = img.reshape(1, 28, 28).numpy()
 
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
 
 .. parsed-literal::
     :class: output
@@ -87,6 +99,10 @@ dataset. The following code downloads and prepares the data from
 
 We can plot out the image instance that we want to be able to predict.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     import matplotlib.pyplot as plt
@@ -103,14 +119,22 @@ We can plot out the image instance that we want to be able to predict.
 .. figure:: output_index_e758e2_5_0.png
 
 
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
 .. parsed-literal::
     :class: output
 
-    Class: Dress
+    Class: Sandal
 
 
 Download Model Parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -130,6 +154,10 @@ corresponds to the most likely class.
 
 Let us begin by reviewing a Numpy implementation of the model.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     def numpy_mlp(data, w0, b0, w1, b1):
@@ -137,6 +165,10 @@ Let us begin by reviewing a Numpy implementation of the model.
         lv1 = np.maximum(lv0, 0)
         lv2 = lv1 @ w1.T + b1
         return lv2
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -154,13 +186,17 @@ Let us begin by reviewing a Numpy implementation of the model.
     print("NumPy-MLP Prediction:", class_names[pred_kind[0]])
 
 
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
 .. parsed-literal::
     :class: output
 
-    [[-19.612558 -16.42075  -28.049974   6.445908 -13.41578  -11.68162
-      -12.531208 -36.883034 -13.14886  -13.511992]]
-    [3]
-    NumPy-MLP Prediction: Dress
+    [[-16.241627   -23.990942    -8.219241   -16.698927    -4.6226664
+       -1.6479989   -0.23097582 -16.81037     14.3662     -22.176208  ]]
+    [8]
+    NumPy-MLP Prediction: Bag
 
 
 The above example code shows the high-level array operations to perform
@@ -177,6 +213,10 @@ and pass them around.
 
 The code block below shows a low-level numpy implementation of the same
 model.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -235,10 +275,14 @@ model.
     print("Low-level Numpy MLP Prediction:", class_names[pred_kind[0]])
 
 
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
 .. parsed-literal::
     :class: output
 
-    Low-level Numpy MLP Prediction: Dress
+    Low-level Numpy MLP Prediction: Bag
 
 
 Constructing an End to End IRModule in TVMScript
@@ -247,6 +291,10 @@ Constructing an End to End IRModule in TVMScript
 With the low-level NumPy example in mind, now we are ready to introduce
 an MLC abstraction for the end-to-end model execution. The code block
 below shows a TVMScript implementation of the model.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -347,12 +395,20 @@ One thing that you may have noticed is that each step of operations in
 the computational graph contains an ``R.call_tir`` operation. This is
 the operation that brings in the tensor primitive functions
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
    lv0 = R.call_tir(linear0, (x, w0, b0), (1, 128), dtype="float32")
 
 To explain what does ``R.call_tir`` mean, let us review an equivalent
 low-level numpy implementation of the operation, as follows:
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -377,6 +433,10 @@ A natural question that one could ask is why do we need ``call_tir``
 construct? This is because our primitive tensor functions take the
 following calling convention.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
    def low_level_prim_func(in0, in1, ..., out):
@@ -396,6 +456,10 @@ While it is possible to assemble the destination passing convention
 function together by explicitly allocating intermediate results and
 calling each function, it is hard to turn the following code into
 computational graph form.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -444,6 +508,10 @@ We can also see ``call_tir`` in action in the low-level numpy as well.
 Now we have defined the ``lnumpy_call_tir``, we can rewrite the
 low-level numpy execution code as:
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     def lnumpy_mlp_with_call_tir(data, w0, b0, w1, b1):
@@ -463,10 +531,14 @@ low-level numpy execution code as:
     print("Low-level Numpy with CallTIR Prediction:", class_names[pred_kind[0]])
 
 
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
 .. parsed-literal::
     :class: output
 
-    Low-level Numpy with CallTIR Prediction: Dress
+    Low-level Numpy with CallTIR Prediction: Bag
 
 
 In practice, the lowest-level implementation will have explicit memory
@@ -479,6 +551,10 @@ Dataflow Block
 
 Another important element in a relax function is the ``R.dataflow()``
 scope annotation.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -498,6 +574,10 @@ of the program. Specifically, within a dataflow block, all the
 operations need to be side-effect free. Outside a dataflow block, the
 operations can contain side-effect. The program below is an example
 program that contains two dataflow blocks.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -541,6 +621,10 @@ In the last section, we discussed the abstraction that enables us to
 represent end-to-end model execution. This section introduces how to
 build and run an IRModule. Let us begin by reviewing the IRModule we
 have.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -659,19 +743,6 @@ have.
             <span class="k">return</span> <span class="n">out</span>
     
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-        <span class="k">def</span> <span class="nf">relu0</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">],</span> <span class="n">Y</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># function attr dict</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;relu0&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
-            <span class="c1"># body</span>
-            <span class="c1"># with T.block(&quot;root&quot;)</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">):</span>
-                <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">):</span>
-                    <span class="n">vi</span><span class="p">,</span> <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">remap</span><span class="p">(</span><span class="s2">&quot;SS&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
-                    <span class="n">T</span><span class="o">.</span><span class="n">reads</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
-                    <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
-                    <span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">],</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
-    
-        <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
         <span class="k">def</span> <span class="nf">linear0</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">784</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">],</span> <span class="n">W</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">784</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">],</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="s2">&quot;float32&quot;</span><span class="p">],</span> <span class="n">Z</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># function attr dict</span>
             <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;linear0&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
@@ -693,6 +764,19 @@ have.
                     <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">Z</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
                     <span class="n">Z</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">+</span> <span class="n">B</span><span class="p">[</span><span class="n">vj</span><span class="p">]</span>
     
+        <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
+        <span class="k">def</span> <span class="nf">relu0</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">],</span> <span class="n">Y</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># function attr dict</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;relu0&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+            <span class="c1"># body</span>
+            <span class="c1"># with T.block(&quot;root&quot;)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">):</span>
+                <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">):</span>
+                    <span class="n">vi</span><span class="p">,</span> <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">remap</span><span class="p">(</span><span class="s2">&quot;SS&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
+                    <span class="n">T</span><span class="o">.</span><span class="n">reads</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
+                    <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
+                    <span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">],</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    
     </pre></div>
 
 
@@ -703,6 +787,10 @@ development, so some of the APIs may change. Our main goal, though, is
 to get familiar with the overall MLC flow (Construct, transform, build)
 for end-to-end models.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     ex = relax.vm.build(MyModule, target="llvm")
@@ -710,6 +798,10 @@ for end-to-end models.
 
 
 
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
 
 .. parsed-literal::
     :class: output
@@ -723,12 +815,20 @@ virtual machine executor that enables us to run the function.
 Additionally, we will pass in a second argument, indicating which device
 we want to run the end-to-end executions on.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     vm = relax.VirtualMachine(ex, tvm.cpu())
 
 Now we are ready to run the model. We begin by constructing tvm NDArray
 that contains input data and weights.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -737,6 +837,10 @@ that contains input data and weights.
 
 Then we can run the main function by passing in the input arguments and
 weights.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -748,16 +852,24 @@ weights.
     print(nd_res)
 
 
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
 .. parsed-literal::
     :class: output
 
-    [[-19.612562 -16.42075  -28.049969   6.44591  -13.415779 -11.681614
-      -12.531206 -36.883026 -13.148861 -13.511991]]
+    [[-16.241629  -23.990955   -8.219245  -16.698923   -4.6226664  -1.6479957
+       -0.2309768 -16.810366   14.366201  -22.176208 ]]
 
 
 The main function returns the prediction result, and we can then call
 ``nd_res.numpy()`` to convert it to numpy array, and take argmax to get
 the class label.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -765,10 +877,14 @@ the class label.
     print("MyModule Prediction:", class_names[pred_kind[0]])
 
 
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
 .. parsed-literal::
     :class: output
 
-    MyModule Prediction: Dress
+    MyModule Prediction: Bag
 
 
 Integrate Existing Libraries in the Environment
@@ -780,6 +896,10 @@ computational graph part. In many cases, we may be interested in
 integrating existing library functions into the MLC process.
 
 The IRModule shows an example on how to do that.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -801,6 +921,10 @@ The IRModule shows an example on how to do that.
 
 Note that we now directly pass in strings in ``call_tir``
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
    R.call_tir("env.linear", (x, w0, b0), (1, 128), dtype="float32")
@@ -814,6 +938,10 @@ Registering Runtime Function
 In order to be able to execute the code that calls into external
 functions, we need to register the corresponding functions. The code
 block below registers two implementations of the functions.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -860,6 +988,10 @@ Build and Run
 Now we can build and run ``MyModuleWithExternCall``, and we can verify
 that we get the same result.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     ex = relax.vm.build(MyModuleWithExternCall, target="llvm")
@@ -875,10 +1007,14 @@ that we get the same result.
     print("MyModuleWithExternCall Prediction:", class_names[pred_kind[0]])
 
 
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
 .. parsed-literal::
     :class: output
 
-    MyModuleWithExternCall Prediction: Dress
+    MyModuleWithExternCall Prediction: Bag
 
 
 Mixing TensorIR Code and Libraries
@@ -887,6 +1023,10 @@ Mixing TensorIR Code and Libraries
 In the last example, we build an IRModule where all primitive operations
 are dispatched to library functions. Sometimes it can be helpful to have
 a mixture of both.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -928,6 +1068,10 @@ The above code block shows an example where linear0 is still implemented
 in TensorIR, while the rest of the functions are redirected to library
 functions. We can build and run to validate the result.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     ex = relax.vm.build(MyModuleMixture, target="llvm")
@@ -943,10 +1087,14 @@ functions. We can build and run to validate the result.
     print("MyModuleMixture Prediction:", class_names[pred_kind[0]])
 
 
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
 .. parsed-literal::
     :class: output
 
-    MyModuleMixture Prediction: Dress
+    MyModuleMixture Prediction: Bag
 
 
 Bind Parameters to IRModule
@@ -957,6 +1105,10 @@ the parameters explicitly. In many cases, it is usually helpful to bind
 the parameters as constants attached to the IRModule. The following code
 created the binding by matching the parameter names to the keys in
 nd_params.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -1086,6 +1238,10 @@ of the script but still is part of the IRModule). If we build the
 transformed IRModule, we can now invoke the function by just passing in
 the input data.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     ex = relax.vm.build(MyModuleWithParams, target="llvm")
@@ -1097,10 +1253,14 @@ the input data.
     print("MyModuleWithParams Prediction:", class_names[pred_kind[0]])
 
 
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
 .. parsed-literal::
     :class: output
 
-    MyModuleWithParams Prediction: Dress
+    MyModuleWithParams Prediction: Bag
 
 
 Discussions

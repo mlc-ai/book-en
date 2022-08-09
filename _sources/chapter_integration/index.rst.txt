@@ -16,6 +16,10 @@ Preparations
 
 To begin with, we will import necessary dependencies.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     # This is needed for deferring annotation parsing in TVMScript
@@ -26,6 +30,10 @@ To begin with, we will import necessary dependencies.
     from tvm.ir.module import IRModule
     from tvm.script import relax as R
     from tvm.script import tir as T
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -48,12 +56,20 @@ Tensor Expression for TensorIR Creation
 First, we review the tensor expression domain-specific language to build
 TensorIR functions.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     from tvm import te
 
 We begin by creating a placeholder object, which represents an input to
 a TensorIR function.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -63,12 +79,20 @@ a TensorIR function.
 Each input and intermediate result here are represented as a
 ``te.Tensor`` object.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     type(A)
 
 
 
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
 
 .. parsed-literal::
     :class: output
@@ -80,12 +104,20 @@ Each input and intermediate result here are represented as a
 Each ``te.Tensor`` has a shape field and dtype field that tracks the
 shape and data type of the computation.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     A.shape
 
 
 
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
 
 .. parsed-literal::
     :class: output
@@ -105,6 +137,10 @@ and returns the matrix multiplication result. Note how we build up
 computations depending on A and B’s input shape. The ``te_matmul`` works
 for A and B with different input shapes.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     def te_matmul(A: te.Tensor, B: te.Tensor) -> te.Tensor:
@@ -116,6 +152,10 @@ for A and B with different input shapes.
 
 We can create the result of matmul calling ``te_matmul`` with A and B.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     C = te_matmul(A, B)
@@ -123,10 +163,18 @@ We can create the result of matmul calling ``te_matmul`` with A and B.
 To create a TensorIR function, we can call ``te.create_prim_func`` and
 pass in the input and output values.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     te.create_prim_func([A, B, C]).show()
 
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
 
 .. parsed-literal::
     :class: output
@@ -153,6 +201,10 @@ We can create a tensor expression for relu computation in a similar
 fashion. Here we write it in a way so that ``te_relu`` function can work
 for ``te.Tensor`` with any dimension and shape.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     def te_relu(A: te.Tensor) -> te.Tensor:
@@ -161,12 +213,20 @@ for ``te.Tensor`` with any dimension and shape.
 Let us try out ``te_relu`` on two different input shapes and dimensions.
 First ``X1`` with shape ``(10,)``.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     X1 = te.placeholder((10,), name="X1", dtype="float32")
     Y1 = te_relu(X1)
     te.create_prim_func([X1, Y1]).show()
 
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
 
 .. parsed-literal::
     :class: output
@@ -189,12 +249,20 @@ First ``X1`` with shape ``(10,)``.
 
 Then ``X2`` with shape ``(10, 20)``.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     X2 = te.placeholder((10, 20), name="X1", dtype="float32")
     Y2 = te_relu(X2)
     te.create_prim_func([X2, Y2]).show()
 
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
 
 .. parsed-literal::
     :class: output
@@ -219,6 +287,10 @@ One final thing that ``te`` API allows us to do is to compose operations
 and create “fused” operators. For example, we can take the result of
 matmul and apply relu again.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     C = te_matmul(A, B)
@@ -229,10 +301,18 @@ values of interest, skipping intermediate values. This will cause the
 result of matmul being allocated as a temp space in the TensorIR
 function.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     te.create_prim_func([A, B, D]).show()
 
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
 
 .. parsed-literal::
     :class: output
@@ -267,10 +347,18 @@ this case, the TensorIR function expects us to also pass in the buffer
 of C from the caller side. Normally we recommend only passing in the
 input/output so we can have more advanced fusion inside.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     te.create_prim_func([A, B, C, D]).show()
 
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
 
 .. parsed-literal::
     :class: output
@@ -309,6 +397,10 @@ TensorIR functions through a computational graph.
 Let us first create a block builder, which helps us incrementally build
 a ``relax.Function``.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     A = relax.Var("A", (128, 128), relax.DynTensorType(2, "float32"))
@@ -316,6 +408,10 @@ a ``relax.Function``.
 
 We construct the relax function by creating a block builder and then a
 sequence of primitive tensor operations.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -331,6 +427,10 @@ sequence of primitive tensor operations.
     MyModule = bb.get()
     MyModule.show()
 
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
 
 .. parsed-literal::
     :class: output
@@ -391,6 +491,10 @@ relax function. For example, ``bb.dataflow()`` creates a dataflow block
 where all the block builder calls inside the scope belonging to the
 dataflow scope.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
    with bb.function("main"):
@@ -402,12 +506,20 @@ that stores the result of the computation. ``DataflowVar`` indicates
 that the var is an intermediate step inside a dataflow block
 (computational graph).
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     type(C)
 
 
 
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
 
 .. parsed-literal::
     :class: output
@@ -416,12 +528,20 @@ that the var is an intermediate step inside a dataflow block
 
 
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     isinstance(C, relax.Var)
 
 
 
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
 
 .. parsed-literal::
     :class: output
@@ -433,11 +553,19 @@ that the var is an intermediate step inside a dataflow block
 Each line in the relax function is generated by an ``emit_te`` call. For
 example,
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
    lv = R.call_tir(te_matmul, (A, B), (128, 128), dtype="float32")
 
 is generated by
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -455,6 +583,10 @@ operation and another one corresponding to ``te_relu``.
 We can create output variable of each dataflow block through
 ``bb.emit_output``.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
    with bb.dataflow():
@@ -471,6 +603,10 @@ Notably, we can specify the list of parameters of the function in the
 output emission stage. Doing so helps us in cases where we collect the
 list of parameters on the fly.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
    with bb.function("main"):
@@ -480,6 +616,10 @@ list of parameters on the fly.
 
 Alternatively, we can specify the list of parameters at the beginning of
 the function scope.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -504,6 +644,10 @@ that into IRModule.
 Let us begin by defining a model in PyTorch. To keep the example
 consistent, we will use matmul relu example.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     class MyModel(nn.Module):
@@ -521,6 +665,10 @@ Create TorchFX GraphModule
 
 We use TorchFX to trace a graph from the PyTorch module.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     model = MyModel()
@@ -529,6 +677,10 @@ We use TorchFX to trace a graph from the PyTorch module.
 
 
 
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
 
 .. parsed-literal::
     :class: output
@@ -541,10 +693,18 @@ The ``fx_module`` contains a simple computation graph view that can be
 printed as tabular data. Our goal is to translate this graph into an
 IRModule.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     fx_module.graph.print_tabular()
 
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
 
 .. parsed-literal::
     :class: output
@@ -553,8 +713,8 @@ IRModule.
     -------------  ------  ---------------------------------------------------------  -----------  --------
     placeholder    x       x                                                          ()           {}
     get_attr       weight  weight                                                     ()           {}
-    call_function  matmul  <built-in method matmul of type object at 0x7fddc01be980>  (x, weight)  {}
-    call_function  relu    <built-in method relu of type object at 0x7fddc01be980>    (matmul,)    {}
+    call_function  matmul  <built-in method matmul of type object at 0x7f448eab1980>  (x, weight)  {}
+    call_function  relu    <built-in method relu of type object at 0x7f448eab1980>    (matmul,)    {}
     output         output  output                                                     (relu,)      {}
 
 
@@ -566,6 +726,10 @@ as follows: - Create a ``node_map`` that maps ``fx.Node`` to the
 corresponding ``relax.Var`` that represents the translated node in
 IRModule. - Iterate over the nodes in the fx graph in topological order.
 - Compute the mapped output of the node given the mapped inputs.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -626,6 +790,10 @@ supply the translation rule of each torch function via a map.
 Specifically, the following code block shows how we can do that through
 the ``emit_te`` API.
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     def map_matmul(bb, node_map, node: fx.Node):
@@ -649,6 +817,10 @@ the ``emit_te`` API.
     
     MyModule.show()
 
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
 
 .. parsed-literal::
     :class: output
@@ -699,6 +871,10 @@ the ``emit_te`` API.
 Coming back to FashionMNIST Example
 -----------------------------------
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     import torch
@@ -717,6 +893,10 @@ Coming back to FashionMNIST Example
     img, label = next(iter(test_loader))
     img = img.reshape(1, 28, 28).numpy()
 
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
 
 .. parsed-literal::
     :class: output
@@ -743,6 +923,10 @@ Coming back to FashionMNIST Example
     
 
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     import matplotlib.pyplot as plt
@@ -760,11 +944,19 @@ Coming back to FashionMNIST Example
 .. figure:: output_index_4f28a7_60_0.png
 
 
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
 .. parsed-literal::
     :class: output
 
-    Class: T-shirt/top
+    Class: Trouser
 
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -775,6 +967,10 @@ Coming back to FashionMNIST Example
 
 The above is our model of interest, we can build the PyTorch model as
 follows.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -791,6 +987,10 @@ follows.
             x = self.linear1(x)
             return x
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     import pickle as pkl
@@ -803,6 +1003,10 @@ follows.
     mlp_model.linear1.weight.data = torch.from_numpy(mlp_params["w1"])
     mlp_model.linear1.bias.data = torch.from_numpy(mlp_params["b1"])
 
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
 .. code:: python
 
     torch_res = mlp_model(torch.from_numpy(img.reshape(1, 784)))
@@ -811,10 +1015,14 @@ follows.
     print("Torch Prediction:", class_names[pred_kind[0]])
 
 
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
 .. parsed-literal::
     :class: output
 
-    Torch Prediction: T-shirt/top
+    Torch Prediction: Trouser
 
 
 Let us try to translate from fx by defining mapping functions for the
@@ -825,6 +1033,10 @@ expression.
 -  ``topi.nn.dense(x, w)`` performs transposed matrix multiplication
    ``x @ w.T``
 -  ``topi.add`` performs broadcast add.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -857,6 +1069,10 @@ expression.
     MLPModule.show()
 
 
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
 .. parsed-literal::
     :class: output
 
@@ -874,6 +1090,36 @@ expression.
                     T.reads(rxplaceholder[ax0, ax1], rxplaceholder_1[ax1])
                     T.writes(T_add[ax0, ax1])
                     T_add[ax0, ax1] = rxplaceholder[ax0, ax1] + rxplaceholder_1[ax1]
+        
+        @T.prim_func
+        def dense(rxplaceholder: T.Buffer[(1, 784), "float32"], rxplaceholder_1: T.Buffer[(128, 784), "float32"], T_matmul_NT: T.Buffer[(1, 128), "float32"]) -> None:
+            # function attr dict
+            T.func_attr({"global_symbol": "dense", "tir.noalias": True, "layout_free_buffers": [1]})
+            # body
+            # with T.block("root")
+            for i0, i1, i2 in T.grid(1, 128, 784):
+                with T.block("T_matmul_NT"):
+                    i, j, k = T.axis.remap("SSR", [i0, i1, i2])
+                    T.reads(rxplaceholder[i, k], rxplaceholder_1[j, k])
+                    T.writes(T_matmul_NT[i, j])
+                    with T.init():
+                        T_matmul_NT[i, j] = T.float32(0)
+                    T_matmul_NT[i, j] = T_matmul_NT[i, j] + rxplaceholder[i, k] * rxplaceholder_1[j, k]
+        
+        @T.prim_func
+        def dense1(rxplaceholder: T.Buffer[(1, 128), "float32"], rxplaceholder_1: T.Buffer[(10, 128), "float32"], T_matmul_NT: T.Buffer[(1, 10), "float32"]) -> None:
+            # function attr dict
+            T.func_attr({"global_symbol": "dense1", "tir.noalias": True, "layout_free_buffers": [1]})
+            # body
+            # with T.block("root")
+            for i0, i1, i2 in T.grid(1, 10, 128):
+                with T.block("T_matmul_NT"):
+                    i, j, k = T.axis.remap("SSR", [i0, i1, i2])
+                    T.reads(rxplaceholder[i, k], rxplaceholder_1[j, k])
+                    T.writes(T_matmul_NT[i, j])
+                    with T.init():
+                        T_matmul_NT[i, j] = T.float32(0)
+                    T_matmul_NT[i, j] = T_matmul_NT[i, j] + rxplaceholder[i, k] * rxplaceholder_1[j, k]
         
         @T.prim_func
         def add1(rxplaceholder: T.Buffer[(1, 10), "float32"], rxplaceholder_1: T.Buffer[10, "float32"], T_add: T.Buffer[(1, 10), "float32"]) -> None:
@@ -914,38 +1160,12 @@ expression.
                 R.output(gv)
             return lv4
         
-        @T.prim_func
-        def dense(rxplaceholder: T.Buffer[(1, 784), "float32"], rxplaceholder_1: T.Buffer[(128, 784), "float32"], T_matmul_NT: T.Buffer[(1, 128), "float32"]) -> None:
-            # function attr dict
-            T.func_attr({"global_symbol": "dense", "tir.noalias": True, "layout_free_buffers": [1]})
-            # body
-            # with T.block("root")
-            for i0, i1, i2 in T.grid(1, 128, 784):
-                with T.block("T_matmul_NT"):
-                    i, j, k = T.axis.remap("SSR", [i0, i1, i2])
-                    T.reads(rxplaceholder[i, k], rxplaceholder_1[j, k])
-                    T.writes(T_matmul_NT[i, j])
-                    with T.init():
-                        T_matmul_NT[i, j] = T.float32(0)
-                    T_matmul_NT[i, j] = T_matmul_NT[i, j] + rxplaceholder[i, k] * rxplaceholder_1[j, k]
-        
-        @T.prim_func
-        def dense1(rxplaceholder: T.Buffer[(1, 128), "float32"], rxplaceholder_1: T.Buffer[(10, 128), "float32"], T_matmul_NT: T.Buffer[(1, 10), "float32"]) -> None:
-            # function attr dict
-            T.func_attr({"global_symbol": "dense1", "tir.noalias": True, "layout_free_buffers": [1]})
-            # body
-            # with T.block("root")
-            for i0, i1, i2 in T.grid(1, 10, 128):
-                with T.block("T_matmul_NT"):
-                    i, j, k = T.axis.remap("SSR", [i0, i1, i2])
-                    T.reads(rxplaceholder[i, k], rxplaceholder_1[j, k])
-                    T.writes(T_matmul_NT[i, j])
-                    with T.init():
-                        T_matmul_NT[i, j] = T.float32(0)
-                    T_matmul_NT[i, j] = T_matmul_NT[i, j] + rxplaceholder[i, k] * rxplaceholder_1[j, k]
-        
     
 
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -959,10 +1179,14 @@ expression.
     print("MLPModule Prediction:", class_names[pred_kind[0]])
 
 
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
 .. parsed-literal::
     :class: output
 
-    MLPModule Prediction: T-shirt/top
+    MLPModule Prediction: Trouser
 
 
 Remark: Translating into High-level Operators
@@ -971,6 +1195,10 @@ Remark: Translating into High-level Operators
 In most machine learning frameworks, it is sometimes helpful to first
 translate into high-level built-in primitive operators. The following
 code block gives an example to do that.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
 
 .. code:: python
 
@@ -999,6 +1227,10 @@ code block gives an example to do that.
     
     MLPModuleHighLevel.show()
 
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
 
 .. parsed-literal::
     :class: output

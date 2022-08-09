@@ -114,6 +114,7 @@ Show Source
 <li class="toctree-l1 current"><a class="current reference internal" href="#">3. End to End Model Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../chapter_auto_program_optimization/index.html">4. Automatic Program Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../chapter_integration/index.html">5. Integration with Machine Learning Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_gpu_acceleration/index.html">6. GPU and Hardware Acceleration</a></li>
 </ul>
 
             </nav>
@@ -153,6 +154,7 @@ Show Source
 <li class="toctree-l1 current"><a class="current reference internal" href="#">3. End to End Model Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../chapter_auto_program_optimization/index.html">4. Automatic Program Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../chapter_integration/index.html">5. Integration with Machine Learning Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_gpu_acceleration/index.html">6. GPU and Hardware Acceleration</a></li>
 </ul>
 
             </nav>
@@ -251,7 +253,7 @@ dataset. The following code downloads and prepares the data from
 <div class="figure align-default">
 <img alt="../_images/output_index_e758e2_5_0.png" src="../_images/output_index_e758e2_5_0.png" />
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Class</span><span class="p">:</span> <span class="n">Dress</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Class</span><span class="p">:</span> <span class="n">Sandal</span>
 </pre></div>
 </div>
 </div>
@@ -295,10 +297,10 @@ corresponds to the most likely class.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NumPy-MLP Prediction:&quot;</span><span class="p">,</span> <span class="n">class_names</span><span class="p">[</span><span class="n">pred_kind</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="o">-</span><span class="mf">19.612558</span> <span class="o">-</span><span class="mf">16.42075</span>  <span class="o">-</span><span class="mf">28.049974</span>   <span class="mf">6.445908</span> <span class="o">-</span><span class="mf">13.41578</span>  <span class="o">-</span><span class="mf">11.68162</span>
-  <span class="o">-</span><span class="mf">12.531208</span> <span class="o">-</span><span class="mf">36.883034</span> <span class="o">-</span><span class="mf">13.14886</span>  <span class="o">-</span><span class="mf">13.511992</span><span class="p">]]</span>
-<span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-<span class="n">NumPy</span><span class="o">-</span><span class="n">MLP</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Dress</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="o">-</span><span class="mf">16.241627</span>   <span class="o">-</span><span class="mf">23.990942</span>    <span class="o">-</span><span class="mf">8.219241</span>   <span class="o">-</span><span class="mf">16.698927</span>    <span class="o">-</span><span class="mf">4.6226664</span>
+   <span class="o">-</span><span class="mf">1.6479989</span>   <span class="o">-</span><span class="mf">0.23097582</span> <span class="o">-</span><span class="mf">16.81037</span>     <span class="mf">14.3662</span>     <span class="o">-</span><span class="mf">22.176208</span>  <span class="p">]]</span>
+<span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+<span class="n">NumPy</span><span class="o">-</span><span class="n">MLP</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Bag</span>
 </pre></div>
 </div>
 <p>The above example code shows the high-level array operations to perform
@@ -367,7 +369,7 @@ model.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Low-level Numpy MLP Prediction:&quot;</span><span class="p">,</span> <span class="n">class_names</span><span class="p">[</span><span class="n">pred_kind</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Low</span><span class="o">-</span><span class="n">level</span> <span class="n">Numpy</span> <span class="n">MLP</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Dress</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Low</span><span class="o">-</span><span class="n">level</span> <span class="n">Numpy</span> <span class="n">MLP</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Bag</span>
 </pre></div>
 </div>
 </div>
@@ -568,7 +570,7 @@ low-level numpy execution code as:</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Low-level Numpy with CallTIR Prediction:&quot;</span><span class="p">,</span> <span class="n">class_names</span><span class="p">[</span><span class="n">pred_kind</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Low</span><span class="o">-</span><span class="n">level</span> <span class="n">Numpy</span> <span class="k">with</span> <span class="n">CallTIR</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Dress</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Low</span><span class="o">-</span><span class="n">level</span> <span class="n">Numpy</span> <span class="k">with</span> <span class="n">CallTIR</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Bag</span>
 </pre></div>
 </div>
 <p>In practice, the lowest-level implementation will have explicit memory
@@ -746,19 +748,6 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
         <span class="k">return</span> <span class="n">out</span>
 
     <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-    <span class="k">def</span> <span class="nf">relu0</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">],</span> <span class="n">Y</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># function attr dict</span>
-        <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;relu0&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
-        <span class="c1"># body</span>
-        <span class="c1"># with T.block(&quot;root&quot;)</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">):</span>
-            <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">):</span>
-                <span class="n">vi</span><span class="p">,</span> <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">remap</span><span class="p">(</span><span class="s2">&quot;SS&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
-                <span class="n">T</span><span class="o">.</span><span class="n">reads</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
-                <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
-                <span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">],</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
-
-    <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
     <span class="k">def</span> <span class="nf">linear0</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">784</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">],</span> <span class="n">W</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">784</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">],</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="s2">&quot;float32&quot;</span><span class="p">],</span> <span class="n">Z</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># function attr dict</span>
         <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;linear0&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
@@ -779,6 +768,19 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
                 <span class="n">T</span><span class="o">.</span><span class="n">reads</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">],</span> <span class="n">B</span><span class="p">[</span><span class="n">vj</span><span class="p">])</span>
                 <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">Z</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
                 <span class="n">Z</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">+</span> <span class="n">B</span><span class="p">[</span><span class="n">vj</span><span class="p">]</span>
+
+    <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
+    <span class="k">def</span> <span class="nf">relu0</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">],</span> <span class="n">Y</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># function attr dict</span>
+        <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;relu0&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+        <span class="c1"># body</span>
+        <span class="c1"># with T.block(&quot;root&quot;)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">):</span>
+                <span class="n">vi</span><span class="p">,</span> <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">remap</span><span class="p">(</span><span class="s2">&quot;SS&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span>
+                <span class="n">T</span><span class="o">.</span><span class="n">reads</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
+                <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
+                <span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">],</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
 
 </pre></div><p>We call <code class="docutils literal notranslate"><span class="pre">relax.vm.build</span></code> to build this function. Relax is still under
 development, so some of the APIs may change. Our main goal, though, is
@@ -814,8 +816,8 @@ weights.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">nd_res</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="o">-</span><span class="mf">19.612562</span> <span class="o">-</span><span class="mf">16.42075</span>  <span class="o">-</span><span class="mf">28.049969</span>   <span class="mf">6.44591</span>  <span class="o">-</span><span class="mf">13.415779</span> <span class="o">-</span><span class="mf">11.681614</span>
-  <span class="o">-</span><span class="mf">12.531206</span> <span class="o">-</span><span class="mf">36.883026</span> <span class="o">-</span><span class="mf">13.148861</span> <span class="o">-</span><span class="mf">13.511991</span><span class="p">]]</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="o">-</span><span class="mf">16.241629</span>  <span class="o">-</span><span class="mf">23.990955</span>   <span class="o">-</span><span class="mf">8.219245</span>  <span class="o">-</span><span class="mf">16.698923</span>   <span class="o">-</span><span class="mf">4.6226664</span>  <span class="o">-</span><span class="mf">1.6479957</span>
+   <span class="o">-</span><span class="mf">0.2309768</span> <span class="o">-</span><span class="mf">16.810366</span>   <span class="mf">14.366201</span>  <span class="o">-</span><span class="mf">22.176208</span> <span class="p">]]</span>
 </pre></div>
 </div>
 <p>The main function returns the prediction result, and we can then call
@@ -825,7 +827,7 @@ the class label.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MyModule Prediction:&quot;</span><span class="p">,</span> <span class="n">class_names</span><span class="p">[</span><span class="n">pred_kind</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MyModule</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Dress</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MyModule</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Bag</span>
 </pre></div>
 </div>
 </div>
@@ -917,7 +919,7 @@ that we get the same result.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MyModuleWithExternCall Prediction:&quot;</span><span class="p">,</span> <span class="n">class_names</span><span class="p">[</span><span class="n">pred_kind</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MyModuleWithExternCall</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Dress</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MyModuleWithExternCall</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Bag</span>
 </pre></div>
 </div>
 </div>
@@ -978,7 +980,7 @@ functions. We can build and run to validate the result.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MyModuleMixture Prediction:&quot;</span><span class="p">,</span> <span class="n">class_names</span><span class="p">[</span><span class="n">pred_kind</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MyModuleMixture</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Dress</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MyModuleMixture</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Bag</span>
 </pre></div>
 </div>
 </div>
@@ -1114,7 +1116,7 @@ the input data.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MyModuleWithParams Prediction:&quot;</span><span class="p">,</span> <span class="n">class_names</span><span class="p">[</span><span class="n">pred_kind</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MyModuleWithParams</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Dress</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MyModuleWithParams</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Bag</span>
 </pre></div>
 </div>
 </div>
