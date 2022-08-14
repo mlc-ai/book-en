@@ -713,8 +713,8 @@ IRModule.
     -------------  ------  ---------------------------------------------------------  -----------  --------
     placeholder    x       x                                                          ()           {}
     get_attr       weight  weight                                                     ()           {}
-    call_function  matmul  <built-in method matmul of type object at 0x7f448eab1980>  (x, weight)  {}
-    call_function  relu    <built-in method relu of type object at 0x7f448eab1980>    (matmul,)    {}
+    call_function  matmul  <built-in method matmul of type object at 0x7f637e06c980>  (x, weight)  {}
+    call_function  relu    <built-in method relu of type object at 0x7f637e06c980>    (matmul,)    {}
     output         output  output                                                     (relu,)      {}
 
 
@@ -1091,6 +1091,32 @@ expression.
                     T.writes(T_add[ax0, ax1])
                     T_add[ax0, ax1] = rxplaceholder[ax0, ax1] + rxplaceholder_1[ax1]
         
+        @R.function
+        def main(x: Tensor((1, 784), "float32")) -> Tensor(None, "float32", ndim = 2):
+            # block 0
+            with R.dataflow():
+                lv = R.call_tir(dense, (x, meta[relay.Constant][0]), (1, 128), dtype="float32")
+                lv1 = R.call_tir(add, (lv, meta[relay.Constant][1]), (1, 128), dtype="float32")
+                lv2 = R.call_tir(te_relu, (lv1,), (1, 128), dtype="float32")
+                lv3 = R.call_tir(dense1, (lv2, meta[relay.Constant][2]), (1, 10), dtype="float32")
+                lv4 = R.call_tir(add1, (lv3, meta[relay.Constant][3]), (1, 10), dtype="float32")
+                gv: Tensor((1, 10), "float32") = lv4
+                R.output(gv)
+            return lv4
+        
+        @T.prim_func
+        def te_relu(rxplaceholder: T.Buffer[(1, 128), "float32"], relu: T.Buffer[(1, 128), "float32"]) -> None:
+            # function attr dict
+            T.func_attr({"global_symbol": "te_relu", "tir.noalias": True})
+            # body
+            # with T.block("root")
+            for i0, i1 in T.grid(1, 128):
+                with T.block("relu"):
+                    i0_1, i1_1 = T.axis.remap("SS", [i0, i1])
+                    T.reads(rxplaceholder[i0_1, i1_1])
+                    T.writes(relu[i0_1, i1_1])
+                    relu[i0_1, i1_1] = T.max(rxplaceholder[i0_1, i1_1], T.float32(0))
+        
         @T.prim_func
         def dense(rxplaceholder: T.Buffer[(1, 784), "float32"], rxplaceholder_1: T.Buffer[(128, 784), "float32"], T_matmul_NT: T.Buffer[(1, 128), "float32"]) -> None:
             # function attr dict
@@ -1133,32 +1159,6 @@ expression.
                     T.reads(rxplaceholder[ax0, ax1], rxplaceholder_1[ax1])
                     T.writes(T_add[ax0, ax1])
                     T_add[ax0, ax1] = rxplaceholder[ax0, ax1] + rxplaceholder_1[ax1]
-        
-        @T.prim_func
-        def te_relu(rxplaceholder: T.Buffer[(1, 128), "float32"], relu: T.Buffer[(1, 128), "float32"]) -> None:
-            # function attr dict
-            T.func_attr({"global_symbol": "te_relu", "tir.noalias": True})
-            # body
-            # with T.block("root")
-            for i0, i1 in T.grid(1, 128):
-                with T.block("relu"):
-                    i0_1, i1_1 = T.axis.remap("SS", [i0, i1])
-                    T.reads(rxplaceholder[i0_1, i1_1])
-                    T.writes(relu[i0_1, i1_1])
-                    relu[i0_1, i1_1] = T.max(rxplaceholder[i0_1, i1_1], T.float32(0))
-        
-        @R.function
-        def main(x: Tensor((1, 784), "float32")) -> Tensor(None, "float32", ndim = 2):
-            # block 0
-            with R.dataflow():
-                lv = R.call_tir(dense, (x, meta[relay.Constant][0]), (1, 128), dtype="float32")
-                lv1 = R.call_tir(add, (lv, meta[relay.Constant][1]), (1, 128), dtype="float32")
-                lv2 = R.call_tir(te_relu, (lv1,), (1, 128), dtype="float32")
-                lv3 = R.call_tir(dense1, (lv2, meta[relay.Constant][2]), (1, 10), dtype="float32")
-                lv4 = R.call_tir(add1, (lv3, meta[relay.Constant][3]), (1, 10), dtype="float32")
-                gv: Tensor((1, 10), "float32") = lv4
-                R.output(gv)
-            return lv4
         
     
 

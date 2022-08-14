@@ -116,7 +116,23 @@ Show Source
 <li class="toctree-l1"><a class="reference internal" href="../chapter_end_to_end/index.html">3. End to End Model Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../chapter_auto_program_optimization/index.html">4. Automatic Program Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../chapter_integration/index.html">5. Integration with Machine Learning Frameworks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../chapter_gpu_acceleration/index.html">6. GPU and Hardware Acceleration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_gpu_acceleration/index.html">6. GPU and Hardware Acceleration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part1.html">6.1.1. Part 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part1.html#preparations">6.1.2. Preparations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part1.html#gpu-architecture">6.1.3. GPU Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part1.html#window-sum-example">6.1.4. Window Sum Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part1.html#matrix-multiplication">6.1.5. Matrix Multiplication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part1.html#shared-memory-blocking">6.1.6. Shared Memory Blocking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part1.html#leveraging-automatic-program-optimization">6.1.7. Leveraging Automatic Program Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part1.html#summary">6.1.8. Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part2.html">6.1.9. Part 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part2.html#preparations">6.1.10. Preparations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part2.html#hardware-specialization-trend">6.1.11. Hardware Specialization Trend</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part2.html#tensorization">6.1.12. Tensorization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part2.html#discussions">6.1.13. Discussions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part2.html#summary">6.1.14. Summary</a></li>
+</ul>
+</li>
 </ul>
 
             </nav>
@@ -156,7 +172,23 @@ Show Source
 <li class="toctree-l1"><a class="reference internal" href="../chapter_end_to_end/index.html">3. End to End Model Execution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../chapter_auto_program_optimization/index.html">4. Automatic Program Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../chapter_integration/index.html">5. Integration with Machine Learning Frameworks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../chapter_gpu_acceleration/index.html">6. GPU and Hardware Acceleration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_gpu_acceleration/index.html">6. GPU and Hardware Acceleration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part1.html">6.1.1. Part 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part1.html#preparations">6.1.2. Preparations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part1.html#gpu-architecture">6.1.3. GPU Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part1.html#window-sum-example">6.1.4. Window Sum Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part1.html#matrix-multiplication">6.1.5. Matrix Multiplication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part1.html#shared-memory-blocking">6.1.6. Shared Memory Blocking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part1.html#leveraging-automatic-program-optimization">6.1.7. Leveraging Automatic Program Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part1.html#summary">6.1.8. Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part2.html">6.1.9. Part 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part2.html#preparations">6.1.10. Preparations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part2.html#hardware-specialization-trend">6.1.11. Hardware Specialization Trend</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part2.html#tensorization">6.1.12. Tensorization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part2.html#discussions">6.1.13. Discussions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part2.html#summary">6.1.14. Summary</a></li>
+</ul>
+</li>
 </ul>
 
             </nav>
@@ -1160,8 +1192,8 @@ compare the running performance of different generated functions.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time cost of transformed sch.mod </span><span class="si">%g</span><span class="s2"> sec&quot;</span> <span class="o">%</span> <span class="n">f_timer_after</span><span class="p">(</span><span class="n">a_nd</span><span class="p">,</span> <span class="n">b_nd</span><span class="p">,</span> <span class="n">c_nd</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">MyModule</span> <span class="mf">0.00333185</span> <span class="n">sec</span>
-<span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">transformed</span> <span class="n">sch</span><span class="o">.</span><span class="n">mod</span> <span class="mf">0.00114028</span> <span class="n">sec</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">MyModule</span> <span class="mf">0.0034797</span> <span class="n">sec</span>
+<span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">transformed</span> <span class="n">sch</span><span class="o">.</span><span class="n">mod</span> <span class="mf">0.00124186</span> <span class="n">sec</span>
 </pre></div>
 </div>
 <p>It is interesting to see the running time difference between the two
@@ -1431,7 +1463,7 @@ affect the code’s performance.</p>
 <span class="n">IPython</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">Code</span><span class="p">(</span><span class="n">mod_transformed</span><span class="o">.</span><span class="n">script</span><span class="p">(),</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">transformed</span> <span class="n">mod_transformed</span> <span class="mf">0.000589526</span> <span class="n">sec</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">transformed</span> <span class="n">mod_transformed</span> <span class="mf">0.000684622</span> <span class="n">sec</span>
 </pre></div>
 </div>
 <style>pre { line-height: 125%; }
