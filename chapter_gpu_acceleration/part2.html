@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     
-    <title>6.1.9. Part 2 &#8212; Machine Learing Compilation 0.0.1 documentation</title>
+    <title>6.2. Part 2 &#8212; Machine Learing Compilation 0.0.1 documentation</title>
 
     <link rel="stylesheet" href="../_static/material-design-lite-1.3.0/material.blue-deep_orange.min.css" type="text/css" />
     <link rel="stylesheet" href="../_static/sphinx_materialdesign_theme.css" type="text/css" />
@@ -26,7 +26,7 @@
     <link rel="shortcut icon" href="../_static/mlc-favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="6.1.1. Part 1" href="part1.html" /> 
+    <link rel="prev" title="6.1. Part 1" href="part1.html" /> 
   </head>
 <body>
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer"><header class="mdl-layout__header mdl-layout__header--waterfall ">
@@ -34,7 +34,7 @@
         
         <nav class="mdl-navigation breadcrumb">
             <a class="mdl-navigation__link" href="index.html"><span class="section-number">6. </span>GPU and Hardware Acceleration</a><i class="material-icons">navigate_next</i>
-            <a class="mdl-navigation__link is-active"><span class="section-number">6.1.9. </span>Part 2</a>
+            <a class="mdl-navigation__link is-active"><span class="section-number">6.2. </span>Part 2</a>
         </nav>
         <div class="mdl-layout-spacer"></div>
         <nav class="mdl-navigation">
@@ -115,20 +115,8 @@ Show Source
 <li class="toctree-l1"><a class="reference internal" href="../chapter_auto_program_optimization/index.html">4. Automatic Program Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../chapter_integration/index.html">5. Integration with Machine Learning Frameworks</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">6. GPU and Hardware Acceleration</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="part1.html">6.1.1. Part 1</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#preparations">6.1.2. Preparations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#gpu-architecture">6.1.3. GPU Architecture</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#window-sum-example">6.1.4. Window Sum Example</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#matrix-multiplication">6.1.5. Matrix Multiplication</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#shared-memory-blocking">6.1.6. Shared Memory Blocking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#leveraging-automatic-program-optimization">6.1.7. Leveraging Automatic Program Optimization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#summary">6.1.8. Summary</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">6.1.9. Part 2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#preparations">6.1.10. Preparations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#hardware-specialization-trend">6.1.11. Hardware Specialization Trend</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#tensorization">6.1.12. Tensorization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#discussions">6.1.13. Discussions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#summary">6.1.14. Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="part1.html">6.1. Part 1</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6.2. Part 2</a></li>
 </ul>
 </li>
 </ul>
@@ -171,20 +159,8 @@ Show Source
 <li class="toctree-l1"><a class="reference internal" href="../chapter_auto_program_optimization/index.html">4. Automatic Program Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../chapter_integration/index.html">5. Integration with Machine Learning Frameworks</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">6. GPU and Hardware Acceleration</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="part1.html">6.1.1. Part 1</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#preparations">6.1.2. Preparations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#gpu-architecture">6.1.3. GPU Architecture</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#window-sum-example">6.1.4. Window Sum Example</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#matrix-multiplication">6.1.5. Matrix Multiplication</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#shared-memory-blocking">6.1.6. Shared Memory Blocking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#leveraging-automatic-program-optimization">6.1.7. Leveraging Automatic Program Optimization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#summary">6.1.8. Summary</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">6.1.9. Part 2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#preparations">6.1.10. Preparations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#hardware-specialization-trend">6.1.11. Hardware Specialization Trend</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#tensorization">6.1.12. Tensorization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#discussions">6.1.13. Discussions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#summary">6.1.14. Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="part1.html">6.1. Part 1</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6.2. Part 2</a></li>
 </ul>
 </li>
 </ul>
@@ -199,13 +175,12 @@ Show Source
         <div class="page-content" role="main">
         
   <div class="section" id="part-2">
-<h1><span class="section-number">6.1.9. </span>Part 2<a class="headerlink" href="#part-2" title="Permalink to this heading">¶</a></h1>
+<h1><span class="section-number">6.2. </span>Part 2<a class="headerlink" href="#part-2" title="Permalink to this heading">¶</a></h1>
 <p>We discussed building MLC flows for CPU and GPU environments in the past
 chapters. This chapter focuses on how we build conceptual programming
 models for specialized hardware backends.</p>
-</div>
 <div class="section" id="preparations">
-<h1><span class="section-number">6.1.10. </span>Preparations<a class="headerlink" href="#preparations" title="Permalink to this heading">¶</a></h1>
+<h2><span class="section-number">6.2.1. </span>Preparations<a class="headerlink" href="#preparations" title="Permalink to this heading">¶</a></h2>
 <p>To begin with, let us import the necessary dependencies.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># This is needed for deferring annotation parsing in TVMScript</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
@@ -219,7 +194,7 @@ models for specialized hardware backends.</p>
 </div>
 </div>
 <div class="section" id="hardware-specialization-trend">
-<h1><span class="section-number">6.1.11. </span>Hardware Specialization Trend<a class="headerlink" href="#hardware-specialization-trend" title="Permalink to this heading">¶</a></h1>
+<h2><span class="section-number">6.2.2. </span>Hardware Specialization Trend<a class="headerlink" href="#hardware-specialization-trend" title="Permalink to this heading">¶</a></h2>
 <div class="figure align-default">
 <img alt="../_images/hardware_specialization.png" src="../_images/hardware_specialization.png" />
 </div>
@@ -233,7 +208,7 @@ some complexities to how we write the programs.</p>
 units for tensor computing, with instructions for multi-dimensional data
 copy and matrix/tensor computations.</p>
 <div class="section" id="key-elements-of-specialized-code">
-<h2><span class="section-number">6.1.11.1. </span>Key Elements of Specialized Code<a class="headerlink" href="#key-elements-of-specialized-code" title="Permalink to this heading">¶</a></h2>
+<h3><span class="section-number">6.2.2.1. </span>Key Elements of Specialized Code<a class="headerlink" href="#key-elements-of-specialized-code" title="Permalink to this heading">¶</a></h3>
 <p>To help us better understand elements of specialized hardware
 programming, let us first study the following <strong>low-level NumPy</strong> code.
 While this code still runs in python, it resembles a set of possible
@@ -297,7 +272,7 @@ runs correctly.</p>
 </div>
 </div>
 <div class="section" id="a-block-with-tensorized-computation">
-<h2><span class="section-number">6.1.11.2. </span>A Block with Tensorized Computation<a class="headerlink" href="#a-block-with-tensorized-computation" title="Permalink to this heading">¶</a></h2>
+<h3><span class="section-number">6.2.2.2. </span>A Block with Tensorized Computation<a class="headerlink" href="#a-block-with-tensorized-computation" title="Permalink to this heading">¶</a></h3>
 <p>One of our key observations is that the specialized accelerator code is
 not structured in the unit of scalar computations. Most of the TensorIR
 code we have run so far contains a block that computes a single element
@@ -386,7 +361,7 @@ produces the correct result.</p>
 </div>
 </div>
 <div class="section" id="transforming-loops-around-tensorized-block">
-<h2><span class="section-number">6.1.11.3. </span>Transforming Loops Around Tensorized Block<a class="headerlink" href="#transforming-loops-around-tensorized-block" title="Permalink to this heading">¶</a></h2>
+<h3><span class="section-number">6.2.2.3. </span>Transforming Loops Around Tensorized Block<a class="headerlink" href="#transforming-loops-around-tensorized-block" title="Permalink to this heading">¶</a></h3>
 <p>One thing that we can do here is to transform the loops surrounding the
 tensor computation block. These loop transformations can help us to
 reorganize the surrounding iterations to enable a space of different
@@ -433,7 +408,7 @@ tensor program variants.</p>
 </div>
 </div>
 <div class="section" id="blockization-creating-tensorized-blocks">
-<h2><span class="section-number">6.1.11.4. </span>Blockization – Creating Tensorized Blocks<a class="headerlink" href="#blockization-creating-tensorized-blocks" title="Permalink to this heading">¶</a></h2>
+<h3><span class="section-number">6.2.2.4. </span>Blockization – Creating Tensorized Blocks<a class="headerlink" href="#blockization-creating-tensorized-blocks" title="Permalink to this heading">¶</a></h3>
 <p>In most settings, we start with loops that come with scalar
 computations. TensorIR provides a primitive call blockization to group
 subregions of a loop together to form a tensorized computation block.</p>
@@ -517,7 +492,7 @@ subregions of a loop together to form a tensorized computation block.</p>
 </div>
 </div>
 <div class="section" id="transforming-tensorir-to-introduce-special-memory-scope">
-<h2><span class="section-number">6.1.11.5. </span>Transforming TensorIR to Introduce Special Memory Scope<a class="headerlink" href="#transforming-tensorir-to-introduce-special-memory-scope" title="Permalink to this heading">¶</a></h2>
+<h3><span class="section-number">6.2.2.5. </span>Transforming TensorIR to Introduce Special Memory Scope<a class="headerlink" href="#transforming-tensorir-to-introduce-special-memory-scope" title="Permalink to this heading">¶</a></h3>
 <p>As we noted in the low-level NumPy code, one key element of the
 low-level TensorIR is the special memory scope used during the
 acceleration.</p>
@@ -595,7 +570,7 @@ map it to special regions such as registers.</p>
 </div>
 </div>
 <div class="section" id="tensorization">
-<h1><span class="section-number">6.1.12. </span>Tensorization<a class="headerlink" href="#tensorization" title="Permalink to this heading">¶</a></h1>
+<h2><span class="section-number">6.2.3. </span>Tensorization<a class="headerlink" href="#tensorization" title="Permalink to this heading">¶</a></h2>
 <p>Now we have created a set of blocks that maps to the corresponding
 stages of computation in the TensorIR. The remaining step is to map some
 of the tensorized blocks to use a specific implementation that maps to
@@ -821,14 +796,14 @@ tensorized computation to the custom defined <code class="docutils literal notra
 <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">c_nd</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">c_tmm</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">03</span><span class="p">:</span><span class="mi">27</span><span class="p">:</span><span class="mi">37</span><span class="p">]</span> <span class="o">/</span><span class="n">workspace</span><span class="o">/</span><span class="n">tvm</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">target</span><span class="o">/</span><span class="n">target_info</span><span class="o">.</span><span class="n">cc</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span> <span class="ne">Warning</span><span class="p">:</span> <span class="n">MemoryInfo</span> <span class="k">for</span> <span class="n">scope</span> <span class="o">=</span> <span class="k">global</span><span class="o">.</span><span class="n">accumulator</span> <span class="ow">is</span> <span class="n">undefined</span>
-<span class="p">[</span><span class="mi">03</span><span class="p">:</span><span class="mi">27</span><span class="p">:</span><span class="mi">37</span><span class="p">]</span> <span class="o">/</span><span class="n">workspace</span><span class="o">/</span><span class="n">tvm</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">target</span><span class="o">/</span><span class="n">target_info</span><span class="o">.</span><span class="n">cc</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span> <span class="ne">Warning</span><span class="p">:</span> <span class="n">MemoryInfo</span> <span class="k">for</span> <span class="n">scope</span> <span class="o">=</span> <span class="k">global</span><span class="o">.</span><span class="n">A_reg</span> <span class="ow">is</span> <span class="n">undefined</span>
-<span class="p">[</span><span class="mi">03</span><span class="p">:</span><span class="mi">27</span><span class="p">:</span><span class="mi">37</span><span class="p">]</span> <span class="o">/</span><span class="n">workspace</span><span class="o">/</span><span class="n">tvm</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">target</span><span class="o">/</span><span class="n">target_info</span><span class="o">.</span><span class="n">cc</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span> <span class="ne">Warning</span><span class="p">:</span> <span class="n">MemoryInfo</span> <span class="k">for</span> <span class="n">scope</span> <span class="o">=</span> <span class="k">global</span><span class="o">.</span><span class="n">B_reg</span> <span class="ow">is</span> <span class="n">undefined</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">14</span><span class="p">:</span><span class="mi">39</span><span class="p">:</span><span class="mi">27</span><span class="p">]</span> <span class="o">/</span><span class="n">workspace</span><span class="o">/</span><span class="n">tvm</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">target</span><span class="o">/</span><span class="n">target_info</span><span class="o">.</span><span class="n">cc</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span> <span class="ne">Warning</span><span class="p">:</span> <span class="n">MemoryInfo</span> <span class="k">for</span> <span class="n">scope</span> <span class="o">=</span> <span class="k">global</span><span class="o">.</span><span class="n">accumulator</span> <span class="ow">is</span> <span class="n">undefined</span>
+<span class="p">[</span><span class="mi">14</span><span class="p">:</span><span class="mi">39</span><span class="p">:</span><span class="mi">27</span><span class="p">]</span> <span class="o">/</span><span class="n">workspace</span><span class="o">/</span><span class="n">tvm</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">target</span><span class="o">/</span><span class="n">target_info</span><span class="o">.</span><span class="n">cc</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span> <span class="ne">Warning</span><span class="p">:</span> <span class="n">MemoryInfo</span> <span class="k">for</span> <span class="n">scope</span> <span class="o">=</span> <span class="k">global</span><span class="o">.</span><span class="n">A_reg</span> <span class="ow">is</span> <span class="n">undefined</span>
+<span class="p">[</span><span class="mi">14</span><span class="p">:</span><span class="mi">39</span><span class="p">:</span><span class="mi">27</span><span class="p">]</span> <span class="o">/</span><span class="n">workspace</span><span class="o">/</span><span class="n">tvm</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">target</span><span class="o">/</span><span class="n">target_info</span><span class="o">.</span><span class="n">cc</span><span class="p">:</span><span class="mi">45</span><span class="p">:</span> <span class="ne">Warning</span><span class="p">:</span> <span class="n">MemoryInfo</span> <span class="k">for</span> <span class="n">scope</span> <span class="o">=</span> <span class="k">global</span><span class="o">.</span><span class="n">B_reg</span> <span class="ow">is</span> <span class="n">undefined</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="discussions">
-<h1><span class="section-number">6.1.13. </span>Discussions<a class="headerlink" href="#discussions" title="Permalink to this heading">¶</a></h1>
+<h2><span class="section-number">6.2.4. </span>Discussions<a class="headerlink" href="#discussions" title="Permalink to this heading">¶</a></h2>
 <p>This section covers a set of key elements of specialized hardware
 support. One of the key constructs here is the tensorized block and
 computation alongside tensor subregions. TensorIR also contains
@@ -841,7 +816,7 @@ additional properties that build on top of the foundational elements:</p>
 optional readings on some of the additional content.</p>
 </div>
 <div class="section" id="summary">
-<h1><span class="section-number">6.1.14. </span>Summary<a class="headerlink" href="#summary" title="Permalink to this heading">¶</a></h1>
+<h2><span class="section-number">6.2.5. </span>Summary<a class="headerlink" href="#summary" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>Overall trend of Hardware Specialization toward tensorized
 computation.</p></li>
@@ -849,6 +824,7 @@ computation.</p></li>
 <li><p>Tensorization: the process of mapping block of loop computations to
 specialized implementations.</p></li>
 </ul>
+</div>
 </div>
 
 
@@ -860,19 +836,21 @@ specialized implementations.</p></li>
       <span class="caption-text">Table Of Contents</span>
     </p>
     <ul>
-<li><a class="reference internal" href="#">6.1.9. Part 2</a></li>
-<li><a class="reference internal" href="#preparations">6.1.10. Preparations</a></li>
-<li><a class="reference internal" href="#hardware-specialization-trend">6.1.11. Hardware Specialization Trend</a><ul>
-<li><a class="reference internal" href="#key-elements-of-specialized-code">6.1.11.1. Key Elements of Specialized Code</a></li>
-<li><a class="reference internal" href="#a-block-with-tensorized-computation">6.1.11.2. A Block with Tensorized Computation</a></li>
-<li><a class="reference internal" href="#transforming-loops-around-tensorized-block">6.1.11.3. Transforming Loops Around Tensorized Block</a></li>
-<li><a class="reference internal" href="#blockization-creating-tensorized-blocks">6.1.11.4. Blockization – Creating Tensorized Blocks</a></li>
-<li><a class="reference internal" href="#transforming-tensorir-to-introduce-special-memory-scope">6.1.11.5. Transforming TensorIR to Introduce Special Memory Scope</a></li>
+<li><a class="reference internal" href="#">6.2. Part 2</a><ul>
+<li><a class="reference internal" href="#preparations">6.2.1. Preparations</a></li>
+<li><a class="reference internal" href="#hardware-specialization-trend">6.2.2. Hardware Specialization Trend</a><ul>
+<li><a class="reference internal" href="#key-elements-of-specialized-code">6.2.2.1. Key Elements of Specialized Code</a></li>
+<li><a class="reference internal" href="#a-block-with-tensorized-computation">6.2.2.2. A Block with Tensorized Computation</a></li>
+<li><a class="reference internal" href="#transforming-loops-around-tensorized-block">6.2.2.3. Transforming Loops Around Tensorized Block</a></li>
+<li><a class="reference internal" href="#blockization-creating-tensorized-blocks">6.2.2.4. Blockization – Creating Tensorized Blocks</a></li>
+<li><a class="reference internal" href="#transforming-tensorir-to-introduce-special-memory-scope">6.2.2.5. Transforming TensorIR to Introduce Special Memory Scope</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#tensorization">6.1.12. Tensorization</a></li>
-<li><a class="reference internal" href="#discussions">6.1.13. Discussions</a></li>
-<li><a class="reference internal" href="#summary">6.1.14. Summary</a></li>
+<li><a class="reference internal" href="#tensorization">6.2.3. Tensorization</a></li>
+<li><a class="reference internal" href="#discussions">6.2.4. Discussions</a></li>
+<li><a class="reference internal" href="#summary">6.2.5. Summary</a></li>
+</ul>
+</li>
 </ul>
 
 </div>
@@ -885,7 +863,7 @@ specialized implementations.</p></li>
          <i class="pagenation-arrow-L fas fa-arrow-left fa-lg"></i>
          <div class="pagenation-text">
             <span class="pagenation-direction">Previous</span>
-            <div>6.1.1. Part 1</div>
+            <div>6.1. Part 1</div>
          </div>
      </a>
   </div>

@@ -7,7 +7,7 @@ chapters. This chapter focuses on how we build conceptual programming
 models for specialized hardware backends.
 
 Preparations
-------------
+~~~~~~~~~~~~
 
 To begin with, let us import the necessary dependencies.
 
@@ -27,7 +27,7 @@ To begin with, let us import the necessary dependencies.
     from tvm.script import tir as T
 
 Hardware Specialization Trend
------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. figure:: ../img/hardware_specialization.png
 
@@ -43,7 +43,7 @@ units for tensor computing, with instructions for multi-dimensional data
 copy and matrix/tensor computations.
 
 Key Elements of Specialized Code
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To help us better understand elements of specialized hardware
 programming, let us first study the following **low-level NumPy** code.
@@ -124,7 +124,7 @@ runs correctly.
     np.testing.assert_allclose(c_np, c_tmm, rtol=1e-5)
 
 A Block with Tensorized Computation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 One of our key observations is that the specialized accelerator code is
 not structured in the unit of scalar computations. Most of the TensorIR
@@ -247,7 +247,7 @@ produces the correct result.
     np.testing.assert_allclose(c_nd.numpy(), c_tmm, rtol=1e-5)
 
 Transforming Loops Around Tensorized Block
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 One thing that we can do here is to transform the loops surrounding the
 tensor computation block. These loop transformations can help us to
@@ -310,7 +310,7 @@ tensor program variants.
 
 
 Blockization – Creating Tensorized Blocks
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In most settings, we start with loops that come with scalar
 computations. TensorIR provides a primitive call blockization to group
@@ -430,7 +430,7 @@ subregions of a loop together to form a tensorized computation block.
 
 
 Transforming TensorIR to Introduce Special Memory Scope
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 As we noted in the low-level NumPy code, one key element of the
 low-level TensorIR is the special memory scope used during the
@@ -524,7 +524,7 @@ of the memory, which provides opportunities for follow-up compilation to
 map it to special regions such as registers.
 
 Tensorization
--------------
+~~~~~~~~~~~~~
 
 Now we have created a set of blocks that maps to the corresponding
 stages of computation in the TensorIR. The remaining step is to map some
@@ -817,13 +817,13 @@ tensorized computation to the custom defined ``tmm_kernel``.
 .. parsed-literal::
     :class: output
 
-    [03:27:37] /workspace/tvm/src/target/target_info.cc:45: Warning: MemoryInfo for scope = global.accumulator is undefined
-    [03:27:37] /workspace/tvm/src/target/target_info.cc:45: Warning: MemoryInfo for scope = global.A_reg is undefined
-    [03:27:37] /workspace/tvm/src/target/target_info.cc:45: Warning: MemoryInfo for scope = global.B_reg is undefined
+    [14:39:27] /workspace/tvm/src/target/target_info.cc:45: Warning: MemoryInfo for scope = global.accumulator is undefined
+    [14:39:27] /workspace/tvm/src/target/target_info.cc:45: Warning: MemoryInfo for scope = global.A_reg is undefined
+    [14:39:27] /workspace/tvm/src/target/target_info.cc:45: Warning: MemoryInfo for scope = global.B_reg is undefined
 
 
 Discussions
------------
+~~~~~~~~~~~
 
 This section covers a set of key elements of specialized hardware
 support. One of the key constructs here is the tensorized block and
@@ -837,7 +837,7 @@ We don’t have enough time to cover these in one lecture, but we will add
 optional readings on some of the additional content.
 
 Summary
--------
+~~~~~~~
 
 -  Overall trend of Hardware Specialization toward tensorized
    computation.

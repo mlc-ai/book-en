@@ -26,7 +26,7 @@
     <link rel="shortcut icon" href="../_static/mlc-favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="6.1.1. Part 1" href="part1.html" />
+    <link rel="next" title="6.1. Part 1" href="part1.html" />
     <link rel="prev" title="5. Integration with Machine Learning Frameworks" href="../chapter_integration/index.html" /> 
   </head>
 <body>
@@ -115,20 +115,8 @@ Show Source
 <li class="toctree-l1"><a class="reference internal" href="../chapter_auto_program_optimization/index.html">4. Automatic Program Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../chapter_integration/index.html">5. Integration with Machine Learning Frameworks</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">6. GPU and Hardware Acceleration</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="part1.html">6.1.1. Part 1</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#preparations">6.1.2. Preparations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#gpu-architecture">6.1.3. GPU Architecture</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#window-sum-example">6.1.4. Window Sum Example</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#matrix-multiplication">6.1.5. Matrix Multiplication</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#shared-memory-blocking">6.1.6. Shared Memory Blocking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#leveraging-automatic-program-optimization">6.1.7. Leveraging Automatic Program Optimization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#summary">6.1.8. Summary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part2.html">6.1.9. Part 2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part2.html#preparations">6.1.10. Preparations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part2.html#hardware-specialization-trend">6.1.11. Hardware Specialization Trend</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part2.html#tensorization">6.1.12. Tensorization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part2.html#discussions">6.1.13. Discussions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part2.html#summary">6.1.14. Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="part1.html">6.1. Part 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="part2.html">6.2. Part 2</a></li>
 </ul>
 </li>
 </ul>
@@ -171,20 +159,8 @@ Show Source
 <li class="toctree-l1"><a class="reference internal" href="../chapter_auto_program_optimization/index.html">4. Automatic Program Optimization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../chapter_integration/index.html">5. Integration with Machine Learning Frameworks</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">6. GPU and Hardware Acceleration</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="part1.html">6.1.1. Part 1</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#preparations">6.1.2. Preparations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#gpu-architecture">6.1.3. GPU Architecture</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#window-sum-example">6.1.4. Window Sum Example</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#matrix-multiplication">6.1.5. Matrix Multiplication</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#shared-memory-blocking">6.1.6. Shared Memory Blocking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#leveraging-automatic-program-optimization">6.1.7. Leveraging Automatic Program Optimization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#summary">6.1.8. Summary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part2.html">6.1.9. Part 2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part2.html#preparations">6.1.10. Preparations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part2.html#hardware-specialization-trend">6.1.11. Hardware Specialization Trend</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part2.html#tensorization">6.1.12. Tensorization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part2.html#discussions">6.1.13. Discussions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part2.html#summary">6.1.14. Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="part1.html">6.1. Part 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="part2.html">6.2. Part 2</a></li>
 </ul>
 </li>
 </ul>
@@ -200,52 +176,28 @@ Show Source
         
   <div class="section" id="gpu-and-hardware-acceleration">
 <h1><span class="section-number">6. </span>GPU and Hardware Acceleration<a class="headerlink" href="#gpu-and-hardware-acceleration" title="Permalink to this heading">¶</a></h1>
-<div class="section" id="install-packages">
-<h2><span class="section-number">6.1. </span>Install packages<a class="headerlink" href="#install-packages" title="Permalink to this heading">¶</a></h2>
-<p>For this course, we will use some ongoing development in TVM, which is
-an open-source machine learning compilation framework. We provide the
-following command to install a packaged version for MLC course. The
-particular notebook of <strong>part 1</strong> depends on a CUDA 11 environment.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3 -m pip install mlc-ai-nightly-cu110 -f https://mlc.ai/wheels
-</pre></div>
-</div>
-<p><strong>NOTE: Our build system does not have GPU support yet, so part of codes
-will not be evaluated.</strong></p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="part1.html">6.1.1. Part 1</a></li>
-<li class="toctree-l1"><a class="reference internal" href="part1.html#preparations">6.1.2. Preparations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="part1.html#gpu-architecture">6.1.3. GPU Architecture</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#gpu-thread-blocks">6.1.3.1. GPU Thread Blocks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#build-and-run-the-tensorir-function-on-gpu">6.1.3.2. Build and Run the TensorIR Function on GPU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part1.html">6.1. Part 1</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="part1.html#install-packages">6.1.1. Install packages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="part1.html#preparations">6.1.2. Preparations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="part1.html#gpu-architecture">6.1.3. GPU Architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" href="part1.html#window-sum-example">6.1.4. Window Sum Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="part1.html#matrix-multiplication">6.1.5. Matrix Multiplication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="part1.html#shared-memory-blocking">6.1.6. Shared Memory Blocking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="part1.html#leveraging-automatic-program-optimization">6.1.7. Leveraging Automatic Program Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="part1.html#summary">6.1.8. Summary</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="part1.html#window-sum-example">6.1.4. Window Sum Example</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#build-code-for-other-gpu-platforms">6.1.4.1. Build Code for Other GPU Platforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="part2.html">6.2. Part 2</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="part2.html#preparations">6.2.1. Preparations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="part2.html#hardware-specialization-trend">6.2.2. Hardware Specialization Trend</a></li>
+<li class="toctree-l2"><a class="reference internal" href="part2.html#tensorization">6.2.3. Tensorization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="part2.html#discussions">6.2.4. Discussions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="part2.html#summary">6.2.5. Summary</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="part1.html#matrix-multiplication">6.1.5. Matrix Multiplication</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="part1.html#local-blocking">6.1.5.1. Local Blocking</a></li>
 </ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="part1.html#shared-memory-blocking">6.1.6. Shared Memory Blocking</a></li>
-<li class="toctree-l1"><a class="reference internal" href="part1.html#leveraging-automatic-program-optimization">6.1.7. Leveraging Automatic Program Optimization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="part1.html#summary">6.1.8. Summary</a></li>
-<li class="toctree-l1"><a class="reference internal" href="part2.html">6.1.9. Part 2</a></li>
-<li class="toctree-l1"><a class="reference internal" href="part2.html#preparations">6.1.10. Preparations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="part2.html#hardware-specialization-trend">6.1.11. Hardware Specialization Trend</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="part2.html#key-elements-of-specialized-code">6.1.11.1. Key Elements of Specialized Code</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part2.html#a-block-with-tensorized-computation">6.1.11.2. A Block with Tensorized Computation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part2.html#transforming-loops-around-tensorized-block">6.1.11.3. Transforming Loops Around Tensorized Block</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part2.html#blockization-creating-tensorized-blocks">6.1.11.4. Blockization – Creating Tensorized Blocks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="part2.html#transforming-tensorir-to-introduce-special-memory-scope">6.1.11.5. Transforming TensorIR to Introduce Special Memory Scope</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="part2.html#tensorization">6.1.12. Tensorization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="part2.html#discussions">6.1.13. Discussions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="part2.html#summary">6.1.14. Summary</a></li>
-</ul>
-</div>
 </div>
 </div>
 
@@ -253,18 +205,6 @@ will not be evaluated.</strong></p>
         </div>
         <div class="side-doc-outline">
             <div class="side-doc-outline--content"> 
-<div class="localtoc">
-    <p class="caption">
-      <span class="caption-text">Table Of Contents</span>
-    </p>
-    <ul>
-<li><a class="reference internal" href="#">6. GPU and Hardware Acceleration</a><ul>
-<li><a class="reference internal" href="#install-packages">6.1. Install packages</a></li>
-</ul>
-</li>
-</ul>
-
-</div>
             </div>
         </div>
 
@@ -281,7 +221,7 @@ will not be evaluated.</strong></p>
          <i class="pagenation-arrow-R fas fa-arrow-right fa-lg"></i>
         <div class="pagenation-text">
             <span class="pagenation-direction">Next</span>
-            <div>6.1.1. Part 1</div>
+            <div>6.1. Part 1</div>
         </div>
      </a>
   </div>

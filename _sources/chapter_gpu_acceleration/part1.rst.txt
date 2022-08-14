@@ -7,8 +7,27 @@ chapter will discuss how to bring some of the optimizations onto GPU. We
 are going to use CUDA terminology. However, the same set of concepts
 applies to other kinds of GPUs as well.
 
+Install packages
+~~~~~~~~~~~~~~~~
+
+For this course, we will use some ongoing development in TVM, which is
+an open-source machine learning compilation framework. We provide the
+following command to install a packaged version for MLC course. The
+particular notebook of **part 1** depends on a CUDA 11 environment.
+
+.. raw:: latex
+
+   \diilbookstyleinputcell
+
+.. code:: bash
+
+   python3 -m pip install mlc-ai-nightly-cu110 -f https://mlc.ai/wheels
+
+**NOTE: Our build system does not have GPU support yet, so part of codes
+will not be evaluated.**
+
 Preparations
-------------
+~~~~~~~~~~~~
 
 To begin with, let us import the necessary dependencies.
 
@@ -28,7 +47,7 @@ To begin with, let us import the necessary dependencies.
     from tvm.script import tir as T
 
 GPU Architecture
-----------------
+~~~~~~~~~~~~~~~~
 
 Let us begin by reviewing what a GPU architecture looks like. A typical
 GPU contains a collection of stream multi-processors, and each
@@ -106,7 +125,7 @@ We first split loop ``i`` into two loops.
 
 
 GPU Thread Blocks
-~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^
 
 Then we bind the iterators to the GPU thread blocks. Each thread is
 parameterized by two indices – ``threadIdx.x`` and ``blockIdx.x``. In
@@ -153,7 +172,7 @@ them simple as one dimension.
 
 
 Build and Run the TensorIR Function on GPU
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 We can build and test out the resulting function on the GPU.
 
@@ -177,7 +196,7 @@ We can build and test out the resulting function on the GPU.
    print(C_nd)
 
 Window Sum Example
-------------------
+~~~~~~~~~~~~~~~~~~
 
 Now, let us move forward to another example – window sum. This program
 can be viewed as a basic version of “convolution” with a predefined
@@ -373,7 +392,7 @@ stage to use a minimum region used within the thread block.
    print(rt_mod.imported_modules[0].get_source())
 
 Build Code for Other GPU Platforms
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 A MLC process usually support targeting multiple kinds of hardware
 platforms, we can generate Metal code(which is another kind of GPU
@@ -389,7 +408,7 @@ programming model) by changing the target parameter.
    print(rt_mod.imported_modules[0].get_source())
 
 Matrix Multiplication
----------------------
+~~~~~~~~~~~~~~~~~~~~~
 
 Let us now get to something slightly more complicated and try out
 optimizing matrix multiplication on GPU. We will go over two common
@@ -416,7 +435,7 @@ techniques for GPU performance optimization.
                     C[vi, vj] = C[vi, vj] + A[vi, vk] * B[vk, vj]
 
 Local Blocking
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 .. figure:: ../img/gpu_local_blocking.png
 
@@ -534,7 +553,7 @@ in the stripe is reused ``V`` times.
    print("GEMM-Blocking: %f GFLOPS" % (num_flop / evaluator(A_nd, B_nd, C_nd).mean / 1e9))
 
 Shared Memory Blocking
-----------------------
+~~~~~~~~~~~~~~~~~~~~~~
 
 .. figure:: ../img/gpu_shared_blocking.png
 
@@ -676,7 +695,7 @@ The following transformation does that.
    print("GEMM-Blocking: %f GFLOPS" % (num_flop / evaluator(A_nd, B_nd, C_nd).mean / 1e9))
 
 Leveraging Automatic Program Optimization
------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 So far, we have been manually writing transformations to optimize the
 TensorIR program on GPU. We can leverage the automatic program
@@ -717,7 +736,7 @@ finish.
    print("MetaSchedule: %f GFLOPS" % (num_flop / evaluator(A_nd, B_nd, C_nd).mean / 1e9))
 
 Summary
--------
+~~~~~~~
 
 This chapter studies another axis of MLC – how we can transform our
 program for hardware acceleration. The MLC process helps us to bridge
