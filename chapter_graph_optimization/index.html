@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    
+    <title>7. Computational Graph Optimization &#8212; Machine Learing Compilation 0.0.1 documentation</title>
+
+    <link rel="stylesheet" href="../_static/material-design-lite-1.3.0/material.blue-deep_orange.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx_materialdesign_theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/fontawesome/all.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/fonts.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/d2l.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/d2l.js"></script>
+    <link rel="shortcut icon" href="../_static/mlc-favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="6.2. Part 2" href="../chapter_gpu_acceleration/part2.html" /> 
+  </head>
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer"><header class="mdl-layout__header mdl-layout__header--waterfall ">
+    <div class="mdl-layout__header-row">
+        
+        <nav class="mdl-navigation breadcrumb">
+            <a class="mdl-navigation__link is-active"><span class="section-number">7. </span>Computational Graph Optimization</a>
+        </nav>
+        <div class="mdl-layout-spacer"></div>
+        <nav class="mdl-navigation">
+        
+<form class="form-inline pull-sm-right" action="../search.html" method="get">
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right">
+        <label id="quick-search-icon" class="mdl-button mdl-js-button mdl-button--icon"  for="waterfall-exp">
+          <i class="material-icons">search</i>
+        </label>
+        <div class="mdl-textfield__expandable-holder">
+          <input class="mdl-textfield__input" type="text" name="q"  id="waterfall-exp" placeholder="Search" />
+          <input type="hidden" name="check_keywords" value="yes" />
+          <input type="hidden" name="area" value="default" />
+        </div>
+      </div>
+      <div class="mdl-tooltip" data-mdl-for="quick-search-icon">
+      Quick search
+      </div>
+</form>
+        
+<a id="button-show-source"
+    class="mdl-button mdl-js-button mdl-button--icon"
+    href="../_sources/chapter_graph_optimization/index.rst.txt" rel="nofollow">
+  <i class="material-icons">code</i>
+</a>
+<div class="mdl-tooltip" data-mdl-for="button-show-source">
+Show Source
+</div>
+        </nav>
+    </div>
+    <div class="mdl-layout__header-row header-links">
+      <div class="mdl-layout-spacer"></div>
+      <nav class="mdl-navigation">
+          
+              <a  class="mdl-navigation__link" href="https://mlc.ai/summer22">
+                  <i class="fas fa-user-graduate"></i>
+                  Course
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://github.com/mlc-ai/mlc-en">
+                  <i class="fab fa-github"></i>
+                  GitHub
+              </a>
+          
+              <a  class="mdl-navigation__link" href="https://mlc.ai/zh">
+                  <i class="fas fa-external-link-alt"></i>
+                  中文版
+              </a>
+      </nav>
+    </div>
+</header><header class="mdl-layout__drawer">
+    
+          <!-- Title -->
+      <span class="mdl-layout-title">
+          <a class="title" href="../index.html">
+              <img class="logo" src="../_static/mlc-logo-with-text-landscape.svg" alt="Machine Learing Compilation"/>
+          </a>
+      </span>
+    
+    
+      <div class="globaltoc">
+        <span class="mdl-layout-title toc">Table Of Contents</span>
+        
+        
+            
+            <nav class="mdl-navigation">
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_introduction/index.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_tensor_program/index.html">2. Tensor Program Abstraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_tensor_program/tensor_program.html">2.1. Primitive Tensor Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_tensor_program/tensor_program.html#tensor-program-abstraction">2.2. Tensor Program Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_tensor_program/tensor_program.html#summary">2.3. Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_tensor_program/case_study.html">2.4. TensorIR: Tensor Program Abstraction Case Study</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_tensor_program/tensorir_exercises.html">2.5. Exercises for TensorIR</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_end_to_end/index.html">3. End to End Model Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_auto_program_optimization/index.html">4. Automatic Program Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_integration/index.html">5. Integration with Machine Learning Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_gpu_acceleration/index.html">6. GPU and Hardware Acceleration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part1.html">6.1. Part 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part2.html">6.2. Part 2</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">7. Computational Graph Optimization</a></li>
+</ul>
+
+            </nav>
+        
+        </div>
+    
+</header>
+        <main class="mdl-layout__content" tabIndex="0">
+
+	<script type="text/javascript" src="../_static/sphinx_materialdesign_theme.js "></script>
+    <header class="mdl-layout__drawer">
+    
+          <!-- Title -->
+      <span class="mdl-layout-title">
+          <a class="title" href="../index.html">
+              <img class="logo" src="../_static/mlc-logo-with-text-landscape.svg" alt="Machine Learing Compilation"/>
+          </a>
+      </span>
+    
+    
+      <div class="globaltoc">
+        <span class="mdl-layout-title toc">Table Of Contents</span>
+        
+        
+            
+            <nav class="mdl-navigation">
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../chapter_introduction/index.html">1. Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_tensor_program/index.html">2. Tensor Program Abstraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_tensor_program/tensor_program.html">2.1. Primitive Tensor Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_tensor_program/tensor_program.html#tensor-program-abstraction">2.2. Tensor Program Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_tensor_program/tensor_program.html#summary">2.3. Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_tensor_program/case_study.html">2.4. TensorIR: Tensor Program Abstraction Case Study</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_tensor_program/tensorir_exercises.html">2.5. Exercises for TensorIR</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_end_to_end/index.html">3. End to End Model Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_auto_program_optimization/index.html">4. Automatic Program Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_integration/index.html">5. Integration with Machine Learning Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../chapter_gpu_acceleration/index.html">6. GPU and Hardware Acceleration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part1.html">6.1. Part 1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../chapter_gpu_acceleration/part2.html">6.2. Part 2</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">7. Computational Graph Optimization</a></li>
+</ul>
+
+            </nav>
+        
+        </div>
+    
+</header>
+
+    <div class="document">
+        <div class="page-content" role="main">
+        
+  <div class="section" id="computational-graph-optimization">
+<h1><span class="section-number">7. </span>Computational Graph Optimization<a class="headerlink" href="#computational-graph-optimization" title="Permalink to this heading">¶</a></h1>
+<div class="section" id="prelude">
+<h2><span class="section-number">7.1. </span>Prelude<a class="headerlink" href="#prelude" title="Permalink to this heading">¶</a></h2>
+<p>Most of the MLC process can be viewed as transformation among tensor
+functions. In the past chapters, we studied how to transform each
+primitive tensor functions individually. In this chapter, let us talk
+about high-level transformations among computational graphs.</p>
+<div class="figure align-default">
+<img alt="../_images/mlc-elem-transform.png" src="../_images/mlc-elem-transform.png" />
+</div>
+</div>
+<div class="section" id="preparations">
+<h2><span class="section-number">7.2. </span>Preparations<a class="headerlink" href="#preparations" title="Permalink to this heading">¶</a></h2>
+<p>To begin with, let us import the necessary dependencies.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># This is needed for deferring annotation parsing in TVMScript</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tvm</span>
+<span class="kn">from</span> <span class="nn">tvm</span> <span class="kn">import</span> <span class="n">relax</span><span class="p">,</span> <span class="n">topi</span>
+<span class="kn">from</span> <span class="nn">tvm.ir.module</span> <span class="kn">import</span> <span class="n">IRModule</span>
+<span class="kn">from</span> <span class="nn">tvm.script</span> <span class="kn">import</span> <span class="n">relax</span> <span class="k">as</span> <span class="n">R</span>
+<span class="kn">from</span> <span class="nn">tvm.script</span> <span class="kn">import</span> <span class="n">tir</span> <span class="k">as</span> <span class="n">T</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="pattern-match-and-rewriting">
+<h2><span class="section-number">7.3. </span>Pattern Match and Rewriting<a class="headerlink" href="#pattern-match-and-rewriting" title="Permalink to this heading">¶</a></h2>
+<p>To begin with, let us start with the following example.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@tvm</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">ir_module</span>
+<span class="k">class</span> <span class="nc">MyModule</span><span class="p">:</span>
+    <span class="nd">@R</span><span class="o">.</span><span class="n">function</span>
+    <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">y</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
+        <span class="k">with</span> <span class="n">relax</span><span class="o">.</span><span class="n">dataflow</span><span class="p">():</span>
+            <span class="n">lv0</span> <span class="o">=</span> <span class="n">relax</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+            <span class="n">gv0</span> <span class="o">=</span> <span class="n">relax</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">lv0</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+            <span class="n">relax</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="n">gv0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">gv0</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">MyModule</span></code> contains a relax function with two high-level operators,
+relax.multiply and relax.add. Our goal is to find these two operators
+and replace it with a call into <code class="docutils literal notranslate"><span class="pre">relax.ewise_fma</span></code> operator.</p>
+<p>Before we dive into how to do that exactly, let us first examine the
+data structure that makes up the MyModule. Each IRModule contains a
+collection of functions, and the function body is composed of a set of
+data structures called abstract syntax trees (AST).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">relax_func</span> <span class="o">=</span> <span class="n">MyModule</span><span class="p">[</span><span class="s2">&quot;main&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Each function is represented by a <code class="docutils literal notranslate"><span class="pre">relax.Function</span></code> node.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">relax_func</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tvm</span><span class="o">.</span><span class="n">relax</span><span class="o">.</span><span class="n">expr</span><span class="o">.</span><span class="n">Function</span>
+</pre></div>
+</div>
+<p>The function contains a list of parameters.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">relax_func</span><span class="o">.</span><span class="n">params</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">relax</span><span class="o">.</span><span class="n">expr</span><span class="o">.</span><span class="n">Var</span><span class="p">(</span><span class="mh">0x5561a9690fb0</span><span class="p">),</span> <span class="n">relax</span><span class="o">.</span><span class="n">expr</span><span class="o">.</span><span class="n">Var</span><span class="p">(</span><span class="mh">0x5561a8517d90</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>The function contains a body fields that represents its return value and
+set of binding blocks in the function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">func_body</span> <span class="o">=</span> <span class="n">relax_func</span><span class="o">.</span><span class="n">body</span>
+<span class="nb">type</span><span class="p">(</span><span class="n">func_body</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tvm</span><span class="o">.</span><span class="n">relax</span><span class="o">.</span><span class="n">expr</span><span class="o">.</span><span class="n">SeqExpr</span>
+</pre></div>
+</div>
+<p>The function body SeqExpr contains a sequence of (binding) blocks</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">func_body</span><span class="o">.</span><span class="n">blocks</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">relax</span><span class="o">.</span><span class="n">expr</span><span class="o">.</span><span class="n">DataflowBlock</span><span class="p">(</span><span class="mh">0x5561a96d90b0</span><span class="p">)]</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataflow_block</span> <span class="o">=</span> <span class="n">func_body</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>In our particular case, we have a single data flow block that contains
+two bindings. Each binding corresponds to one of the following two lines</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lv0</span> <span class="o">=</span> <span class="n">relax</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">gv0</span> <span class="o">=</span> <span class="n">relax</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">lv0</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataflow_block</span><span class="o">.</span><span class="n">bindings</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">relax</span><span class="o">.</span><span class="n">expr</span><span class="o">.</span><span class="n">VarBinding</span><span class="p">(</span><span class="mh">0x5561a8523930</span><span class="p">),</span> <span class="n">relax</span><span class="o">.</span><span class="n">expr</span><span class="o">.</span><span class="n">VarBinding</span><span class="p">(</span><span class="mh">0x5561a9655e40</span><span class="p">)]</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">binding</span> <span class="o">=</span> <span class="n">dataflow_block</span><span class="o">.</span><span class="n">bindings</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Each binding have a var field that corresponds to the left hand side of
+the binding (<code class="docutils literal notranslate"><span class="pre">lv0</span></code>, <code class="docutils literal notranslate"><span class="pre">gv0</span></code>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">binding</span><span class="o">.</span><span class="n">var</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">relax</span><span class="o">.</span><span class="n">expr</span><span class="o">.</span><span class="n">DataflowVar</span><span class="p">(</span><span class="mh">0x5561a96caeb0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And its value field corresponds to the right-hand side of the binding.
+Each value field corresponds to a <code class="docutils literal notranslate"><span class="pre">relax.Call</span></code> node representing a
+call into a primitive function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">binding</span><span class="o">.</span><span class="n">value</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CallNode</span><span class="p">(</span><span class="n">Op</span><span class="p">(</span><span class="n">relax</span><span class="o">.</span><span class="n">multiply</span><span class="p">),</span> <span class="p">[</span><span class="n">relax</span><span class="o">.</span><span class="n">expr</span><span class="o">.</span><span class="n">Var</span><span class="p">(</span><span class="mh">0x5561a9690fb0</span><span class="p">),</span> <span class="n">relax</span><span class="o">.</span><span class="n">expr</span><span class="o">.</span><span class="n">Var</span><span class="p">(</span><span class="mh">0x5561a8517d90</span><span class="p">)],</span> <span class="p">(</span><span class="n">nullptr</span><span class="p">),</span> <span class="p">[])</span>
+</pre></div>
+</div>
+<div class="figure align-default">
+<img alt="../_images/relax_func_data_structure.png" src="../_images/relax_func_data_structure.png" />
+</div>
+<p>The above figure summarizes the data structure involved in this
+particular function.</p>
+<p>One approach to rewrite the program would be to traverse MyModule’s AST
+recursively and generate a transformed AST. We can certainly do that
+using the python API available. However, we can use extra tooling
+support to simplify the process. The following code block follows a
+design pattern called <strong>visitor pattern</strong> that allows us to visit each
+AST node and rewrite them to transformed versions.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@relax</span><span class="o">.</span><span class="n">expr_functor</span><span class="o">.</span><span class="n">mutator</span>
+<span class="k">class</span> <span class="nc">EwiseFMARewriter</span><span class="p">(</span><span class="n">relax</span><span class="o">.</span><span class="n">PyExprMutator</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">visit_call_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call</span><span class="p">):</span>
+        <span class="n">call</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit_expr_post_order</span><span class="p">(</span><span class="n">call</span><span class="p">)</span>
+        <span class="n">add_op</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">ir</span><span class="o">.</span><span class="n">Op</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;relax.add&quot;</span><span class="p">)</span>
+        <span class="n">multiply_op</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">ir</span><span class="o">.</span><span class="n">Op</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;relax.multiply&quot;</span><span class="p">)</span>
+        <span class="n">ewise_fma_op</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">ir</span><span class="o">.</span><span class="n">Op</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;relax.ewise_fma&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">call</span><span class="o">.</span><span class="n">op</span> <span class="o">!=</span> <span class="n">add_op</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">call</span>
+
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lookup_binding</span><span class="p">(</span><span class="n">call</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">relax</span><span class="o">.</span><span class="n">Call</span><span class="p">)</span> <span class="ow">or</span> <span class="n">value</span><span class="o">.</span><span class="n">op</span> <span class="o">!=</span> <span class="n">multiply_op</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">call</span>
+
+        <span class="n">fma_call</span> <span class="o">=</span> <span class="n">relax</span><span class="o">.</span><span class="n">Call</span><span class="p">(</span>
+            <span class="n">ewise_fma_op</span><span class="p">,</span> <span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">value</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">call</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">fma_call</span>
+
+
+<span class="n">updated_fn</span> <span class="o">=</span> <span class="n">EwiseFMARewriter</span><span class="p">()</span><span class="o">.</span><span class="n">visit_expr</span><span class="p">(</span><span class="n">MyModule</span><span class="p">[</span><span class="s2">&quot;main&quot;</span><span class="p">])</span>
+<span class="n">updated_fn</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight" style="background: "><pre style="line-height: 125%;"><span></span><span style="color: #AA22FF">@R</span><span style="color: #AA22FF; font-weight: bold">.</span>function
+<span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">main</span>(x: Tensor((<span style="color: #008000">3</span>, <span style="color: #008000">4</span>), <span style="color: #BA2121">&quot;float32&quot;</span>), y: Tensor((<span style="color: #008000">3</span>, <span style="color: #008000">4</span>), <span style="color: #BA2121">&quot;float32&quot;</span>)) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> Tensor(<span style="color: #008000; font-weight: bold">None</span>, <span style="color: #BA2121">&quot;float32&quot;</span>, ndim <span style="color: #AA22FF; font-weight: bold">=</span> <span style="color: #008000">2</span>):
+    <span style="color: #007979; font-style: italic"># block 0</span>
+    <span style="color: #008000; font-weight: bold">with</span> R<span style="color: #AA22FF; font-weight: bold">.</span>dataflow():
+        lv0: Tensor((<span style="color: #008000">3</span>, <span style="color: #008000">4</span>), <span style="color: #BA2121">&quot;float32&quot;</span>) <span style="color: #AA22FF; font-weight: bold">=</span> relax<span style="color: #AA22FF; font-weight: bold">.</span>multiply(x, y)
+        gv0: Tensor((<span style="color: #008000">3</span>, <span style="color: #008000">4</span>), <span style="color: #BA2121">&quot;float32&quot;</span>) <span style="color: #AA22FF; font-weight: bold">=</span> relax<span style="color: #AA22FF; font-weight: bold">.</span>ewise_fma(x, y, y)
+        R<span style="color: #AA22FF; font-weight: bold">.</span>output(gv0)
+    <span style="color: #008000; font-weight: bold">return</span> gv0
+</pre></div><p>We can go ahead and run the code. Note that the result rewrites gv0 to
+the fused operator but leaves lv0 in the code. We can use
+<code class="docutils literal notranslate"><span class="pre">remove_all_unused</span></code> to further simplify the code block.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">relax</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">remove_all_unused</span><span class="p">(</span><span class="n">updated_fn</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight" style="background: "><pre style="line-height: 125%;"><span></span><span style="color: #AA22FF">@R</span><span style="color: #AA22FF; font-weight: bold">.</span>function
+<span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">main</span>(x: Tensor((<span style="color: #008000">3</span>, <span style="color: #008000">4</span>), <span style="color: #BA2121">&quot;float32&quot;</span>), y: Tensor((<span style="color: #008000">3</span>, <span style="color: #008000">4</span>), <span style="color: #BA2121">&quot;float32&quot;</span>)) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> Tensor(<span style="color: #008000; font-weight: bold">None</span>, <span style="color: #BA2121">&quot;float32&quot;</span>, ndim <span style="color: #AA22FF; font-weight: bold">=</span> <span style="color: #008000">2</span>):
+    <span style="color: #007979; font-style: italic"># block 0</span>
+    <span style="color: #008000; font-weight: bold">with</span> R<span style="color: #AA22FF; font-weight: bold">.</span>dataflow():
+        gv0: Tensor((<span style="color: #008000">3</span>, <span style="color: #008000">4</span>), <span style="color: #BA2121">&quot;float32&quot;</span>) <span style="color: #AA22FF; font-weight: bold">=</span> relax<span style="color: #AA22FF; font-weight: bold">.</span>ewise_fma(x, y, y)
+        R<span style="color: #AA22FF; font-weight: bold">.</span>output(gv0)
+    <span style="color: #008000; font-weight: bold">return</span> gv0
+</pre></div></div>
+<div class="section" id="fuse-linear-and-relu">
+<h2><span class="section-number">7.4. </span>Fuse Linear and ReLU<a class="headerlink" href="#fuse-linear-and-relu" title="Permalink to this heading">¶</a></h2>
+<p>Now we have get a basic taste of graph rewriting. Let us try it on an
+end to end model.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span># Hide outputs
+!wget https://github.com/mlc-ai/web-data/raw/main/models/fasionmnist_mlp_params.pkl
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pickle</span> <span class="k">as</span> <span class="nn">pkl</span>
+
+<span class="n">mlp_params</span> <span class="o">=</span> <span class="n">pkl</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;fasionmnist_mlp_params.pkl&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The following code reconstructs the FashionMNIST MLP model we used in
+our past chapters. To simplify our explaination, we directly construct
+the model using high-level operators such as <code class="docutils literal notranslate"><span class="pre">relax.op.add</span></code> and
+<code class="docutils literal notranslate"><span class="pre">relax.op.dense</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">create_model</span><span class="p">():</span>
+    <span class="n">bb</span> <span class="o">=</span> <span class="n">relax</span><span class="o">.</span><span class="n">BlockBuilder</span><span class="p">()</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">relax</span><span class="o">.</span><span class="n">Var</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">784</span><span class="p">),</span> <span class="n">relax</span><span class="o">.</span><span class="n">DynTensorType</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;float32&quot;</span><span class="p">))</span>
+    <span class="n">w0</span> <span class="o">=</span> <span class="n">relax</span><span class="o">.</span><span class="n">const</span><span class="p">(</span><span class="n">mlp_params</span><span class="p">[</span><span class="s2">&quot;w0&quot;</span><span class="p">],</span> <span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+    <span class="n">b0</span> <span class="o">=</span> <span class="n">relax</span><span class="o">.</span><span class="n">const</span><span class="p">(</span><span class="n">mlp_params</span><span class="p">[</span><span class="s2">&quot;b0&quot;</span><span class="p">],</span> <span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+    <span class="n">w1</span> <span class="o">=</span> <span class="n">relax</span><span class="o">.</span><span class="n">const</span><span class="p">(</span><span class="n">mlp_params</span><span class="p">[</span><span class="s2">&quot;w1&quot;</span><span class="p">],</span> <span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+    <span class="n">b1</span> <span class="o">=</span> <span class="n">relax</span><span class="o">.</span><span class="n">const</span><span class="p">(</span><span class="n">mlp_params</span><span class="p">[</span><span class="s2">&quot;b1&quot;</span><span class="p">],</span> <span class="s2">&quot;float32&quot;</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">bb</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">x</span><span class="p">]):</span>
+        <span class="k">with</span> <span class="n">bb</span><span class="o">.</span><span class="n">dataflow</span><span class="p">():</span>
+            <span class="n">lv0</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">relax</span><span class="o">.</span><span class="n">op</span><span class="o">.</span><span class="n">dense</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">w0</span><span class="p">))</span>
+            <span class="n">lv1</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">relax</span><span class="o">.</span><span class="n">op</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">lv0</span><span class="p">,</span> <span class="n">b0</span><span class="p">))</span>
+            <span class="n">lv2</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">relax</span><span class="o">.</span><span class="n">op</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">lv1</span><span class="p">))</span>
+            <span class="n">lv3</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">relax</span><span class="o">.</span><span class="n">op</span><span class="o">.</span><span class="n">dense</span><span class="p">(</span><span class="n">lv2</span><span class="p">,</span> <span class="n">w1</span><span class="p">))</span>
+            <span class="n">lv4</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">relax</span><span class="o">.</span><span class="n">op</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">lv3</span><span class="p">,</span> <span class="n">b1</span><span class="p">))</span>
+            <span class="n">gv</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">emit_output</span><span class="p">(</span><span class="n">lv4</span><span class="p">)</span>
+        <span class="n">bb</span><span class="o">.</span><span class="n">emit_func_output</span><span class="p">(</span><span class="n">gv</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">bb</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+<span class="n">MLPModel</span> <span class="o">=</span> <span class="n">create_model</span><span class="p">()</span>
+<span class="n">MLPModel</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight" style="background: "><pre style="line-height: 125%;"><span></span><span style="color: #AA22FF">@tvm</span><span style="color: #AA22FF; font-weight: bold">.</span>script<span style="color: #AA22FF; font-weight: bold">.</span>ir_module
+<span style="color: #008000; font-weight: bold">class</span> <span style="color: #1E90FF; font-weight: bold">Module</span>:
+    <span style="color: #AA22FF">@R</span><span style="color: #AA22FF; font-weight: bold">.</span>function
+    <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">main</span>(x: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">784</span>), <span style="color: #BA2121">&quot;float32&quot;</span>)) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> Tensor(<span style="color: #008000; font-weight: bold">None</span>, <span style="color: #BA2121">&quot;float32&quot;</span>, ndim <span style="color: #AA22FF; font-weight: bold">=</span> <span style="color: #008000">2</span>):
+        <span style="color: #007979; font-style: italic"># block 0</span>
+        <span style="color: #008000; font-weight: bold">with</span> R<span style="color: #AA22FF; font-weight: bold">.</span>dataflow():
+            lv: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">128</span>), <span style="color: #BA2121">&quot;float32&quot;</span>) <span style="color: #AA22FF; font-weight: bold">=</span> relax<span style="color: #AA22FF; font-weight: bold">.</span>nn<span style="color: #AA22FF; font-weight: bold">.</span>dense(x, meta[relay<span style="color: #AA22FF; font-weight: bold">.</span>Constant][<span style="color: #008000">0</span>])
+            lv1: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">128</span>), <span style="color: #BA2121">&quot;float32&quot;</span>) <span style="color: #AA22FF; font-weight: bold">=</span> relax<span style="color: #AA22FF; font-weight: bold">.</span>add(lv, meta[relay<span style="color: #AA22FF; font-weight: bold">.</span>Constant][<span style="color: #008000">1</span>])
+            lv2: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">128</span>), <span style="color: #BA2121">&quot;float32&quot;</span>) <span style="color: #AA22FF; font-weight: bold">=</span> relax<span style="color: #AA22FF; font-weight: bold">.</span>nn<span style="color: #AA22FF; font-weight: bold">.</span>relu(lv1)
+            lv3: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">10</span>), <span style="color: #BA2121">&quot;float32&quot;</span>) <span style="color: #AA22FF; font-weight: bold">=</span> relax<span style="color: #AA22FF; font-weight: bold">.</span>nn<span style="color: #AA22FF; font-weight: bold">.</span>dense(lv2, meta[relay<span style="color: #AA22FF; font-weight: bold">.</span>Constant][<span style="color: #008000">2</span>])
+            lv4: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">10</span>), <span style="color: #BA2121">&quot;float32&quot;</span>) <span style="color: #AA22FF; font-weight: bold">=</span> relax<span style="color: #AA22FF; font-weight: bold">.</span>add(lv3, meta[relay<span style="color: #AA22FF; font-weight: bold">.</span>Constant][<span style="color: #008000">3</span>])
+            gv: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">10</span>), <span style="color: #BA2121">&quot;float32&quot;</span>) <span style="color: #AA22FF; font-weight: bold">=</span> lv4
+            R<span style="color: #AA22FF; font-weight: bold">.</span>output(gv)
+        <span style="color: #008000; font-weight: bold">return</span> gv
+
+</pre></div><p>We aim to “fuse” the dense and add operations into a single group. The
+following code achieves that through the following steps:</p>
+<ul class="simple">
+<li><p>Identify <code class="docutils literal notranslate"><span class="pre">dense</span></code> and <code class="docutils literal notranslate"><span class="pre">add</span></code> patterns.</p></li>
+<li><p>Generate another fused sub-function that calls into the dense and add
+operators.</p></li>
+<li><p>Replace <code class="docutils literal notranslate"><span class="pre">dense</span></code> and <code class="docutils literal notranslate"><span class="pre">add</span></code> with the fused sub-functions.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@relax</span><span class="o">.</span><span class="n">expr_functor</span><span class="o">.</span><span class="n">mutator</span>
+<span class="k">class</span> <span class="nc">DenseAddFusor</span><span class="p">(</span><span class="n">relax</span><span class="o">.</span><span class="n">PyExprMutator</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mod</span><span class="p">:</span> <span class="n">IRModule</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mod_</span> <span class="o">=</span> <span class="n">mod</span>
+        <span class="c1"># cache pre-defined ops</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_op</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">ir</span><span class="o">.</span><span class="n">Op</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;relax.add&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dense_op</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">ir</span><span class="o">.</span><span class="n">Op</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;relax.nn.dense&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IRModule</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">global_var</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mod_</span><span class="o">.</span><span class="n">functions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">relax</span><span class="o">.</span><span class="n">Function</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="c1"># avoid already fused primitive functions</span>
+            <span class="k">if</span> <span class="s2">&quot;Primitive&quot;</span> <span class="ow">in</span> <span class="n">func</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="n">func</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;Primitive&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">updated_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit_expr</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+            <span class="n">updated_func</span> <span class="o">=</span> <span class="n">relax</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">remove_all_unused</span><span class="p">(</span><span class="n">updated_func</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">builder_</span><span class="o">.</span><span class="n">update_func</span><span class="p">(</span><span class="n">global_var</span><span class="p">,</span> <span class="n">updated_func</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">builder_</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">visit_call_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call</span><span class="p">):</span>
+        <span class="n">call</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit_expr_post_order</span><span class="p">(</span><span class="n">call</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">match_call</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">op</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">relax</span><span class="o">.</span><span class="n">Call</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="n">op</span> <span class="o">==</span> <span class="n">op</span>
+
+        <span class="c1"># pattern match dense =&gt; add</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">match_call</span><span class="p">(</span><span class="n">call</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_op</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">call</span>
+
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lookup_binding</span><span class="p">(</span><span class="n">call</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">call</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">match_call</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dense_op</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">call</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">call</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># construct a new fused primitive function</span>
+        <span class="n">param_x</span> <span class="o">=</span> <span class="n">relax</span><span class="o">.</span><span class="n">Var</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape_</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">_checked_type_</span><span class="p">)</span>
+        <span class="n">param_w</span> <span class="o">=</span> <span class="n">relax</span><span class="o">.</span><span class="n">Var</span><span class="p">(</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">shape_</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">_checked_type_</span><span class="p">)</span>
+        <span class="n">param_b</span> <span class="o">=</span> <span class="n">relax</span><span class="o">.</span><span class="n">Var</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">shape_</span><span class="p">,</span> <span class="n">b</span><span class="o">.</span><span class="n">_checked_type_</span><span class="p">)</span>
+
+        <span class="n">bb</span> <span class="o">=</span> <span class="n">relax</span><span class="o">.</span><span class="n">BlockBuilder</span><span class="p">()</span>
+
+        <span class="n">fn_name</span> <span class="o">=</span> <span class="s2">&quot;fused_dense_add</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">counter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">with</span> <span class="n">bb</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">fn_name</span><span class="p">,</span> <span class="p">[</span><span class="n">param_x</span><span class="p">,</span> <span class="n">param_w</span><span class="p">,</span> <span class="n">param_b</span><span class="p">]):</span>
+            <span class="k">with</span> <span class="n">bb</span><span class="o">.</span><span class="n">dataflow</span><span class="p">():</span>
+                <span class="n">lv0</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">relax</span><span class="o">.</span><span class="n">op</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">dense</span><span class="p">(</span><span class="n">param_x</span><span class="p">,</span> <span class="n">param_w</span><span class="p">))</span>
+                <span class="n">gv</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">emit_output</span><span class="p">(</span><span class="n">relax</span><span class="o">.</span><span class="n">op</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">lv0</span><span class="p">,</span> <span class="n">param_b</span><span class="p">))</span>
+            <span class="n">bb</span><span class="o">.</span><span class="n">emit_func_output</span><span class="p">(</span><span class="n">gv</span><span class="p">)</span>
+
+        <span class="c1"># Add Primitive attribute to the fused funtions</span>
+        <span class="n">fused_fn</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">get</span><span class="p">()[</span><span class="n">fn_name</span><span class="p">]</span><span class="o">.</span><span class="n">with_attr</span><span class="p">(</span><span class="s2">&quot;Primitive&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">global_var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">builder_</span><span class="o">.</span><span class="n">add_func</span><span class="p">(</span><span class="n">fused_fn</span><span class="p">,</span> <span class="n">fn_name</span><span class="p">)</span>
+
+        <span class="c1"># construct call into the fused function</span>
+        <span class="k">return</span> <span class="n">relax</span><span class="o">.</span><span class="n">Call</span><span class="p">(</span><span class="n">global_var</span><span class="p">,</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+<span class="nd">@tvm</span><span class="o">.</span><span class="n">ir</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">module_pass</span><span class="p">(</span><span class="n">opt_level</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;DeseAddFuse&quot;</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">FuseDenseAddPass</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;The wrapper for the LowerTensorIR pass.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">transform_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mod</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">DenseAddFusor</span><span class="p">(</span><span class="n">mod</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">()</span>
+
+
+<span class="n">MLPFused</span> <span class="o">=</span> <span class="n">FuseDenseAddPass</span><span class="p">()(</span><span class="n">MLPModel</span><span class="p">)</span>
+<span class="n">MLPFused</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight" style="background: "><pre style="line-height: 125%;"><span></span><span style="color: #AA22FF">@tvm</span><span style="color: #AA22FF; font-weight: bold">.</span>script<span style="color: #AA22FF; font-weight: bold">.</span>ir_module
+<span style="color: #008000; font-weight: bold">class</span> <span style="color: #1E90FF; font-weight: bold">Module</span>:
+    <span style="color: #AA22FF">@R</span><span style="color: #AA22FF; font-weight: bold">.</span>function
+    <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">fused_dense_add0</span>(x: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">784</span>), <span style="color: #BA2121">&quot;float32&quot;</span>), w: Tensor((<span style="color: #008000">128</span>, <span style="color: #008000">784</span>), <span style="color: #BA2121">&quot;float32&quot;</span>), b: Tensor((<span style="color: #008000">128</span>,), <span style="color: #BA2121">&quot;float32&quot;</span>)) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> Tensor(<span style="color: #008000; font-weight: bold">None</span>, <span style="color: #BA2121">&quot;float32&quot;</span>, ndim <span style="color: #AA22FF; font-weight: bold">=</span> <span style="color: #008000">2</span>):
+        <span style="color: #007979; font-style: italic"># block 0</span>
+        <span style="color: #008000; font-weight: bold">with</span> R<span style="color: #AA22FF; font-weight: bold">.</span>dataflow():
+            lv: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">128</span>), <span style="color: #BA2121">&quot;float32&quot;</span>) <span style="color: #AA22FF; font-weight: bold">=</span> relax<span style="color: #AA22FF; font-weight: bold">.</span>nn<span style="color: #AA22FF; font-weight: bold">.</span>dense(x, w)
+            gv: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">128</span>), <span style="color: #BA2121">&quot;float32&quot;</span>) <span style="color: #AA22FF; font-weight: bold">=</span> relax<span style="color: #AA22FF; font-weight: bold">.</span>add(lv, b)
+            R<span style="color: #AA22FF; font-weight: bold">.</span>output(gv)
+        <span style="color: #008000; font-weight: bold">return</span> gv
+
+    <span style="color: #AA22FF">@R</span><span style="color: #AA22FF; font-weight: bold">.</span>function
+    <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">fused_dense_add1</span>(x1: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">128</span>), <span style="color: #BA2121">&quot;float32&quot;</span>), w1: Tensor((<span style="color: #008000">10</span>, <span style="color: #008000">128</span>), <span style="color: #BA2121">&quot;float32&quot;</span>), b1: Tensor((<span style="color: #008000">10</span>,), <span style="color: #BA2121">&quot;float32&quot;</span>)) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> Tensor(<span style="color: #008000; font-weight: bold">None</span>, <span style="color: #BA2121">&quot;float32&quot;</span>, ndim <span style="color: #AA22FF; font-weight: bold">=</span> <span style="color: #008000">2</span>):
+        <span style="color: #007979; font-style: italic"># block 0</span>
+        <span style="color: #008000; font-weight: bold">with</span> R<span style="color: #AA22FF; font-weight: bold">.</span>dataflow():
+            lv1: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">10</span>), <span style="color: #BA2121">&quot;float32&quot;</span>) <span style="color: #AA22FF; font-weight: bold">=</span> relax<span style="color: #AA22FF; font-weight: bold">.</span>nn<span style="color: #AA22FF; font-weight: bold">.</span>dense(x1, w1)
+            gv1: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">10</span>), <span style="color: #BA2121">&quot;float32&quot;</span>) <span style="color: #AA22FF; font-weight: bold">=</span> relax<span style="color: #AA22FF; font-weight: bold">.</span>add(lv1, b1)
+            R<span style="color: #AA22FF; font-weight: bold">.</span>output(gv1)
+        <span style="color: #008000; font-weight: bold">return</span> gv1
+
+    <span style="color: #AA22FF">@R</span><span style="color: #AA22FF; font-weight: bold">.</span>function
+    <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">main</span>(x2: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">784</span>), <span style="color: #BA2121">&quot;float32&quot;</span>)) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> Tensor(<span style="color: #008000; font-weight: bold">None</span>, <span style="color: #BA2121">&quot;float32&quot;</span>, ndim <span style="color: #AA22FF; font-weight: bold">=</span> <span style="color: #008000">2</span>):
+        <span style="color: #007979; font-style: italic"># block 0</span>
+        <span style="color: #008000; font-weight: bold">with</span> R<span style="color: #AA22FF; font-weight: bold">.</span>dataflow():
+            lv11: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">128</span>), <span style="color: #BA2121">&quot;float32&quot;</span>) <span style="color: #AA22FF; font-weight: bold">=</span> fused_dense_add0(x2, meta[relay<span style="color: #AA22FF; font-weight: bold">.</span>Constant][<span style="color: #008000">0</span>], meta[relay<span style="color: #AA22FF; font-weight: bold">.</span>Constant][<span style="color: #008000">1</span>])
+            lv2: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">128</span>), <span style="color: #BA2121">&quot;float32&quot;</span>) <span style="color: #AA22FF; font-weight: bold">=</span> relax<span style="color: #AA22FF; font-weight: bold">.</span>nn<span style="color: #AA22FF; font-weight: bold">.</span>relu(lv11)
+            lv4: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">10</span>), <span style="color: #BA2121">&quot;float32&quot;</span>) <span style="color: #AA22FF; font-weight: bold">=</span> fused_dense_add1(lv2, meta[relay<span style="color: #AA22FF; font-weight: bold">.</span>Constant][<span style="color: #008000">2</span>], meta[relay<span style="color: #AA22FF; font-weight: bold">.</span>Constant][<span style="color: #008000">3</span>])
+            gv2: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">10</span>), <span style="color: #BA2121">&quot;float32&quot;</span>) <span style="color: #AA22FF; font-weight: bold">=</span> lv4
+            R<span style="color: #AA22FF; font-weight: bold">.</span>output(gv2)
+        <span style="color: #008000; font-weight: bold">return</span> gv2
+
+</pre></div><div class="section" id="why-creating-a-sub-function">
+<h3><span class="section-number">7.4.1. </span>Why Creating a Sub-function<a class="headerlink" href="#why-creating-a-sub-function" title="Permalink to this heading">¶</a></h3>
+<p>In the above example, we created two sub-functions with the prefix
+<code class="docutils literal notranslate"><span class="pre">fuse_dense_add</span></code>. These sub-function bodies contain information about
+the operations performed by the fused operator. An alternative to this
+rewriting is simply creating a separate primitive operation for the
+fused operator (like <code class="docutils literal notranslate"><span class="pre">ewise_fma</span></code>). However, as we are looking into
+fusing more operators, there can be an exponential amount of possible
+combinations. A sub-function that groups the fused operation together
+provides the same amount of information for follow-up code lowering
+without introducing a dedicated high-level operator for each fusion
+pattern.</p>
+</div>
+</div>
+<div class="section" id="map-to-tensorir-calls">
+<h2><span class="section-number">7.5. </span>Map to TensorIR Calls<a class="headerlink" href="#map-to-tensorir-calls" title="Permalink to this heading">¶</a></h2>
+<p>The fused IRModule only contains calls into high-level operations. To
+further low-level optimization and code generation, we need to translate
+those high-level primitive operators into corresponding TensorIR
+functions (or environment library functions).</p>
+<p>The following code remaps high-level operations to the corresponding
+TensorIR functions. Here we leverage the internal block builder in each
+Mutator and return the transformed value using <code class="docutils literal notranslate"><span class="pre">call_te</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@relax</span><span class="o">.</span><span class="n">expr_functor</span><span class="o">.</span><span class="n">mutator</span>
+<span class="k">class</span> <span class="nc">LowerToTensorIR</span><span class="p">(</span><span class="n">relax</span><span class="o">.</span><span class="n">PyExprMutator</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mod</span><span class="p">:</span> <span class="n">IRModule</span><span class="p">,</span> <span class="n">op_map</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mod_</span> <span class="o">=</span> <span class="n">mod</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">op_map</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">tvm</span><span class="o">.</span><span class="n">ir</span><span class="o">.</span><span class="n">Op</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">op_map</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+
+
+    <span class="k">def</span> <span class="nf">visit_call_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call</span><span class="p">):</span>
+        <span class="n">call</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit_expr_post_order</span><span class="p">(</span><span class="n">call</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">call</span><span class="o">.</span><span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">op_map</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">op_map</span><span class="p">[</span><span class="n">call</span><span class="o">.</span><span class="n">op</span><span class="p">](</span><span class="bp">self</span><span class="o">.</span><span class="n">builder_</span><span class="p">,</span> <span class="n">call</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">call</span>
+
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IRModule</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">global_var</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mod_</span><span class="o">.</span><span class="n">functions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">relax</span><span class="o">.</span><span class="n">Function</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">updated_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visit_expr</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">builder_</span><span class="o">.</span><span class="n">update_func</span><span class="p">(</span><span class="n">global_var</span><span class="p">,</span> <span class="n">updated_func</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">builder_</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">map_dense</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">call</span><span class="p">):</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">call</span><span class="o">.</span><span class="n">args</span>
+    <span class="k">return</span> <span class="n">bb</span><span class="o">.</span><span class="n">call_te</span><span class="p">(</span><span class="n">topi</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">dense</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">map_add</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">call</span><span class="p">):</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">call</span><span class="o">.</span><span class="n">args</span>
+    <span class="k">return</span> <span class="n">bb</span><span class="o">.</span><span class="n">call_te</span><span class="p">(</span><span class="n">topi</span><span class="o">.</span><span class="n">add</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">map_relu</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">call</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">bb</span><span class="o">.</span><span class="n">call_te</span><span class="p">(</span><span class="n">topi</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">relu</span><span class="p">,</span> <span class="n">call</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+
+<span class="n">op_map</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s2">&quot;relax.nn.dense&quot;</span><span class="p">:</span> <span class="n">map_dense</span><span class="p">,</span>
+  <span class="s2">&quot;relax.add&quot;</span><span class="p">:</span> <span class="n">map_add</span><span class="p">,</span>
+  <span class="s2">&quot;relax.nn.relu&quot;</span><span class="p">:</span> <span class="n">map_relu</span>
+<span class="p">}</span>
+
+<span class="nd">@tvm</span><span class="o">.</span><span class="n">ir</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">module_pass</span><span class="p">(</span><span class="n">opt_level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;LowerToTensorIR&quot;</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">LowerToTensorIRPass</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;The wrapper for the LowerTensorIR pass.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">transform_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mod</span><span class="p">,</span> <span class="n">ctx</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">LowerToTensorIR</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">op_map</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">()</span>
+
+
+<span class="n">MLPModelTIR</span> <span class="o">=</span> <span class="n">LowerToTensorIRPass</span><span class="p">()(</span><span class="n">MLPFused</span><span class="p">)</span>
+<span class="n">MLPModelTIR</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight" style="background: "><pre style="line-height: 125%;"><span></span><span style="color: #AA22FF">@tvm</span><span style="color: #AA22FF; font-weight: bold">.</span>script<span style="color: #AA22FF; font-weight: bold">.</span>ir_module
+<span style="color: #008000; font-weight: bold">class</span> <span style="color: #1E90FF; font-weight: bold">Module</span>:
+    <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func
+    <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">add</span>(rxplaceholder: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>)), <span style="color: #BA2121">&quot;float32&quot;</span>], rxplaceholder_1: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>), <span style="color: #BA2121">&quot;float32&quot;</span>], T_add: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>)), <span style="color: #BA2121">&quot;float32&quot;</span>]) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> <span style="color: #008000; font-weight: bold">None</span>:
+        <span style="color: #007979; font-style: italic"># function attr dict</span>
+        T<span style="color: #AA22FF; font-weight: bold">.</span>func_attr({<span style="color: #BA2121">&quot;global_symbol&quot;</span>: <span style="color: #BA2121">&quot;add&quot;</span>, <span style="color: #BA2121">&quot;tir.noalias&quot;</span>: <span style="color: #008000; font-weight: bold">True</span>})
+        <span style="color: #007979; font-style: italic"># body</span>
+        <span style="color: #007979; font-style: italic"># with T.block(&quot;root&quot;)</span>
+        <span style="color: #008000; font-weight: bold">for</span> i0, i1 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>grid(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>)):
+            <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;T_add&quot;</span>):
+                ax0 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(<span style="color: #008000">1</span>, i0)
+                ax1 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>), i1)
+                T<span style="color: #AA22FF; font-weight: bold">.</span>reads(rxplaceholder[ax0, ax1], rxplaceholder_1[ax1])
+                T<span style="color: #AA22FF; font-weight: bold">.</span>writes(T_add[ax0, ax1])
+                T_add[ax0, ax1] <span style="color: #AA22FF; font-weight: bold">=</span> rxplaceholder[ax0, ax1] <span style="color: #AA22FF; font-weight: bold">+</span> rxplaceholder_1[ax1]
+
+    <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func
+    <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">dense</span>(rxplaceholder: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(<span style="color: #008000">1</span>, <span style="color: #008000">784</span>), <span style="color: #BA2121">&quot;float32&quot;</span>], rxplaceholder_1: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>), T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">784</span>)), <span style="color: #BA2121">&quot;float32&quot;</span>], T_matmul_NT: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>)), <span style="color: #BA2121">&quot;float32&quot;</span>]) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> <span style="color: #008000; font-weight: bold">None</span>:
+        <span style="color: #007979; font-style: italic"># function attr dict</span>
+        T<span style="color: #AA22FF; font-weight: bold">.</span>func_attr({<span style="color: #BA2121">&quot;global_symbol&quot;</span>: <span style="color: #BA2121">&quot;dense&quot;</span>, <span style="color: #BA2121">&quot;tir.noalias&quot;</span>: <span style="color: #008000; font-weight: bold">True</span>, <span style="color: #BA2121">&quot;layout_free_buffers&quot;</span>: [<span style="color: #008000">1</span>]})
+        <span style="color: #007979; font-style: italic"># body</span>
+        <span style="color: #007979; font-style: italic"># with T.block(&quot;root&quot;)</span>
+        <span style="color: #008000; font-weight: bold">for</span> i0, i1, i2 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>grid(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>), <span style="color: #008000">784</span>):
+            <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;T_matmul_NT&quot;</span>):
+                i <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(<span style="color: #008000">1</span>, i0)
+                j <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>), i1)
+                k <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>reduce(<span style="color: #008000">784</span>, i2)
+                T<span style="color: #AA22FF; font-weight: bold">.</span>reads(rxplaceholder[i, k], rxplaceholder_1[j, k])
+                T<span style="color: #AA22FF; font-weight: bold">.</span>writes(T_matmul_NT[i, j])
+                <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>init():
+                    T_matmul_NT[i, j] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>)
+                T_matmul_NT[i, j] <span style="color: #AA22FF; font-weight: bold">=</span> T_matmul_NT[i, j] <span style="color: #AA22FF; font-weight: bold">+</span> rxplaceholder[i, k] <span style="color: #AA22FF; font-weight: bold">*</span> rxplaceholder_1[j, k]
+
+    <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func
+    <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">add1</span>(rxplaceholder: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">10</span>)), <span style="color: #BA2121">&quot;float32&quot;</span>], rxplaceholder_1: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">10</span>), <span style="color: #BA2121">&quot;float32&quot;</span>], T_add: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">10</span>)), <span style="color: #BA2121">&quot;float32&quot;</span>]) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> <span style="color: #008000; font-weight: bold">None</span>:
+        <span style="color: #007979; font-style: italic"># function attr dict</span>
+        T<span style="color: #AA22FF; font-weight: bold">.</span>func_attr({<span style="color: #BA2121">&quot;global_symbol&quot;</span>: <span style="color: #BA2121">&quot;add1&quot;</span>, <span style="color: #BA2121">&quot;tir.noalias&quot;</span>: <span style="color: #008000; font-weight: bold">True</span>})
+        <span style="color: #007979; font-style: italic"># body</span>
+        <span style="color: #007979; font-style: italic"># with T.block(&quot;root&quot;)</span>
+        <span style="color: #008000; font-weight: bold">for</span> i0, i1 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>grid(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">10</span>)):
+            <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;T_add&quot;</span>):
+                ax0 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(<span style="color: #008000">1</span>, i0)
+                ax1 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">10</span>), i1)
+                T<span style="color: #AA22FF; font-weight: bold">.</span>reads(rxplaceholder[ax0, ax1], rxplaceholder_1[ax1])
+                T<span style="color: #AA22FF; font-weight: bold">.</span>writes(T_add[ax0, ax1])
+                T_add[ax0, ax1] <span style="color: #AA22FF; font-weight: bold">=</span> rxplaceholder[ax0, ax1] <span style="color: #AA22FF; font-weight: bold">+</span> rxplaceholder_1[ax1]
+
+    <span style="color: #AA22FF">@R</span><span style="color: #AA22FF; font-weight: bold">.</span>function
+    <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">fused_dense_add0</span>(x: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">784</span>), <span style="color: #BA2121">&quot;float32&quot;</span>), w: Tensor((<span style="color: #008000">128</span>, <span style="color: #008000">784</span>), <span style="color: #BA2121">&quot;float32&quot;</span>), b: Tensor((<span style="color: #008000">128</span>,), <span style="color: #BA2121">&quot;float32&quot;</span>)) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> Tensor(<span style="color: #008000; font-weight: bold">None</span>, <span style="color: #BA2121">&quot;float32&quot;</span>, ndim <span style="color: #AA22FF; font-weight: bold">=</span> <span style="color: #008000">2</span>):
+        <span style="color: #007979; font-style: italic"># block 0</span>
+        <span style="color: #008000; font-weight: bold">with</span> R<span style="color: #AA22FF; font-weight: bold">.</span>dataflow():
+            lv <span style="color: #AA22FF; font-weight: bold">=</span> R<span style="color: #AA22FF; font-weight: bold">.</span>call_tir(dense, (x, w), (<span style="color: #008000">1</span>, <span style="color: #008000">128</span>), dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>)
+            gv <span style="color: #AA22FF; font-weight: bold">=</span> R<span style="color: #AA22FF; font-weight: bold">.</span>call_tir(add, (lv, b), (<span style="color: #008000">1</span>, <span style="color: #008000">128</span>), dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>)
+            R<span style="color: #AA22FF; font-weight: bold">.</span>output(gv)
+        <span style="color: #008000; font-weight: bold">return</span> gv
+
+    <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func
+    <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">relu</span>(rxplaceholder: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>)), <span style="color: #BA2121">&quot;float32&quot;</span>], compute: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>)), <span style="color: #BA2121">&quot;float32&quot;</span>]) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> <span style="color: #008000; font-weight: bold">None</span>:
+        <span style="color: #007979; font-style: italic"># function attr dict</span>
+        T<span style="color: #AA22FF; font-weight: bold">.</span>func_attr({<span style="color: #BA2121">&quot;global_symbol&quot;</span>: <span style="color: #BA2121">&quot;relu&quot;</span>, <span style="color: #BA2121">&quot;tir.noalias&quot;</span>: <span style="color: #008000; font-weight: bold">True</span>})
+        <span style="color: #007979; font-style: italic"># body</span>
+        <span style="color: #007979; font-style: italic"># with T.block(&quot;root&quot;)</span>
+        <span style="color: #008000; font-weight: bold">for</span> i0, i1 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>grid(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>)):
+            <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;compute&quot;</span>):
+                i0_1 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(<span style="color: #008000">1</span>, i0)
+                i1_1 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>), i1)
+                T<span style="color: #AA22FF; font-weight: bold">.</span>reads(rxplaceholder[i0_1, i1_1])
+                T<span style="color: #AA22FF; font-weight: bold">.</span>writes(compute[i0_1, i1_1])
+                compute[i0_1, i1_1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>max(rxplaceholder[i0_1, i1_1], T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>))
+
+    <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func
+    <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">dense1</span>(rxplaceholder: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>)), <span style="color: #BA2121">&quot;float32&quot;</span>], rxplaceholder_1: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">10</span>), T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>)), <span style="color: #BA2121">&quot;float32&quot;</span>], T_matmul_NT: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">10</span>)), <span style="color: #BA2121">&quot;float32&quot;</span>]) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> <span style="color: #008000; font-weight: bold">None</span>:
+        <span style="color: #007979; font-style: italic"># function attr dict</span>
+        T<span style="color: #AA22FF; font-weight: bold">.</span>func_attr({<span style="color: #BA2121">&quot;global_symbol&quot;</span>: <span style="color: #BA2121">&quot;dense1&quot;</span>, <span style="color: #BA2121">&quot;tir.noalias&quot;</span>: <span style="color: #008000; font-weight: bold">True</span>, <span style="color: #BA2121">&quot;layout_free_buffers&quot;</span>: [<span style="color: #008000">1</span>]})
+        <span style="color: #007979; font-style: italic"># body</span>
+        <span style="color: #007979; font-style: italic"># with T.block(&quot;root&quot;)</span>
+        <span style="color: #008000; font-weight: bold">for</span> i0, i1, i2 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>grid(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">10</span>), T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>)):
+            <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;T_matmul_NT&quot;</span>):
+                i <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(<span style="color: #008000">1</span>, i0)
+                j <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">10</span>), i1)
+                k <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>reduce(T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>), i2)
+                T<span style="color: #AA22FF; font-weight: bold">.</span>reads(rxplaceholder[i, k], rxplaceholder_1[j, k])
+                T<span style="color: #AA22FF; font-weight: bold">.</span>writes(T_matmul_NT[i, j])
+                <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>init():
+                    T_matmul_NT[i, j] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>)
+                T_matmul_NT[i, j] <span style="color: #AA22FF; font-weight: bold">=</span> T_matmul_NT[i, j] <span style="color: #AA22FF; font-weight: bold">+</span> rxplaceholder[i, k] <span style="color: #AA22FF; font-weight: bold">*</span> rxplaceholder_1[j, k]
+
+    <span style="color: #AA22FF">@R</span><span style="color: #AA22FF; font-weight: bold">.</span>function
+    <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">main</span>(x1: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">784</span>), <span style="color: #BA2121">&quot;float32&quot;</span>)) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> Tensor(<span style="color: #008000; font-weight: bold">None</span>, <span style="color: #BA2121">&quot;float32&quot;</span>, ndim <span style="color: #AA22FF; font-weight: bold">=</span> <span style="color: #008000">2</span>):
+        <span style="color: #007979; font-style: italic"># block 0</span>
+        <span style="color: #008000; font-weight: bold">with</span> R<span style="color: #AA22FF; font-weight: bold">.</span>dataflow():
+            lv1: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">128</span>), <span style="color: #BA2121">&quot;float32&quot;</span>) <span style="color: #AA22FF; font-weight: bold">=</span> fused_dense_add0(x1, meta[relay<span style="color: #AA22FF; font-weight: bold">.</span>Constant][<span style="color: #008000">0</span>], meta[relay<span style="color: #AA22FF; font-weight: bold">.</span>Constant][<span style="color: #008000">1</span>])
+            lv2 <span style="color: #AA22FF; font-weight: bold">=</span> R<span style="color: #AA22FF; font-weight: bold">.</span>call_tir(relu, (lv1,), (<span style="color: #008000">1</span>, <span style="color: #008000">128</span>), dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>)
+            lv4: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">10</span>), <span style="color: #BA2121">&quot;float32&quot;</span>) <span style="color: #AA22FF; font-weight: bold">=</span> fused_dense_add1(lv2, meta[relay<span style="color: #AA22FF; font-weight: bold">.</span>Constant][<span style="color: #008000">2</span>], meta[relay<span style="color: #AA22FF; font-weight: bold">.</span>Constant][<span style="color: #008000">3</span>])
+            gv1: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">10</span>), <span style="color: #BA2121">&quot;float32&quot;</span>) <span style="color: #AA22FF; font-weight: bold">=</span> lv4
+            R<span style="color: #AA22FF; font-weight: bold">.</span>output(gv1)
+        <span style="color: #008000; font-weight: bold">return</span> gv1
+
+    <span style="color: #AA22FF">@R</span><span style="color: #AA22FF; font-weight: bold">.</span>function
+    <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">fused_dense_add1</span>(x2: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">128</span>), <span style="color: #BA2121">&quot;float32&quot;</span>), w1: Tensor((<span style="color: #008000">10</span>, <span style="color: #008000">128</span>), <span style="color: #BA2121">&quot;float32&quot;</span>), b1: Tensor((<span style="color: #008000">10</span>,), <span style="color: #BA2121">&quot;float32&quot;</span>)) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> Tensor(<span style="color: #008000; font-weight: bold">None</span>, <span style="color: #BA2121">&quot;float32&quot;</span>, ndim <span style="color: #AA22FF; font-weight: bold">=</span> <span style="color: #008000">2</span>):
+        <span style="color: #007979; font-style: italic"># block 0</span>
+        <span style="color: #008000; font-weight: bold">with</span> R<span style="color: #AA22FF; font-weight: bold">.</span>dataflow():
+            lv3 <span style="color: #AA22FF; font-weight: bold">=</span> R<span style="color: #AA22FF; font-weight: bold">.</span>call_tir(dense1, (x2, w1), (<span style="color: #008000">1</span>, <span style="color: #008000">10</span>), dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>)
+            gv2 <span style="color: #AA22FF; font-weight: bold">=</span> R<span style="color: #AA22FF; font-weight: bold">.</span>call_tir(add1, (lv3, b1), (<span style="color: #008000">1</span>, <span style="color: #008000">10</span>), dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>)
+            R<span style="color: #AA22FF; font-weight: bold">.</span>output(gv2)
+        <span style="color: #008000; font-weight: bold">return</span> gv2
+
+</pre></div><p>Note that in the above code. <code class="docutils literal notranslate"><span class="pre">fused_dense_add0</span></code> and
+<code class="docutils literal notranslate"><span class="pre">fused_dense_add1</span></code> still are high-level relax functions that calls
+into the corresponding TensorIR dense and add functions. We can turn
+them into a single TensorIR function, which then can be used for
+follow-up optimization and code generation phases.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MLPModelFinal</span> <span class="o">=</span> <span class="n">relax</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">FuseTIR</span><span class="p">()(</span><span class="n">MLPModelTIR</span><span class="p">)</span>
+<span class="n">MLPModelFinal</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight" style="background: "><pre style="line-height: 125%;"><span></span><span style="color: #AA22FF">@tvm</span><span style="color: #AA22FF; font-weight: bold">.</span>script<span style="color: #AA22FF; font-weight: bold">.</span>ir_module
+<span style="color: #008000; font-weight: bold">class</span> <span style="color: #1E90FF; font-weight: bold">Module</span>:
+    <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func
+    <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">fused_dense_add0</span>(x: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(<span style="color: #008000">1</span>, <span style="color: #008000">784</span>), <span style="color: #BA2121">&quot;float32&quot;</span>], w: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>), T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">784</span>)), <span style="color: #BA2121">&quot;float32&quot;</span>], b: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>), <span style="color: #BA2121">&quot;float32&quot;</span>], T_add: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>)), <span style="color: #BA2121">&quot;float32&quot;</span>]) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> <span style="color: #008000; font-weight: bold">None</span>:
+        <span style="color: #007979; font-style: italic"># function attr dict</span>
+        T<span style="color: #AA22FF; font-weight: bold">.</span>func_attr({<span style="color: #BA2121">&quot;tir.noalias&quot;</span>: <span style="color: #008000; font-weight: bold">True</span>, <span style="color: #BA2121">&quot;global_symbol&quot;</span>: <span style="color: #BA2121">&quot;fused_dense_add0&quot;</span>})
+        <span style="color: #007979; font-style: italic"># body</span>
+        <span style="color: #007979; font-style: italic"># with T.block(&quot;root&quot;)</span>
+        T_matmul_NT <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>alloc_buffer([<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>)], dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>)
+        <span style="color: #008000; font-weight: bold">for</span> i0, i1, i2 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>grid(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>), <span style="color: #008000">784</span>):
+            <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;T_matmul_NT&quot;</span>):
+                i <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(<span style="color: #008000">1</span>, i0)
+                j <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>), i1)
+                k <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>reduce(<span style="color: #008000">784</span>, i2)
+                T<span style="color: #AA22FF; font-weight: bold">.</span>reads(x[i, k], w[j, k])
+                T<span style="color: #AA22FF; font-weight: bold">.</span>writes(T_matmul_NT[i, j])
+                <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>init():
+                    T_matmul_NT[i, j] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>)
+                T_matmul_NT[i, j] <span style="color: #AA22FF; font-weight: bold">=</span> T_matmul_NT[i, j] <span style="color: #AA22FF; font-weight: bold">+</span> x[i, k] <span style="color: #AA22FF; font-weight: bold">*</span> w[j, k]
+        <span style="color: #008000; font-weight: bold">for</span> i0, i1 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>grid(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>)):
+            <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;T_add&quot;</span>):
+                ax0 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(<span style="color: #008000">1</span>, i0)
+                ax1 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>), i1)
+                T<span style="color: #AA22FF; font-weight: bold">.</span>reads(T_matmul_NT[ax0, ax1], b[ax1])
+                T<span style="color: #AA22FF; font-weight: bold">.</span>writes(T_add[ax0, ax1])
+                T_add[ax0, ax1] <span style="color: #AA22FF; font-weight: bold">=</span> T_matmul_NT[ax0, ax1] <span style="color: #AA22FF; font-weight: bold">+</span> b[ax1]
+
+    <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func
+    <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">relu</span>(rxplaceholder: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>)), <span style="color: #BA2121">&quot;float32&quot;</span>], compute: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>)), <span style="color: #BA2121">&quot;float32&quot;</span>]) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> <span style="color: #008000; font-weight: bold">None</span>:
+        <span style="color: #007979; font-style: italic"># function attr dict</span>
+        T<span style="color: #AA22FF; font-weight: bold">.</span>func_attr({<span style="color: #BA2121">&quot;global_symbol&quot;</span>: <span style="color: #BA2121">&quot;relu&quot;</span>, <span style="color: #BA2121">&quot;tir.noalias&quot;</span>: <span style="color: #008000; font-weight: bold">True</span>})
+        <span style="color: #007979; font-style: italic"># body</span>
+        <span style="color: #007979; font-style: italic"># with T.block(&quot;root&quot;)</span>
+        <span style="color: #008000; font-weight: bold">for</span> i0, i1 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>grid(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>)):
+            <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;compute&quot;</span>):
+                i0_1 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(<span style="color: #008000">1</span>, i0)
+                i1_1 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>), i1)
+                T<span style="color: #AA22FF; font-weight: bold">.</span>reads(rxplaceholder[i0_1, i1_1])
+                T<span style="color: #AA22FF; font-weight: bold">.</span>writes(compute[i0_1, i1_1])
+                compute[i0_1, i1_1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>max(rxplaceholder[i0_1, i1_1], T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>))
+
+    <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func
+    <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">fused_dense_add1</span>(x: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>)), <span style="color: #BA2121">&quot;float32&quot;</span>], w: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">10</span>), T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>)), <span style="color: #BA2121">&quot;float32&quot;</span>], b: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">10</span>), <span style="color: #BA2121">&quot;float32&quot;</span>], T_add: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">10</span>)), <span style="color: #BA2121">&quot;float32&quot;</span>]) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> <span style="color: #008000; font-weight: bold">None</span>:
+        <span style="color: #007979; font-style: italic"># function attr dict</span>
+        T<span style="color: #AA22FF; font-weight: bold">.</span>func_attr({<span style="color: #BA2121">&quot;tir.noalias&quot;</span>: <span style="color: #008000; font-weight: bold">True</span>, <span style="color: #BA2121">&quot;global_symbol&quot;</span>: <span style="color: #BA2121">&quot;fused_dense_add1&quot;</span>})
+        <span style="color: #007979; font-style: italic"># body</span>
+        <span style="color: #007979; font-style: italic"># with T.block(&quot;root&quot;)</span>
+        T_matmul_NT <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>alloc_buffer([<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">10</span>)], dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>)
+        <span style="color: #008000; font-weight: bold">for</span> i0, i1, i2 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>grid(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">10</span>), T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>)):
+            <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;T_matmul_NT&quot;</span>):
+                i <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(<span style="color: #008000">1</span>, i0)
+                j <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">10</span>), i1)
+                k <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>reduce(T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>), i2)
+                T<span style="color: #AA22FF; font-weight: bold">.</span>reads(x[i, k], w[j, k])
+                T<span style="color: #AA22FF; font-weight: bold">.</span>writes(T_matmul_NT[i, j])
+                <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>init():
+                    T_matmul_NT[i, j] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>)
+                T_matmul_NT[i, j] <span style="color: #AA22FF; font-weight: bold">=</span> T_matmul_NT[i, j] <span style="color: #AA22FF; font-weight: bold">+</span> x[i, k] <span style="color: #AA22FF; font-weight: bold">*</span> w[j, k]
+        <span style="color: #008000; font-weight: bold">for</span> i0, i1 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>grid(<span style="color: #008000">1</span>, T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">10</span>)):
+            <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;T_add&quot;</span>):
+                ax0 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(<span style="color: #008000">1</span>, i0)
+                ax1 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">10</span>), i1)
+                T<span style="color: #AA22FF; font-weight: bold">.</span>reads(T_matmul_NT[ax0, ax1], b[ax1])
+                T<span style="color: #AA22FF; font-weight: bold">.</span>writes(T_add[ax0, ax1])
+                T_add[ax0, ax1] <span style="color: #AA22FF; font-weight: bold">=</span> T_matmul_NT[ax0, ax1] <span style="color: #AA22FF; font-weight: bold">+</span> b[ax1]
+
+    <span style="color: #AA22FF">@R</span><span style="color: #AA22FF; font-weight: bold">.</span>function
+    <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">main</span>(x: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">784</span>), <span style="color: #BA2121">&quot;float32&quot;</span>)) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> Tensor(<span style="color: #008000; font-weight: bold">None</span>, <span style="color: #BA2121">&quot;float32&quot;</span>, ndim <span style="color: #AA22FF; font-weight: bold">=</span> <span style="color: #008000">2</span>):
+        <span style="color: #007979; font-style: italic"># block 0</span>
+        <span style="color: #008000; font-weight: bold">with</span> R<span style="color: #AA22FF; font-weight: bold">.</span>dataflow():
+            lv1 <span style="color: #AA22FF; font-weight: bold">=</span> R<span style="color: #AA22FF; font-weight: bold">.</span>call_tir(fused_dense_add0, (x, meta[relay<span style="color: #AA22FF; font-weight: bold">.</span>Constant][<span style="color: #008000">0</span>], meta[relay<span style="color: #AA22FF; font-weight: bold">.</span>Constant][<span style="color: #008000">1</span>]), (<span style="color: #008000">1</span>, <span style="color: #008000">128</span>), dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>)
+            lv2 <span style="color: #AA22FF; font-weight: bold">=</span> R<span style="color: #AA22FF; font-weight: bold">.</span>call_tir(relu, (lv1,), (<span style="color: #008000">1</span>, <span style="color: #008000">128</span>), dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>)
+            lv4 <span style="color: #AA22FF; font-weight: bold">=</span> R<span style="color: #AA22FF; font-weight: bold">.</span>call_tir(fused_dense_add1, (lv2, meta[relay<span style="color: #AA22FF; font-weight: bold">.</span>Constant][<span style="color: #008000">2</span>], meta[relay<span style="color: #AA22FF; font-weight: bold">.</span>Constant][<span style="color: #008000">3</span>]), (<span style="color: #008000">1</span>, <span style="color: #008000">10</span>), dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>)
+            gv: Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">10</span>), <span style="color: #BA2121">&quot;float32&quot;</span>) <span style="color: #AA22FF; font-weight: bold">=</span> lv4
+            R<span style="color: #AA22FF; font-weight: bold">.</span>output(gv)
+        <span style="color: #008000; font-weight: bold">return</span> gv
+
+</pre></div></div>
+<div class="section" id="build-and-run">
+<h2><span class="section-number">7.6. </span>Build and Run<a class="headerlink" href="#build-and-run" title="Permalink to this heading">¶</a></h2>
+<p>We can go ahead and build the final module and try it out on an example
+picture.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Hide outputs</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torchvision</span>
+
+<span class="n">test_data</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">FashionMNIST</span><span class="p">(</span>
+    <span class="n">root</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span>
+    <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">transform</span><span class="o">=</span><span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">()</span>
+<span class="p">)</span>
+<span class="n">test_loader</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">test_data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">class_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;T-shirt/top&#39;</span><span class="p">,</span> <span class="s1">&#39;Trouser&#39;</span><span class="p">,</span> <span class="s1">&#39;Pullover&#39;</span><span class="p">,</span> <span class="s1">&#39;Dress&#39;</span><span class="p">,</span> <span class="s1">&#39;Coat&#39;</span><span class="p">,</span>
+               <span class="s1">&#39;Sandal&#39;</span><span class="p">,</span> <span class="s1">&#39;Shirt&#39;</span><span class="p">,</span> <span class="s1">&#39;Sneaker&#39;</span><span class="p">,</span> <span class="s1">&#39;Bag&#39;</span><span class="p">,</span> <span class="s1">&#39;Ankle boot&#39;</span><span class="p">]</span>
+
+<span class="n">img</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">test_loader</span><span class="p">))</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">28</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Class:&quot;</span><span class="p">,</span> <span class="n">class_names</span><span class="p">[</span><span class="n">label</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+</pre></div>
+</div>
+<div class="figure align-default">
+<img alt="../_images/output_index_e26dde_40_0.png" src="../_images/output_index_e26dde_40_0.png" />
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Class</span><span class="p">:</span> <span class="n">Bag</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ex</span> <span class="o">=</span> <span class="n">relax</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">MLPModelFinal</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;llvm&quot;</span><span class="p">)</span>
+<span class="n">vm</span> <span class="o">=</span> <span class="n">relax</span><span class="o">.</span><span class="n">VirtualMachine</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="n">tvm</span><span class="o">.</span><span class="n">cpu</span><span class="p">())</span>
+<span class="n">data_nd</span> <span class="o">=</span> <span class="n">tvm</span><span class="o">.</span><span class="n">nd</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">784</span><span class="p">))</span>
+
+<span class="n">nd_res</span> <span class="o">=</span> <span class="n">vm</span><span class="p">[</span><span class="s2">&quot;main&quot;</span><span class="p">](</span><span class="n">data_nd</span><span class="p">)</span>
+
+<span class="n">pred_kind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">nd_res</span><span class="o">.</span><span class="n">numpy</span><span class="p">(),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MLPModule Prediction:&quot;</span><span class="p">,</span> <span class="n">class_names</span><span class="p">[</span><span class="n">pred_kind</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+</pre></div>
+</div>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MLPModule</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Bag</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="discussion">
+<h2><span class="section-number">7.7. </span>Discussion<a class="headerlink" href="#discussion" title="Permalink to this heading">¶</a></h2>
+<p>This section comes back to our common theme of <strong>transformation</strong> among
+computational graphs. Despite being minimum, this sequence of
+transformations covers two important optimizations we commonly do in MLC
+process – fusion and loop level code lowering.</p>
+<p>Real-world MLC process can contain more powerful and robust
+transformations. For example, our fusion pass can create duplicated
+dense computations in which a dense operator is referenced in two
+follow-ups add operations. A robust fusion pass will detect that and
+choose to skip such cases. Additionally, we do not want to have to write
+down rules for each combination. Instead, TVM’s internal fusor will
+analyze the TensorIR function loop patterns and use them in fusion
+decisions.</p>
+<p>Notably, each of these transformations is composable with each other.
+For example, we can choose to use our version of customized fusor to
+support additional new fusion patterns that we want to explore and then
+feed into an existing fusor to handle the rest of the steps.</p>
+<div class="figure align-default">
+<img alt="../_images/mlc_process.png" src="../_images/mlc_process.png" />
+</div>
+</div>
+<div class="section" id="summary">
+<h2><span class="section-number">7.8. </span>Summary<a class="headerlink" href="#summary" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>We can optimize tensor programs by rewriting computational graph data
+structures.</p></li>
+<li><p>Visitor pattern to rewrite call nodes.</p></li>
+<li><p>We can perform computational graph transformations, such as fusion
+and loop-level program lowering.</p></li>
+</ul>
+</div>
+</div>
+
+
+        </div>
+        <div class="side-doc-outline">
+            <div class="side-doc-outline--content"> 
+<div class="localtoc">
+    <p class="caption">
+      <span class="caption-text">Table Of Contents</span>
+    </p>
+    <ul>
+<li><a class="reference internal" href="#">7. Computational Graph Optimization</a><ul>
+<li><a class="reference internal" href="#prelude">7.1. Prelude</a></li>
+<li><a class="reference internal" href="#preparations">7.2. Preparations</a></li>
+<li><a class="reference internal" href="#pattern-match-and-rewriting">7.3. Pattern Match and Rewriting</a></li>
+<li><a class="reference internal" href="#fuse-linear-and-relu">7.4. Fuse Linear and ReLU</a><ul>
+<li><a class="reference internal" href="#why-creating-a-sub-function">7.4.1. Why Creating a Sub-function</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#map-to-tensorir-calls">7.5. Map to TensorIR Calls</a></li>
+<li><a class="reference internal" href="#build-and-run">7.6. Build and Run</a></li>
+<li><a class="reference internal" href="#discussion">7.7. Discussion</a></li>
+<li><a class="reference internal" href="#summary">7.8. Summary</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+            </div>
+        </div>
+
+      <div class="clearer"></div>
+    </div><div class="pagenation">
+     <a id="button-prev" href="../chapter_gpu_acceleration/part2.html" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored" role="botton" accesskey="P">
+         <i class="pagenation-arrow-L fas fa-arrow-left fa-lg"></i>
+         <div class="pagenation-text">
+            <span class="pagenation-direction">Previous</span>
+            <div>6.2. Part 2</div>
+         </div>
+     </a>
+  </div>
+        
+        </main>
+    </div>
+  </body>
+</html>
