@@ -357,8 +357,10 @@ The following reading process can be different.
 
 
 We can inspect the corresponding low-level code (in CUDA). The generated
-code contains two parts: - A host part that calls into the GPU driver -
-A cuda kernel that runs the corresponding computation.
+code contains two parts:
+
+-  A host part that calls into the GPU driver
+-  A cuda kernel that runs the corresponding computation.
 
 We can print out the cuda kernel using the following code. We still need
 both the host and kernel code to run the program, so it is only a quick

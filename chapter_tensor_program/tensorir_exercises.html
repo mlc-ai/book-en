@@ -496,9 +496,11 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <div class="section" id="exercise-3-transform-a-batch-matmul-program">
 <h3><span class="section-number">2.5.2.2. </span>Exercise 3: Transform a batch matmul program<a class="headerlink" href="#exercise-3-transform-a-batch-matmul-program" title="Permalink to this heading">¶</a></h3>
 <p>Now, let’s go back to the <code class="docutils literal notranslate"><span class="pre">bmm_relu</span></code> exercise. First, Let’s see the
-definition of <code class="docutils literal notranslate"><span class="pre">bmm</span></code>: -
-<span class="math notranslate nohighlight">\(Y_{n, i, j} = \sum_k A_{n, i, k} \times B_{n, k, j}\)</span> -
-<span class="math notranslate nohighlight">\(C_{n, i, j} = \mathbb{relu}(Y_{n,i,j}) = \mathbb{max}(Y_{n, i, j}, 0)\)</span></p>
+definition of <code class="docutils literal notranslate"><span class="pre">bmm</span></code>:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(Y_{n, i, j} = \sum_k A_{n, i, k} \times B_{n, k, j}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(C_{n, i, j} = \mathbb{relu}(Y_{n,i,j}) = \mathbb{max}(Y_{n, i, j}, 0)\)</span></p></li>
+</ul>
 <p>It’s your time to write the TensorIR for <code class="docutils literal notranslate"><span class="pre">bmm_relu</span></code>. We provide the
 lnumpy func as hint:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">lnumpy_mm_relu_v2</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">B</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">C</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>

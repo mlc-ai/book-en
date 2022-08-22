@@ -26,9 +26,10 @@ Prelude
 To begin today’s lecture, let us recap the key principle of the MLC
 process. Most of the MLC process can be viewed as transformation among
 tensor functions. The main thing we aim to answer in our following up
-are: - What are the possible abstractions to represent the tensor
-function. - What are possible transformations among the tensor
-functions.
+are:
+
+-  What are the possible abstractions to represent the tensor function.
+-  What are possible transformations among the tensor functions.
 
 Today we are going to cover part of that by focusing on primitive tensor
 functions.
@@ -156,9 +157,11 @@ The above example code shows how we can bring an **under the hood**
 implementation of ``mm_relu``. Of course, the code itself will run much
 slower because of the python interpreter. Nevertheless, the example
 numpy code contains all the possible elements we will use in real-world
-implementations of those computations. - Multi-dimensional buffer
-(arrays). - Loops over array dimensions. - Computations statements are
-executed under the loops.
+implementations of those computations.
+
+-  Multi-dimensional buffer (arrays).
+-  Loops over array dimensions.
+-  Computations statements are executed under the loops.
 
 With the low-level NumPy example in mind, now we are ready to introduce
 TensorIR. The code block below shows a TensorIR implementation of
@@ -313,11 +316,14 @@ the following syntax.
 
    [block_axis] = T.axis.[axis_type]([axis_range], [mapped_value])
 
-The three lines contain the following information: - They define where
-should vi, vj, vk be bound to (in this case i, j k). - They declare the
-original range that the vi, vj, vk are supposed to be (the ``128`` in
-``T.axis.spatial(128, i)``) - They declare the properties of the
-iterators (``spatial``, ``reduce``)
+The three lines contain the following information:
+
+-  They define where should vi, vj, vk be bound to (in this case i, j
+   k).
+-  They declare the original range that the vi, vj, vk are supposed to
+   be (the ``128`` in ``T.axis.spatial(128, i)``)
+-  They declare the properties of the iterators (``spatial``,
+   ``reduce``)
 
 Let us walk through those property one by one. First of all, in terms of
 the bounding relation. ``vi = T.axis.spatial(128, i)`` effectively
@@ -553,9 +559,11 @@ Section Checkpoint
 ^^^^^^^^^^^^^^^^^^
 
 So far, we have gone through one example instance of TensorIR program
-and covered most of the elements, including: - Buffer declarations in
-parameters and intermediate temporary memory. - For loop iterations. -
-**Block** and block axes properties.
+and covered most of the elements, including:
+
+-  Buffer declarations in parameters and intermediate temporary memory.
+-  For loop iterations.
+-  **Block** and block axes properties.
 
 In this section, we have gone through one example instance of TensorIR
 that covers the most common elements in MLC.
@@ -606,9 +614,10 @@ ability to get different implementation variants using transformations.
     np.testing.assert_allclose(c_mm_relu, c_np, rtol=1e-5)
 
 The above code block shows a slightly different variation of
-``mm_relu``. To see the relation to the original program - We replace
-the ``j`` loop with two loops, ``j0`` and ``j1``. - The order of
-iterations changes slightly
+``mm_relu``. To see the relation to the original program
+
+-  We replace the ``j`` loop with two loops, ``j0`` and ``j1``.
+-  The order of iterations changes slightly
 
 In order to get ``lnumpy_mm_relu_v2``, we have to rewrite a new function
 (or manual copy-pasting and editing). TensorIR introduces a utility
@@ -1307,8 +1316,8 @@ compare the running performance of different generated functions.
 .. parsed-literal::
     :class: output
 
-    Time cost of MyModule 0.00355115 sec
-    Time cost of transformed sch.mod 0.00133552 sec
+    Time cost of MyModule 0.0061771 sec
+    Time cost of transformed sch.mod 0.00197015 sec
 
 
 It is interesting to see the running time difference between the two
@@ -1627,7 +1636,7 @@ affect the code’s performance.
 .. parsed-literal::
     :class: output
 
-    Time cost of transformed mod_transformed 0.000682791 sec
+    Time cost of transformed mod_transformed 0.000853665 sec
 
 
 

@@ -198,9 +198,11 @@ course.</p>
 <p>To begin today’s lecture, let us recap the key principle of the MLC
 process. Most of the MLC process can be viewed as transformation among
 tensor functions. The main thing we aim to answer in our following up
-are: - What are the possible abstractions to represent the tensor
-function. - What are possible transformations among the tensor
-functions.</p>
+are:</p>
+<ul class="simple">
+<li><p>What are the possible abstractions to represent the tensor function.</p></li>
+<li><p>What are possible transformations among the tensor functions.</p></li>
+</ul>
 <p>Today we are going to cover part of that by focusing on primitive tensor
 functions.</p>
 </div>
@@ -296,9 +298,12 @@ ways in the later part of this tutorial.</p>
 implementation of <code class="docutils literal notranslate"><span class="pre">mm_relu</span></code>. Of course, the code itself will run much
 slower because of the python interpreter. Nevertheless, the example
 numpy code contains all the possible elements we will use in real-world
-implementations of those computations. - Multi-dimensional buffer
-(arrays). - Loops over array dimensions. - Computations statements are
-executed under the loops.</p>
+implementations of those computations.</p>
+<ul class="simple">
+<li><p>Multi-dimensional buffer (arrays).</p></li>
+<li><p>Loops over array dimensions.</p></li>
+<li><p>Computations statements are executed under the loops.</p></li>
+</ul>
 <p>With the low-level NumPy example in mind, now we are ready to introduce
 TensorIR. The code block below shows a TensorIR implementation of
 <code class="docutils literal notranslate"><span class="pre">mm_relu</span></code>. The particular code is implemented in a language called
@@ -411,11 +416,15 @@ the following syntax.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">block_axis</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="p">[</span><span class="n">axis_type</span><span class="p">]([</span><span class="n">axis_range</span><span class="p">],</span> <span class="p">[</span><span class="n">mapped_value</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>The three lines contain the following information: - They define where
-should vi, vj, vk be bound to (in this case i, j k). - They declare the
-original range that the vi, vj, vk are supposed to be (the <code class="docutils literal notranslate"><span class="pre">128</span></code> in
-<code class="docutils literal notranslate"><span class="pre">T.axis.spatial(128,</span> <span class="pre">i)</span></code>) - They declare the properties of the
-iterators (<code class="docutils literal notranslate"><span class="pre">spatial</span></code>, <code class="docutils literal notranslate"><span class="pre">reduce</span></code>)</p>
+<p>The three lines contain the following information:</p>
+<ul class="simple">
+<li><p>They define where should vi, vj, vk be bound to (in this case i, j
+k).</p></li>
+<li><p>They declare the original range that the vi, vj, vk are supposed to
+be (the <code class="docutils literal notranslate"><span class="pre">128</span></code> in <code class="docutils literal notranslate"><span class="pre">T.axis.spatial(128,</span> <span class="pre">i)</span></code>)</p></li>
+<li><p>They declare the properties of the iterators (<code class="docutils literal notranslate"><span class="pre">spatial</span></code>,
+<code class="docutils literal notranslate"><span class="pre">reduce</span></code>)</p></li>
+</ul>
 <p>Let us walk through those property one by one. First of all, in terms of
 the bounding relation. <code class="docutils literal notranslate"><span class="pre">vi</span> <span class="pre">=</span> <span class="pre">T.axis.spatial(128,</span> <span class="pre">i)</span></code> effectively
 implies <code class="docutils literal notranslate"><span class="pre">vi</span> <span class="pre">=</span> <span class="pre">i</span></code>. The <code class="docutils literal notranslate"><span class="pre">[axis_range]</span></code> value provided the expected
@@ -573,9 +582,12 @@ two functions.</p>
 <div class="section" id="section-checkpoint">
 <h3><span class="section-number">2.4.3.8. </span>Section Checkpoint<a class="headerlink" href="#section-checkpoint" title="Permalink to this heading">¶</a></h3>
 <p>So far, we have gone through one example instance of TensorIR program
-and covered most of the elements, including: - Buffer declarations in
-parameters and intermediate temporary memory. - For loop iterations. -
-<strong>Block</strong> and block axes properties.</p>
+and covered most of the elements, including:</p>
+<ul class="simple">
+<li><p>Buffer declarations in parameters and intermediate temporary memory.</p></li>
+<li><p>For loop iterations.</p></li>
+<li><p><strong>Block</strong> and block axes properties.</p></li>
+</ul>
 <p>In this section, we have gone through one example instance of TensorIR
 that covers the most common elements in MLC.</p>
 <p>TensorIR contains more elements than what we went over in this section,
@@ -616,9 +628,11 @@ ability to get different implementation variants using transformations.</p>
 </pre></div>
 </div>
 <p>The above code block shows a slightly different variation of
-<code class="docutils literal notranslate"><span class="pre">mm_relu</span></code>. To see the relation to the original program - We replace
-the <code class="docutils literal notranslate"><span class="pre">j</span></code> loop with two loops, <code class="docutils literal notranslate"><span class="pre">j0</span></code> and <code class="docutils literal notranslate"><span class="pre">j1</span></code>. - The order of
-iterations changes slightly</p>
+<code class="docutils literal notranslate"><span class="pre">mm_relu</span></code>. To see the relation to the original program</p>
+<ul class="simple">
+<li><p>We replace the <code class="docutils literal notranslate"><span class="pre">j</span></code> loop with two loops, <code class="docutils literal notranslate"><span class="pre">j0</span></code> and <code class="docutils literal notranslate"><span class="pre">j1</span></code>.</p></li>
+<li><p>The order of iterations changes slightly</p></li>
+</ul>
 <p>In order to get <code class="docutils literal notranslate"><span class="pre">lnumpy_mm_relu_v2</span></code>, we have to rewrite a new function
 (or manual copy-pasting and editing). TensorIR introduces a utility
 called Schedule that allows us to do that pragmatically.</p>
@@ -1170,8 +1184,8 @@ compare the running performance of different generated functions.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time cost of transformed sch.mod </span><span class="si">%g</span><span class="s2"> sec&quot;</span> <span class="o">%</span> <span class="n">f_timer_after</span><span class="p">(</span><span class="n">a_nd</span><span class="p">,</span> <span class="n">b_nd</span><span class="p">,</span> <span class="n">c_nd</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">MyModule</span> <span class="mf">0.00355115</span> <span class="n">sec</span>
-<span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">transformed</span> <span class="n">sch</span><span class="o">.</span><span class="n">mod</span> <span class="mf">0.00133552</span> <span class="n">sec</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">MyModule</span> <span class="mf">0.0061771</span> <span class="n">sec</span>
+<span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">transformed</span> <span class="n">sch</span><span class="o">.</span><span class="n">mod</span> <span class="mf">0.00197015</span> <span class="n">sec</span>
 </pre></div>
 </div>
 <p>It is interesting to see the running time difference between the two
@@ -1441,7 +1455,7 @@ affect the code’s performance.</p>
 <span class="n">IPython</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">Code</span><span class="p">(</span><span class="n">mod_transformed</span><span class="o">.</span><span class="n">script</span><span class="p">(),</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">transformed</span> <span class="n">mod_transformed</span> <span class="mf">0.000682791</span> <span class="n">sec</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">transformed</span> <span class="n">mod_transformed</span> <span class="mf">0.000853665</span> <span class="n">sec</span>
 </pre></div>
 </div>
 <style>pre { line-height: 125%; }

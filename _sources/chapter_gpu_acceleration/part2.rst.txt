@@ -796,9 +796,9 @@ tensorized computation to the custom defined ``tmm_kernel``.
 .. parsed-literal::
     :class: output
 
-    [14:37:16] /workspace/tvm/src/target/target_info.cc:45: Warning: MemoryInfo for scope = global.accumulator is undefined
-    [14:37:16] /workspace/tvm/src/target/target_info.cc:45: Warning: MemoryInfo for scope = global.A_reg is undefined
-    [14:37:16] /workspace/tvm/src/target/target_info.cc:45: Warning: MemoryInfo for scope = global.B_reg is undefined
+    [20:33:23] /workspace/tvm/src/target/target_info.cc:45: Warning: MemoryInfo for scope = global.accumulator is undefined
+    [20:33:23] /workspace/tvm/src/target/target_info.cc:45: Warning: MemoryInfo for scope = global.A_reg is undefined
+    [20:33:23] /workspace/tvm/src/target/target_info.cc:45: Warning: MemoryInfo for scope = global.B_reg is undefined
 
 
 Discussions

@@ -451,9 +451,10 @@ Exercise 3: Transform a batch matmul program
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Now, let’s go back to the ``bmm_relu`` exercise. First, Let’s see the
-definition of ``bmm``: -
-:math:`Y_{n, i, j} = \sum_k A_{n, i, k} \times B_{n, k, j}` -
-:math:`C_{n, i, j} = \mathbb{relu}(Y_{n,i,j}) = \mathbb{max}(Y_{n, i, j}, 0)`
+definition of ``bmm``:
+
+-  :math:`Y_{n, i, j} = \sum_k A_{n, i, k} \times B_{n, k, j}`
+-  :math:`C_{n, i, j} = \mathbb{relu}(Y_{n,i,j}) = \mathbb{max}(Y_{n, i, j}, 0)`
 
 It’s your time to write the TensorIR for ``bmm_relu``. We provide the
 lnumpy func as hint:

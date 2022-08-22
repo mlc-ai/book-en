@@ -434,8 +434,11 @@ The following reading process can be different.</p>
                     B[vi] <span style="color: #AA22FF; font-weight: bold">=</span> A_shared[vi] <span style="color: #AA22FF; font-weight: bold">+</span> A_shared[vi <span style="color: #AA22FF; font-weight: bold">+</span> <span style="color: #008000">1</span>] <span style="color: #AA22FF; font-weight: bold">+</span> A_shared[vi <span style="color: #AA22FF; font-weight: bold">+</span> <span style="color: #008000">2</span>]
 
 </pre></div><p>We can inspect the corresponding low-level code (in CUDA). The generated
-code contains two parts: - A host part that calls into the GPU driver -
-A cuda kernel that runs the corresponding computation.</p>
+code contains two parts:</p>
+<ul class="simple">
+<li><p>A host part that calls into the GPU driver</p></li>
+<li><p>A cuda kernel that runs the corresponding computation.</p></li>
+</ul>
 <p>We can print out the cuda kernel using the following code. We still need
 both the host and kernel code to run the program, so it is only a quick
 way to inspect what the final code generation result.</p>
