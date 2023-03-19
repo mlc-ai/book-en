@@ -118,9 +118,9 @@ into TensorIR. And compare the result with it comes from NumPy.
     @tvm.script.ir_module
     class MyAdd:
       @T.prim_func
-      def add(A: T.Buffer[(4, 4), "int64"],
-              B: T.Buffer[(4, 4), "int64"],
-              C: T.Buffer[(4, 4), "int64"]):
+      def add(A: T.Buffer((4, 4), "int64"),
+              B: T.Buffer((4, 4), "int64"),
+              C: T.Buffer((4, 4), "int64")):
         T.func_attr({"global_symbol": "add"})
         for i, j in T.grid(4, 4):
           with T.block("C"):
@@ -327,9 +327,9 @@ this loop execute. Here is the example:
     @tvm.script.ir_module
     class MyAdd:
       @T.prim_func
-      def add(A: T.Buffer[(4, 4), "int64"],
-              B: T.Buffer[(4, 4), "int64"],
-              C: T.Buffer[(4, 4), "int64"]):
+      def add(A: T.Buffer((4, 4), "int64"),
+              B: T.Buffer((4, 4), "int64"),
+              C: T.Buffer((4, 4), "int64")):
         T.func_attr({"global_symbol": "add"})
         for i, j in T.grid(4, 4):
           with T.block("C"):
@@ -424,14 +424,15 @@ this loop execute. Here is the example:
     .output_html .vg { color: #19177C } /* Name.Variable.Global */
     .output_html .vi { color: #19177C } /* Name.Variable.Instance */
     .output_html .vm { color: #19177C } /* Name.Variable.Magic */
-    .output_html .il { color: #666666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="nd">@tvm</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">ir_module</span>
+    .output_html .il { color: #666666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="c1"># from tvm.script import ir as I</span>
+    <span class="c1"># from tvm.script import tir as T</span>
+    
+    <span class="nd">@I</span><span class="o">.</span><span class="n">ir_module</span>
     <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-        <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">],</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">],</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># function attr dict</span>
+        <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">)):</span>
             <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;add&quot;</span><span class="p">})</span>
-            <span class="c1"># body</span>
-            <span class="c1"># with T.block(&quot;root&quot;)</span>
+            <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="k">for</span> <span class="n">i_0</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">parallel</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
                 <span class="k">for</span> <span class="n">i_1</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">unroll</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
                     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">vectorized</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
@@ -441,7 +442,6 @@ this loop execute. Here is the example:
                             <span class="n">T</span><span class="o">.</span><span class="n">reads</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">],</span> <span class="n">B</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
                             <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
                             <span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">+</span> <span class="n">B</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span>
-    
     </pre></div>
 
 
@@ -512,7 +512,7 @@ target program:
     @tvm.script.ir_module
     class TargetModule:
         @T.prim_func
-        def bmm_relu(A: T.Buffer[(16, 128, 128), "float32"], B: T.Buffer[(16, 128, 128), "float32"], C: T.Buffer[(16, 128, 128), "float32"]) -> None:
+        def bmm_relu(A: T.Buffer((16, 128, 128), "float32"), B: T.Buffer((16, 128, 128), "float32"), C: T.Buffer((16, 128, 128), "float32")) -> None:
             T.func_attr({"global_symbol": "bmm_relu", "tir.noalias": True})
             Y = T.alloc_buffer([16, 128, 128], dtype="float32")
             for i0 in T.parallel(16):

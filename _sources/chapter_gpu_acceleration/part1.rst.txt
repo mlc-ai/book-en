@@ -37,8 +37,6 @@ To begin with, let us import the necessary dependencies.
 
 .. code:: python
 
-    # This is needed for deferring annotation parsing in TVMScript
-    from __future__ import annotations
     import numpy as np
     import tvm
     from tvm import relax
@@ -75,9 +73,9 @@ and stores the result in C.
     @tvm.script.ir_module
     class MyModuleVecAdd:
         @T.prim_func
-        def main(A: T.Buffer[(1024,), "float32"],
-                 B: T.Buffer[(1024,), "float32"],
-                 C: T.Buffer[(1024,), "float32"]) -> None:
+        def main(A: T.Buffer((1024,), "float32"),
+                 B: T.Buffer((1024,), "float32"),
+                 C: T.Buffer((1024,), "float32")) -> None:
             T.func_attr({"global_symbol": "main", "tir.noalias": True})
             for i in T.grid(1024):
                 with T.block("C"):
@@ -99,24 +97,37 @@ We first split loop ``i`` into two loops.
     sch.mod.show()
 
 
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
+.. parsed-literal::
+    :class: output
+
+    /usr/share/miniconda/envs/mlc/lib/python3.8/site-packages/tvm/script/highlight.py:117: UserWarning: No module named 'black'
+    To print formatted TVM script, please install the formatter 'Black':
+    /usr/share/miniconda/envs/mlc/bin/python -m pip install "black==22.3.0" --upgrade --user
+      warnings.warn(
+
+
 
 .. raw:: html
 
-    <div class="highlight" style="background: "><pre style="line-height: 125%;"><span></span><span style="color: #AA22FF">@tvm</span><span style="color: #AA22FF; font-weight: bold">.</span>script<span style="color: #AA22FF; font-weight: bold">.</span>ir_module
-    <span style="color: #008000; font-weight: bold">class</span> <span style="color: #1E90FF; font-weight: bold">Module</span>:
+    <div class="highlight" style="background: "><pre style="line-height: 125%;"><span></span><span style="color: #007979; font-style: italic"># from tvm.script import ir as I</span>
+    <span style="color: #007979; font-style: italic"># from tvm.script import tir as T</span>
+    
+    <span style="color: #AA22FF">@I</span><span style="color: #AA22FF; font-weight: bold">.</span>ir_module
+    <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Module</span>:
         <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func
-        <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">main</span>(A: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[<span style="color: #008000">1024</span>, <span style="color: #BA2121">&quot;float32&quot;</span>], B: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[<span style="color: #008000">1024</span>, <span style="color: #BA2121">&quot;float32&quot;</span>], C: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[<span style="color: #008000">1024</span>, <span style="color: #BA2121">&quot;float32&quot;</span>]) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> <span style="color: #008000; font-weight: bold">None</span>:
-            <span style="color: #007979; font-style: italic"># function attr dict</span>
+        <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">main</span>(A: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer((<span style="color: #008000">1024</span>,), <span style="color: #BA2121">&quot;float32&quot;</span>), B: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer((<span style="color: #008000">1024</span>,), <span style="color: #BA2121">&quot;float32&quot;</span>), C: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer((<span style="color: #008000">1024</span>,), <span style="color: #BA2121">&quot;float32&quot;</span>)):
             T<span style="color: #AA22FF; font-weight: bold">.</span>func_attr({<span style="color: #BA2121">&quot;global_symbol&quot;</span>: <span style="color: #BA2121">&quot;main&quot;</span>, <span style="color: #BA2121">&quot;tir.noalias&quot;</span>: <span style="color: #008000; font-weight: bold">True</span>})
-            <span style="color: #007979; font-style: italic"># body</span>
-            <span style="color: #007979; font-style: italic"># with T.block(&quot;root&quot;)</span>
+            <span style="color: #007979; font-style: italic"># with T.block(&quot;root&quot;):</span>
             <span style="color: #008000; font-weight: bold">for</span> i_0, i_1 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>grid(<span style="color: #008000">8</span>, <span style="color: #008000">128</span>):
                 <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;C&quot;</span>):
                     vi <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(<span style="color: #008000">1024</span>, i_0 <span style="color: #AA22FF; font-weight: bold">*</span> <span style="color: #008000">128</span> <span style="color: #AA22FF; font-weight: bold">+</span> i_1)
                     T<span style="color: #AA22FF; font-weight: bold">.</span>reads(A[vi], B[vi])
                     T<span style="color: #AA22FF; font-weight: bold">.</span>writes(C[vi])
                     C[vi] <span style="color: #AA22FF; font-weight: bold">=</span> A[vi] <span style="color: #AA22FF; font-weight: bold">+</span> B[vi]
-    
     </pre></div>
 
 
@@ -142,17 +153,31 @@ them simple as one dimension.
     sch.mod.show()
 
 
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
+.. parsed-literal::
+    :class: output
+
+    /usr/share/miniconda/envs/mlc/lib/python3.8/site-packages/tvm/script/highlight.py:117: UserWarning: No module named 'black'
+    To print formatted TVM script, please install the formatter 'Black':
+    /usr/share/miniconda/envs/mlc/bin/python -m pip install "black==22.3.0" --upgrade --user
+      warnings.warn(
+
+
 
 .. raw:: html
 
-    <div class="highlight" style="background: "><pre style="line-height: 125%;"><span></span><span style="color: #AA22FF">@tvm</span><span style="color: #AA22FF; font-weight: bold">.</span>script<span style="color: #AA22FF; font-weight: bold">.</span>ir_module
-    <span style="color: #008000; font-weight: bold">class</span> <span style="color: #1E90FF; font-weight: bold">Module</span>:
+    <div class="highlight" style="background: "><pre style="line-height: 125%;"><span></span><span style="color: #007979; font-style: italic"># from tvm.script import ir as I</span>
+    <span style="color: #007979; font-style: italic"># from tvm.script import tir as T</span>
+    
+    <span style="color: #AA22FF">@I</span><span style="color: #AA22FF; font-weight: bold">.</span>ir_module
+    <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Module</span>:
         <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func
-        <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">main</span>(A: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[<span style="color: #008000">1024</span>, <span style="color: #BA2121">&quot;float32&quot;</span>], B: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[<span style="color: #008000">1024</span>, <span style="color: #BA2121">&quot;float32&quot;</span>], C: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[<span style="color: #008000">1024</span>, <span style="color: #BA2121">&quot;float32&quot;</span>]) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> <span style="color: #008000; font-weight: bold">None</span>:
-            <span style="color: #007979; font-style: italic"># function attr dict</span>
+        <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">main</span>(A: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer((<span style="color: #008000">1024</span>,), <span style="color: #BA2121">&quot;float32&quot;</span>), B: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer((<span style="color: #008000">1024</span>,), <span style="color: #BA2121">&quot;float32&quot;</span>), C: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer((<span style="color: #008000">1024</span>,), <span style="color: #BA2121">&quot;float32&quot;</span>)):
             T<span style="color: #AA22FF; font-weight: bold">.</span>func_attr({<span style="color: #BA2121">&quot;global_symbol&quot;</span>: <span style="color: #BA2121">&quot;main&quot;</span>, <span style="color: #BA2121">&quot;tir.noalias&quot;</span>: <span style="color: #008000; font-weight: bold">True</span>})
-            <span style="color: #007979; font-style: italic"># body</span>
-            <span style="color: #007979; font-style: italic"># with T.block(&quot;root&quot;)</span>
+            <span style="color: #007979; font-style: italic"># with T.block(&quot;root&quot;):</span>
             <span style="color: #008000; font-weight: bold">for</span> i_0 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>thread_binding(<span style="color: #008000">8</span>, thread<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;blockIdx.x&quot;</span>):
                 <span style="color: #008000; font-weight: bold">for</span> i_1 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>thread_binding(<span style="color: #008000">128</span>, thread<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;threadIdx.x&quot;</span>):
                     <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;C&quot;</span>):
@@ -160,7 +185,6 @@ them simple as one dimension.
                         T<span style="color: #AA22FF; font-weight: bold">.</span>reads(A[vi], B[vi])
                         T<span style="color: #AA22FF; font-weight: bold">.</span>writes(C[vi])
                         C[vi] <span style="color: #AA22FF; font-weight: bold">=</span> A[vi] <span style="color: #AA22FF; font-weight: bold">+</span> B[vi]
-    
     </pre></div>
 
 
@@ -234,25 +258,38 @@ First, we can bind the loop to GPU threads.
     sch.mod.show()
 
 
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
+.. parsed-literal::
+    :class: output
+
+    /usr/share/miniconda/envs/mlc/lib/python3.8/site-packages/tvm/script/highlight.py:117: UserWarning: No module named 'black'
+    To print formatted TVM script, please install the formatter 'Black':
+    /usr/share/miniconda/envs/mlc/bin/python -m pip install "black==22.3.0" --upgrade --user
+      warnings.warn(
+
+
 
 .. raw:: html
 
-    <div class="highlight" style="background: "><pre style="line-height: 125%;"><span></span><span style="color: #AA22FF">@tvm</span><span style="color: #AA22FF; font-weight: bold">.</span>script<span style="color: #AA22FF; font-weight: bold">.</span>ir_module
-    <span style="color: #008000; font-weight: bold">class</span> <span style="color: #1E90FF; font-weight: bold">Module</span>:
+    <div class="highlight" style="background: "><pre style="line-height: 125%;"><span></span><span style="color: #007979; font-style: italic"># from tvm.script import ir as I</span>
+    <span style="color: #007979; font-style: italic"># from tvm.script import tir as T</span>
+    
+    <span style="color: #AA22FF">@I</span><span style="color: #AA22FF; font-weight: bold">.</span>ir_module
+    <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Module</span>:
         <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func
-        <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">main</span>(A: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[<span style="color: #008000">1027</span>, <span style="color: #BA2121">&quot;float32&quot;</span>], B: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[<span style="color: #008000">1024</span>, <span style="color: #BA2121">&quot;float32&quot;</span>]) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> <span style="color: #008000; font-weight: bold">None</span>:
-            <span style="color: #007979; font-style: italic"># function attr dict</span>
+        <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">main</span>(A: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer((<span style="color: #008000">1027</span>,), <span style="color: #BA2121">&quot;float32&quot;</span>), B: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer((<span style="color: #008000">1024</span>,), <span style="color: #BA2121">&quot;float32&quot;</span>)):
             T<span style="color: #AA22FF; font-weight: bold">.</span>func_attr({<span style="color: #BA2121">&quot;global_symbol&quot;</span>: <span style="color: #BA2121">&quot;main&quot;</span>, <span style="color: #BA2121">&quot;tir.noalias&quot;</span>: <span style="color: #008000; font-weight: bold">True</span>})
-            <span style="color: #007979; font-style: italic"># body</span>
-            <span style="color: #007979; font-style: italic"># with T.block(&quot;root&quot;)</span>
+            <span style="color: #007979; font-style: italic"># with T.block(&quot;root&quot;):</span>
             <span style="color: #008000; font-weight: bold">for</span> i_0 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>thread_binding(<span style="color: #008000">8</span>, thread<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;blockIdx.x&quot;</span>):
                 <span style="color: #008000; font-weight: bold">for</span> i_1 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>thread_binding(<span style="color: #008000">128</span>, thread<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;threadIdx.x&quot;</span>):
                     <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;C&quot;</span>):
                         vi <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(<span style="color: #008000">1024</span>, i_0 <span style="color: #AA22FF; font-weight: bold">*</span> <span style="color: #008000">128</span> <span style="color: #AA22FF; font-weight: bold">+</span> i_1)
-                        T<span style="color: #AA22FF; font-weight: bold">.</span>reads(A[vi : vi <span style="color: #AA22FF; font-weight: bold">+</span> <span style="color: #008000">3</span>])
+                        T<span style="color: #AA22FF; font-weight: bold">.</span>reads(A[vi:vi <span style="color: #AA22FF; font-weight: bold">+</span> <span style="color: #008000">3</span>])
                         T<span style="color: #AA22FF; font-weight: bold">.</span>writes(B[vi])
                         B[vi] <span style="color: #AA22FF; font-weight: bold">=</span> A[vi] <span style="color: #AA22FF; font-weight: bold">+</span> A[vi <span style="color: #AA22FF; font-weight: bold">+</span> <span style="color: #008000">1</span>] <span style="color: #AA22FF; font-weight: bold">+</span> A[vi <span style="color: #AA22FF; font-weight: bold">+</span> <span style="color: #008000">2</span>]
-    
     </pre></div>
 
 
@@ -276,21 +313,35 @@ caching is finished, the threads can then read from the shared memory.
     sch.mod.show()
 
 
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
+.. parsed-literal::
+    :class: output
+
+    /usr/share/miniconda/envs/mlc/lib/python3.8/site-packages/tvm/script/highlight.py:117: UserWarning: No module named 'black'
+    To print formatted TVM script, please install the formatter 'Black':
+    /usr/share/miniconda/envs/mlc/bin/python -m pip install "black==22.3.0" --upgrade --user
+      warnings.warn(
+
+
 
 .. raw:: html
 
-    <div class="highlight" style="background: "><pre style="line-height: 125%;"><span></span><span style="color: #AA22FF">@tvm</span><span style="color: #AA22FF; font-weight: bold">.</span>script<span style="color: #AA22FF; font-weight: bold">.</span>ir_module
-    <span style="color: #008000; font-weight: bold">class</span> <span style="color: #1E90FF; font-weight: bold">Module</span>:
+    <div class="highlight" style="background: "><pre style="line-height: 125%;"><span></span><span style="color: #007979; font-style: italic"># from tvm.script import ir as I</span>
+    <span style="color: #007979; font-style: italic"># from tvm.script import tir as T</span>
+    
+    <span style="color: #AA22FF">@I</span><span style="color: #AA22FF; font-weight: bold">.</span>ir_module
+    <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Module</span>:
         <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func
-        <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">main</span>(A: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[<span style="color: #008000">1027</span>, <span style="color: #BA2121">&quot;float32&quot;</span>], B: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[<span style="color: #008000">1024</span>, <span style="color: #BA2121">&quot;float32&quot;</span>]) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> <span style="color: #008000; font-weight: bold">None</span>:
-            <span style="color: #007979; font-style: italic"># function attr dict</span>
+        <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">main</span>(A: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer((<span style="color: #008000">1027</span>,), <span style="color: #BA2121">&quot;float32&quot;</span>), B: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer((<span style="color: #008000">1024</span>,), <span style="color: #BA2121">&quot;float32&quot;</span>)):
             T<span style="color: #AA22FF; font-weight: bold">.</span>func_attr({<span style="color: #BA2121">&quot;global_symbol&quot;</span>: <span style="color: #BA2121">&quot;main&quot;</span>, <span style="color: #BA2121">&quot;tir.noalias&quot;</span>: <span style="color: #008000; font-weight: bold">True</span>})
-            <span style="color: #007979; font-style: italic"># body</span>
-            <span style="color: #007979; font-style: italic"># with T.block(&quot;root&quot;)</span>
-            A_shared <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>alloc_buffer([<span style="color: #008000">1027</span>], dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>, scope<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;shared&quot;</span>)
+            <span style="color: #007979; font-style: italic"># with T.block(&quot;root&quot;):</span>
+            A_shared <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>alloc_buffer((<span style="color: #008000">1027</span>,), scope<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;shared&quot;</span>)
             <span style="color: #008000; font-weight: bold">for</span> i_0 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>thread_binding(<span style="color: #008000">8</span>, thread<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;blockIdx.x&quot;</span>):
                 <span style="color: #008000; font-weight: bold">for</span> i_1 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>thread_binding(<span style="color: #008000">128</span>, thread<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;threadIdx.x&quot;</span>):
-                    <span style="color: #008000; font-weight: bold">for</span> ax0 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>serial(<span style="color: #008000">130</span>):
+                    <span style="color: #008000; font-weight: bold">for</span> ax0 <span style="color: #008000; font-weight: bold">in</span> range(<span style="color: #008000">130</span>):
                         <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;A_shared&quot;</span>):
                             v0 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(<span style="color: #008000">1027</span>, i_0 <span style="color: #AA22FF; font-weight: bold">*</span> <span style="color: #008000">128</span> <span style="color: #AA22FF; font-weight: bold">+</span> ax0)
                             T<span style="color: #AA22FF; font-weight: bold">.</span>reads(A[v0])
@@ -298,10 +349,9 @@ caching is finished, the threads can then read from the shared memory.
                             A_shared[v0] <span style="color: #AA22FF; font-weight: bold">=</span> A[v0]
                     <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;C&quot;</span>):
                         vi <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(<span style="color: #008000">1024</span>, i_0 <span style="color: #AA22FF; font-weight: bold">*</span> <span style="color: #008000">128</span> <span style="color: #AA22FF; font-weight: bold">+</span> i_1)
-                        T<span style="color: #AA22FF; font-weight: bold">.</span>reads(A_shared[vi : vi <span style="color: #AA22FF; font-weight: bold">+</span> <span style="color: #008000">3</span>])
+                        T<span style="color: #AA22FF; font-weight: bold">.</span>reads(A_shared[vi:vi <span style="color: #AA22FF; font-weight: bold">+</span> <span style="color: #008000">3</span>])
                         T<span style="color: #AA22FF; font-weight: bold">.</span>writes(B[vi])
                         B[vi] <span style="color: #AA22FF; font-weight: bold">=</span> A_shared[vi] <span style="color: #AA22FF; font-weight: bold">+</span> A_shared[vi <span style="color: #AA22FF; font-weight: bold">+</span> <span style="color: #008000">1</span>] <span style="color: #AA22FF; font-weight: bold">+</span> A_shared[vi <span style="color: #AA22FF; font-weight: bold">+</span> <span style="color: #008000">2</span>]
-    
     </pre></div>
 
 
@@ -324,21 +374,35 @@ The following reading process can be different.
     sch.mod.show()
 
 
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
+.. parsed-literal::
+    :class: output
+
+    /usr/share/miniconda/envs/mlc/lib/python3.8/site-packages/tvm/script/highlight.py:117: UserWarning: No module named 'black'
+    To print formatted TVM script, please install the formatter 'Black':
+    /usr/share/miniconda/envs/mlc/bin/python -m pip install "black==22.3.0" --upgrade --user
+      warnings.warn(
+
+
 
 .. raw:: html
 
-    <div class="highlight" style="background: "><pre style="line-height: 125%;"><span></span><span style="color: #AA22FF">@tvm</span><span style="color: #AA22FF; font-weight: bold">.</span>script<span style="color: #AA22FF; font-weight: bold">.</span>ir_module
-    <span style="color: #008000; font-weight: bold">class</span> <span style="color: #1E90FF; font-weight: bold">Module</span>:
+    <div class="highlight" style="background: "><pre style="line-height: 125%;"><span></span><span style="color: #007979; font-style: italic"># from tvm.script import ir as I</span>
+    <span style="color: #007979; font-style: italic"># from tvm.script import tir as T</span>
+    
+    <span style="color: #AA22FF">@I</span><span style="color: #AA22FF; font-weight: bold">.</span>ir_module
+    <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Module</span>:
         <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func
-        <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">main</span>(A: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[<span style="color: #008000">1027</span>, <span style="color: #BA2121">&quot;float32&quot;</span>], B: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[<span style="color: #008000">1024</span>, <span style="color: #BA2121">&quot;float32&quot;</span>]) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> <span style="color: #008000; font-weight: bold">None</span>:
-            <span style="color: #007979; font-style: italic"># function attr dict</span>
+        <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">main</span>(A: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer((<span style="color: #008000">1027</span>,), <span style="color: #BA2121">&quot;float32&quot;</span>), B: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer((<span style="color: #008000">1024</span>,), <span style="color: #BA2121">&quot;float32&quot;</span>)):
             T<span style="color: #AA22FF; font-weight: bold">.</span>func_attr({<span style="color: #BA2121">&quot;global_symbol&quot;</span>: <span style="color: #BA2121">&quot;main&quot;</span>, <span style="color: #BA2121">&quot;tir.noalias&quot;</span>: <span style="color: #008000; font-weight: bold">True</span>})
-            <span style="color: #007979; font-style: italic"># body</span>
-            <span style="color: #007979; font-style: italic"># with T.block(&quot;root&quot;)</span>
-            A_shared <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>alloc_buffer([<span style="color: #008000">1027</span>], dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>, scope<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;shared&quot;</span>)
+            <span style="color: #007979; font-style: italic"># with T.block(&quot;root&quot;):</span>
+            A_shared <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>alloc_buffer((<span style="color: #008000">1027</span>,), scope<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;shared&quot;</span>)
             <span style="color: #008000; font-weight: bold">for</span> i_0 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>thread_binding(<span style="color: #008000">8</span>, thread<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;blockIdx.x&quot;</span>):
                 <span style="color: #008000; font-weight: bold">for</span> i_1 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>thread_binding(<span style="color: #008000">128</span>, thread<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;threadIdx.x&quot;</span>):
-                    <span style="color: #008000; font-weight: bold">for</span> ax0_0 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>serial(<span style="color: #008000">2</span>):
+                    <span style="color: #008000; font-weight: bold">for</span> ax0_0 <span style="color: #008000; font-weight: bold">in</span> range(<span style="color: #008000">2</span>):
                         <span style="color: #008000; font-weight: bold">for</span> ax0_1 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>thread_binding(<span style="color: #008000">128</span>, thread<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;threadIdx.x&quot;</span>):
                             <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;A_shared&quot;</span>):
                                 v0 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(<span style="color: #008000">1027</span>, i_0 <span style="color: #AA22FF; font-weight: bold">*</span> <span style="color: #008000">128</span> <span style="color: #AA22FF; font-weight: bold">+</span> (ax0_0 <span style="color: #AA22FF; font-weight: bold">*</span> <span style="color: #008000">128</span> <span style="color: #AA22FF; font-weight: bold">+</span> ax0_1))
@@ -348,10 +412,9 @@ The following reading process can be different.
                                 A_shared[v0] <span style="color: #AA22FF; font-weight: bold">=</span> A[v0]
                     <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;C&quot;</span>):
                         vi <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(<span style="color: #008000">1024</span>, i_0 <span style="color: #AA22FF; font-weight: bold">*</span> <span style="color: #008000">128</span> <span style="color: #AA22FF; font-weight: bold">+</span> i_1)
-                        T<span style="color: #AA22FF; font-weight: bold">.</span>reads(A_shared[vi : vi <span style="color: #AA22FF; font-weight: bold">+</span> <span style="color: #008000">3</span>])
+                        T<span style="color: #AA22FF; font-weight: bold">.</span>reads(A_shared[vi:vi <span style="color: #AA22FF; font-weight: bold">+</span> <span style="color: #008000">3</span>])
                         T<span style="color: #AA22FF; font-weight: bold">.</span>writes(B[vi])
                         B[vi] <span style="color: #AA22FF; font-weight: bold">=</span> A_shared[vi] <span style="color: #AA22FF; font-weight: bold">+</span> A_shared[vi <span style="color: #AA22FF; font-weight: bold">+</span> <span style="color: #008000">1</span>] <span style="color: #AA22FF; font-weight: bold">+</span> A_shared[vi <span style="color: #AA22FF; font-weight: bold">+</span> <span style="color: #008000">2</span>]
-    
     </pre></div>
 
 
@@ -410,9 +473,9 @@ techniques for GPU performance optimization.
     @tvm.script.ir_module
     class MyModuleMatmul:
         @T.prim_func
-        def main(A: T.Buffer[(1024, 1024), "float32"],
-                 B: T.Buffer[(1024, 1024), "float32"],
-                 C: T.Buffer[(1024, 1024), "float32"]) -> None:
+        def main(A: T.Buffer((1024, 1024), "float32"),
+                 B: T.Buffer((1024, 1024), "float32"),
+                 C: T.Buffer((1024, 1024), "float32")) -> None:
             T.func_attr({"global_symbol": "main", "tir.noalias": True})
             for i, j, k in T.grid(1024, 1024, 1024):
                 with T.block("C"):
@@ -472,18 +535,32 @@ in the stripe is reused ``V`` times.
     sch.mod.show()
 
 
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
+.. parsed-literal::
+    :class: output
+
+    /usr/share/miniconda/envs/mlc/lib/python3.8/site-packages/tvm/script/highlight.py:117: UserWarning: No module named 'black'
+    To print formatted TVM script, please install the formatter 'Black':
+    /usr/share/miniconda/envs/mlc/bin/python -m pip install "black==22.3.0" --upgrade --user
+      warnings.warn(
+
+
 
 .. raw:: html
 
-    <div class="highlight" style="background: "><pre style="line-height: 125%;"><span></span><span style="color: #AA22FF">@tvm</span><span style="color: #AA22FF; font-weight: bold">.</span>script<span style="color: #AA22FF; font-weight: bold">.</span>ir_module
-    <span style="color: #008000; font-weight: bold">class</span> <span style="color: #1E90FF; font-weight: bold">Module</span>:
+    <div class="highlight" style="background: "><pre style="line-height: 125%;"><span></span><span style="color: #007979; font-style: italic"># from tvm.script import ir as I</span>
+    <span style="color: #007979; font-style: italic"># from tvm.script import tir as T</span>
+    
+    <span style="color: #AA22FF">@I</span><span style="color: #AA22FF; font-weight: bold">.</span>ir_module
+    <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Module</span>:
         <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func
-        <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">main</span>(A: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(<span style="color: #008000">1024</span>, <span style="color: #008000">1024</span>), <span style="color: #BA2121">&quot;float32&quot;</span>], B: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(<span style="color: #008000">1024</span>, <span style="color: #008000">1024</span>), <span style="color: #BA2121">&quot;float32&quot;</span>], C: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(<span style="color: #008000">1024</span>, <span style="color: #008000">1024</span>), <span style="color: #BA2121">&quot;float32&quot;</span>]) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> <span style="color: #008000; font-weight: bold">None</span>:
-            <span style="color: #007979; font-style: italic"># function attr dict</span>
+        <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">main</span>(A: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer((<span style="color: #008000">1024</span>, <span style="color: #008000">1024</span>), <span style="color: #BA2121">&quot;float32&quot;</span>), B: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer((<span style="color: #008000">1024</span>, <span style="color: #008000">1024</span>), <span style="color: #BA2121">&quot;float32&quot;</span>), C: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer((<span style="color: #008000">1024</span>, <span style="color: #008000">1024</span>), <span style="color: #BA2121">&quot;float32&quot;</span>)):
             T<span style="color: #AA22FF; font-weight: bold">.</span>func_attr({<span style="color: #BA2121">&quot;global_symbol&quot;</span>: <span style="color: #BA2121">&quot;main&quot;</span>, <span style="color: #BA2121">&quot;tir.noalias&quot;</span>: <span style="color: #008000; font-weight: bold">True</span>})
-            <span style="color: #007979; font-style: italic"># body</span>
-            <span style="color: #007979; font-style: italic"># with T.block(&quot;root&quot;)</span>
-            C_local <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>alloc_buffer([<span style="color: #008000">1024</span>, <span style="color: #008000">1024</span>], dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>, scope<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;local&quot;</span>)
+            <span style="color: #007979; font-style: italic"># with T.block(&quot;root&quot;):</span>
+            C_local <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>alloc_buffer((<span style="color: #008000">1024</span>, <span style="color: #008000">1024</span>), scope<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;local&quot;</span>)
             <span style="color: #008000; font-weight: bold">for</span> i_0 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>thread_binding(<span style="color: #008000">16</span>, thread<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;blockIdx.y&quot;</span>):
                 <span style="color: #008000; font-weight: bold">for</span> j_0 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>thread_binding(<span style="color: #008000">16</span>, thread<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;blockIdx.x&quot;</span>):
                     <span style="color: #008000; font-weight: bold">for</span> i_1 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>thread_binding(<span style="color: #008000">8</span>, thread<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;threadIdx.y&quot;</span>):
@@ -495,7 +572,7 @@ in the stripe is reused ``V`` times.
                                     T<span style="color: #AA22FF; font-weight: bold">.</span>reads()
                                     T<span style="color: #AA22FF; font-weight: bold">.</span>writes(C_local[vi, vj])
                                     C_local[vi, vj] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>)
-                            <span style="color: #008000; font-weight: bold">for</span> k_0 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>serial(<span style="color: #008000">256</span>):
+                            <span style="color: #008000; font-weight: bold">for</span> k_0 <span style="color: #008000; font-weight: bold">in</span> range(<span style="color: #008000">256</span>):
                                 <span style="color: #008000; font-weight: bold">for</span> k_1 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>unroll(<span style="color: #008000">4</span>):
                                     <span style="color: #008000; font-weight: bold">for</span> i_2, j_2 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>grid(<span style="color: #008000">8</span>, <span style="color: #008000">8</span>):
                                         <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;C_update&quot;</span>):
@@ -512,7 +589,6 @@ in the stripe is reused ``V`` times.
                                     T<span style="color: #AA22FF; font-weight: bold">.</span>reads(C_local[v0, v1])
                                     T<span style="color: #AA22FF; font-weight: bold">.</span>writes(C[v0, v1])
                                     C[v0, v1] <span style="color: #AA22FF; font-weight: bold">=</span> C_local[v0, v1]
-    
     </pre></div>
 
 
@@ -600,20 +676,34 @@ The following transformation does that.
     sch.mod.show()
 
 
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
+.. parsed-literal::
+    :class: output
+
+    /usr/share/miniconda/envs/mlc/lib/python3.8/site-packages/tvm/script/highlight.py:117: UserWarning: No module named 'black'
+    To print formatted TVM script, please install the formatter 'Black':
+    /usr/share/miniconda/envs/mlc/bin/python -m pip install "black==22.3.0" --upgrade --user
+      warnings.warn(
+
+
 
 .. raw:: html
 
-    <div class="highlight" style="background: "><pre style="line-height: 125%;"><span></span><span style="color: #AA22FF">@tvm</span><span style="color: #AA22FF; font-weight: bold">.</span>script<span style="color: #AA22FF; font-weight: bold">.</span>ir_module
-    <span style="color: #008000; font-weight: bold">class</span> <span style="color: #1E90FF; font-weight: bold">Module</span>:
+    <div class="highlight" style="background: "><pre style="line-height: 125%;"><span></span><span style="color: #007979; font-style: italic"># from tvm.script import ir as I</span>
+    <span style="color: #007979; font-style: italic"># from tvm.script import tir as T</span>
+    
+    <span style="color: #AA22FF">@I</span><span style="color: #AA22FF; font-weight: bold">.</span>ir_module
+    <span style="color: #008000; font-weight: bold">class</span> <span style="color: #0000FF; font-weight: bold">Module</span>:
         <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func
-        <span style="color: #008000; font-weight: bold">def</span> <span style="color: #1E90FF">main</span>(A: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(<span style="color: #008000">1024</span>, <span style="color: #008000">1024</span>), <span style="color: #BA2121">&quot;float32&quot;</span>], B: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(<span style="color: #008000">1024</span>, <span style="color: #008000">1024</span>), <span style="color: #BA2121">&quot;float32&quot;</span>], C: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer[(<span style="color: #008000">1024</span>, <span style="color: #008000">1024</span>), <span style="color: #BA2121">&quot;float32&quot;</span>]) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> <span style="color: #008000; font-weight: bold">None</span>:
-            <span style="color: #007979; font-style: italic"># function attr dict</span>
+        <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">main</span>(A: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer((<span style="color: #008000">1024</span>, <span style="color: #008000">1024</span>), <span style="color: #BA2121">&quot;float32&quot;</span>), B: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer((<span style="color: #008000">1024</span>, <span style="color: #008000">1024</span>), <span style="color: #BA2121">&quot;float32&quot;</span>), C: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer((<span style="color: #008000">1024</span>, <span style="color: #008000">1024</span>), <span style="color: #BA2121">&quot;float32&quot;</span>)):
             T<span style="color: #AA22FF; font-weight: bold">.</span>func_attr({<span style="color: #BA2121">&quot;global_symbol&quot;</span>: <span style="color: #BA2121">&quot;main&quot;</span>, <span style="color: #BA2121">&quot;tir.noalias&quot;</span>: <span style="color: #008000; font-weight: bold">True</span>})
-            <span style="color: #007979; font-style: italic"># body</span>
-            <span style="color: #007979; font-style: italic"># with T.block(&quot;root&quot;)</span>
-            C_local <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>alloc_buffer([<span style="color: #008000">1024</span>, <span style="color: #008000">1024</span>], dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>, scope<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;local&quot;</span>)
-            A_shared <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>alloc_buffer([<span style="color: #008000">1024</span>, <span style="color: #008000">1024</span>], dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>, scope<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;shared&quot;</span>)
-            B_shared <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>alloc_buffer([<span style="color: #008000">1024</span>, <span style="color: #008000">1024</span>], dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>, scope<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;shared&quot;</span>)
+            <span style="color: #007979; font-style: italic"># with T.block(&quot;root&quot;):</span>
+            C_local <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>alloc_buffer((<span style="color: #008000">1024</span>, <span style="color: #008000">1024</span>), scope<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;local&quot;</span>)
+            A_shared <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>alloc_buffer((<span style="color: #008000">1024</span>, <span style="color: #008000">1024</span>), scope<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;shared&quot;</span>)
+            B_shared <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>alloc_buffer((<span style="color: #008000">1024</span>, <span style="color: #008000">1024</span>), scope<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;shared&quot;</span>)
             <span style="color: #008000; font-weight: bold">for</span> i_0 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>thread_binding(<span style="color: #008000">16</span>, thread<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;blockIdx.y&quot;</span>):
                 <span style="color: #008000; font-weight: bold">for</span> j_0 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>thread_binding(<span style="color: #008000">16</span>, thread<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;blockIdx.x&quot;</span>):
                     <span style="color: #008000; font-weight: bold">for</span> i_1_j_1_fused <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>thread_binding(<span style="color: #008000">64</span>, thread<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;threadIdx.x&quot;</span>):
@@ -624,8 +714,8 @@ The following transformation does that.
                                 T<span style="color: #AA22FF; font-weight: bold">.</span>reads()
                                 T<span style="color: #AA22FF; font-weight: bold">.</span>writes(C_local[vi, vj])
                                 C_local[vi, vj] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>)
-                        <span style="color: #008000; font-weight: bold">for</span> k_0 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>serial(<span style="color: #008000">128</span>):
-                            <span style="color: #008000; font-weight: bold">for</span> ax0_ax1_fused_0 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>serial(<span style="color: #008000">2</span>):
+                        <span style="color: #008000; font-weight: bold">for</span> k_0 <span style="color: #008000; font-weight: bold">in</span> range(<span style="color: #008000">128</span>):
+                            <span style="color: #008000; font-weight: bold">for</span> ax0_ax1_fused_0 <span style="color: #008000; font-weight: bold">in</span> range(<span style="color: #008000">2</span>):
                                 <span style="color: #008000; font-weight: bold">for</span> ax0_ax1_fused_1 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>thread_binding(<span style="color: #008000">64</span>, thread<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;threadIdx.x&quot;</span>):
                                     <span style="color: #008000; font-weight: bold">for</span> ax0_ax1_fused_2 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>vectorized(<span style="color: #008000">4</span>):
                                         <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;A_shared&quot;</span>):
@@ -634,7 +724,7 @@ The following transformation does that.
                                             T<span style="color: #AA22FF; font-weight: bold">.</span>reads(A[v0, v1])
                                             T<span style="color: #AA22FF; font-weight: bold">.</span>writes(A_shared[v0, v1])
                                             A_shared[v0, v1] <span style="color: #AA22FF; font-weight: bold">=</span> A[v0, v1]
-                            <span style="color: #008000; font-weight: bold">for</span> ax0_ax1_fused_0 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>serial(<span style="color: #008000">2</span>):
+                            <span style="color: #008000; font-weight: bold">for</span> ax0_ax1_fused_0 <span style="color: #008000; font-weight: bold">in</span> range(<span style="color: #008000">2</span>):
                                 <span style="color: #008000; font-weight: bold">for</span> ax0_ax1_fused_1 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>thread_binding(<span style="color: #008000">64</span>, thread<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;threadIdx.x&quot;</span>):
                                     <span style="color: #008000; font-weight: bold">for</span> ax0_ax1_fused_2 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>vectorized(<span style="color: #008000">4</span>):
                                         <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;B_shared&quot;</span>):
@@ -658,7 +748,6 @@ The following transformation does that.
                                 T<span style="color: #AA22FF; font-weight: bold">.</span>reads(C_local[v0, v1])
                                 T<span style="color: #AA22FF; font-weight: bold">.</span>writes(C[v0, v1])
                                 C[v0, v1] <span style="color: #AA22FF; font-weight: bold">=</span> C_local[v0, v1]
-    
     </pre></div>
 
 
@@ -692,17 +781,16 @@ finish.
 
    from tvm import meta_schedule as ms
 
-   sch_tuned = ms.tune_tir(
+   database = ms.tune_tir(
        mod=MyModuleMatmul,
        target="nvidia/tesla-p100",
-       config=ms.TuneConfig(
-         max_trials_global=64,
-         num_trials_per_iter=64,
-       ),
+       max_trials_global=64,
+       num_trials_per_iter=64,
        work_dir="./tune_tmp",
        task_name="main"
    )
-   sch_tuned.mod.show()
+   sch = ms.tir_integration.compile_tir(database, MyModuleMatmul, "nvidia/tesla-p100")
+   sch.mod.show()
 
 .. raw:: latex
 
@@ -710,7 +798,7 @@ finish.
 
 .. code:: python
 
-   rt_mod = tvm.build(sch_tuned.mod, target="nvidia/tesla-p100")
+   rt_mod = tvm.build(sch.mod, target="nvidia/tesla-p100")
    dev = tvm.cuda(0)
    evaluator = rt_mod.time_evaluator("main", dev, number=10)
 
