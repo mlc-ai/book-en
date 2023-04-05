@@ -369,7 +369,7 @@ independent from the external loop-nest ``i``, ``j``, ``k``.
 
 The block axis information also provides additional properties that help
 us to validate the correctness of the external loops that are used to
-carry out the computation. For example, the code block below will result
+carry out the computation. For example, the above code block will result
 in an error because the loop expects an iterator of size ``128``, but we
 only bound it to a for loop of size ``127``.
 
@@ -1316,8 +1316,8 @@ compare the running performance of different generated functions.
 .. parsed-literal::
     :class: output
 
-    Time cost of MyModule 0.00511923 sec
-    Time cost of transformed sch.mod 0.00133802 sec
+    Time cost of MyModule 0.00330583 sec
+    Time cost of transformed sch.mod 0.00113609 sec
 
 
 It is interesting to see the running time difference between the two
@@ -1636,7 +1636,7 @@ affect the code’s performance.
 .. parsed-literal::
     :class: output
 
-    Time cost of transformed mod_transformed 0.00068414 sec
+    Time cost of transformed mod_transformed 0.000573686 sec
 
 
 

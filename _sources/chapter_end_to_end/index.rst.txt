@@ -124,7 +124,7 @@ We can plot out the image instance that we want to be able to predict.
 .. parsed-literal::
     :class: output
 
-    Class: Sneaker
+    Class: Sandal
 
 
 Download Model Parameters
@@ -191,10 +191,10 @@ Let us begin by reviewing a Numpy implementation of the model.
 .. parsed-literal::
     :class: output
 
-    [[-12.881153  -30.720388  -20.821566  -21.063423  -22.971212   -3.1455915
-      -15.289822   10.031644   -7.4001474   0.7232342]]
-    [7]
-    NumPy-MLP Prediction: Sneaker
+    [[-26.194868  -34.8678    -24.12358   -20.510454  -18.109476   12.921284
+      -17.477413   -4.9815836  -7.2966995  -6.3170166]]
+    [5]
+    NumPy-MLP Prediction: Sandal
 
 
 The above example code shows the high-level array operations to perform
@@ -282,7 +282,7 @@ model.
 .. parsed-literal::
     :class: output
 
-    Low-level Numpy MLP Prediction: Sneaker
+    Low-level Numpy MLP Prediction: Sandal
 
 
 Constructing an End to End IRModule in TVMScript
@@ -528,7 +528,7 @@ the low-level numpy execution code as:
 .. parsed-literal::
     :class: output
 
-    Low-level Numpy with CallTIR Prediction: Sneaker
+    Low-level Numpy with CallTIR Prediction: Sandal
 
 
 In practice, the lowest-level implementation will have explicit memory
@@ -837,8 +837,8 @@ weights.
 .. parsed-literal::
     :class: output
 
-    [[-12.881156  -30.720383  -20.821568  -21.063421  -22.971214   -3.14559
-      -15.289824   10.031643   -7.4001455   0.7232331]]
+    [[-26.19487   -34.867805  -24.123579  -20.510454  -18.109478   12.921284
+      -17.47741    -4.981583   -7.2966967  -6.3170156]]
 
 
 The main function returns the prediction result, and we can then call
@@ -862,7 +862,7 @@ the class label.
 .. parsed-literal::
     :class: output
 
-    MyModule Prediction: Sneaker
+    MyModule Prediction: Sandal
 
 
 Integrate Existing Libraries in the Environment
@@ -993,7 +993,7 @@ that we get the same result.
 .. parsed-literal::
     :class: output
 
-    MyModuleWithExternCall Prediction: Sneaker
+    MyModuleWithExternCall Prediction: Sandal
 
 
 Mixing TensorIR Code and Libraries
@@ -1077,7 +1077,7 @@ functions. We can build and run to validate the result.
 .. parsed-literal::
     :class: output
 
-    MyModuleMixture Prediction: Sneaker
+    MyModuleMixture Prediction: Sandal
 
 
 Bind Parameters to IRModule
@@ -1250,7 +1250,7 @@ the input data.
 .. parsed-literal::
     :class: output
 
-    MyModuleWithParams Prediction: Sneaker
+    MyModuleWithParams Prediction: Sandal
 
 
 Discussions

@@ -1058,7 +1058,7 @@ picture.
 .. parsed-literal::
     :class: output
 
-    Class: Dress
+    Class: Sandal
 
 
 .. raw:: latex
@@ -1084,7 +1084,7 @@ picture.
 .. parsed-literal::
     :class: output
 
-    MLPModule Prediction: Dress
+    MLPModule Prediction: Sandal
 
 
 Discussion
