@@ -124,7 +124,7 @@ We can plot out the image instance that we want to be able to predict.
 .. parsed-literal::
     :class: output
 
-    Class: Ankle boot
+    Class: Sneaker
 
 
 Download Model Parameters
@@ -191,10 +191,10 @@ Let us begin by reviewing a Numpy implementation of the model.
 .. parsed-literal::
     :class: output
 
-    [[-43.15863   -51.01475   -33.527565  -29.899078  -21.516666    2.7945764
-      -19.699093   -6.738555  -10.9177685  21.715364 ]]
-    [9]
-    NumPy-MLP Prediction: Ankle boot
+    [[-12.881153  -30.720388  -20.821566  -21.063423  -22.971212   -3.1455915
+      -15.289822   10.031644   -7.4001474   0.7232342]]
+    [7]
+    NumPy-MLP Prediction: Sneaker
 
 
 The above example code shows the high-level array operations to perform
@@ -282,7 +282,7 @@ model.
 .. parsed-literal::
     :class: output
 
-    Low-level Numpy MLP Prediction: Ankle boot
+    Low-level Numpy MLP Prediction: Sneaker
 
 
 Constructing an End to End IRModule in TVMScript
@@ -528,7 +528,7 @@ the low-level numpy execution code as:
 .. parsed-literal::
     :class: output
 
-    Low-level Numpy with CallTIR Prediction: Ankle boot
+    Low-level Numpy with CallTIR Prediction: Sneaker
 
 
 In practice, the lowest-level implementation will have explicit memory
@@ -837,8 +837,8 @@ weights.
 .. parsed-literal::
     :class: output
 
-    [[-43.15863   -51.014744  -33.527565  -29.899069  -21.516672    2.7945762
-      -19.699104   -6.7385583 -10.917769   21.71536  ]]
+    [[-12.881156  -30.720383  -20.821568  -21.063421  -22.971214   -3.14559
+      -15.289824   10.031643   -7.4001455   0.7232331]]
 
 
 The main function returns the prediction result, and we can then call
@@ -862,7 +862,7 @@ the class label.
 .. parsed-literal::
     :class: output
 
-    MyModule Prediction: Ankle boot
+    MyModule Prediction: Sneaker
 
 
 Integrate Existing Libraries in the Environment
@@ -993,7 +993,7 @@ that we get the same result.
 .. parsed-literal::
     :class: output
 
-    MyModuleWithExternCall Prediction: Ankle boot
+    MyModuleWithExternCall Prediction: Sneaker
 
 
 Mixing TensorIR Code and Libraries
@@ -1077,7 +1077,7 @@ functions. We can build and run to validate the result.
 .. parsed-literal::
     :class: output
 
-    MyModuleMixture Prediction: Ankle boot
+    MyModuleMixture Prediction: Sneaker
 
 
 Bind Parameters to IRModule
@@ -1250,7 +1250,7 @@ the input data.
 .. parsed-literal::
     :class: output
 
-    MyModuleWithParams Prediction: Ankle boot
+    MyModuleWithParams Prediction: Sneaker
 
 
 Discussions
