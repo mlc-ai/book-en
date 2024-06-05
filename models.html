@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+
+    <title>MLC Models</title>
+
+    <link
+      rel="stylesheet"
+      href="../_static/material-design-lite-1.3.0/material.blue-deep_orange.min.css"
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="../_static/sphinx_materialdesign_theme.css"
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="../_static/fontawesome/all.css"
+      type="text/css"
+    />
+    <link rel="stylesheet" href="../_static/fonts.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/d2l.css" />
+    <script
+      data-url_root="../"
+      id="documentation_options"
+      src="../_static/documentation_options.js"
+    ></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/d2l.js"></script>
+    <script></script>
+    <link rel="shortcut icon" href="../_static/mlc-favicon.png" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <style>
+      .document {
+        min-height: calc(100vh - 228px);
+      }
+      table#model-table {
+        border-collapse: collapse;
+      }
+      table#model-table th {
+        text-align: center;
+      }
+      table th + th,
+      table td + td {
+        border-left: 1px solid rgba(0, 0, 0, 0.12);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-drawer"
+    >
+      <header class="mdl-layout__header mdl-layout__header--waterfall">
+        <div class="mdl-layout__header-row">
+          <nav class="mdl-navigation breadcrumb">
+            <a class="mdl-navigation__link is-active">MLC Models</a>
+          </nav>
+          <div class="mdl-layout-spacer"></div>
+          <nav class="mdl-navigation">
+            <a
+              id="button-show-source"
+              class="mdl-button mdl-js-button mdl-button--icon"
+              href="https://github.com/mlc-ai/model-delivery-flow/blob/main/model_delivery/model-delivered-log.json"
+              rel="nofollow"
+            >
+              <i class="material-icons">code</i>
+            </a>
+            <div class="mdl-tooltip" data-mdl-for="button-show-source">
+              Show Source
+            </div>
+          </nav>
+        </div>
+      </header>
+      <header class="mdl-layout__drawer">
+        <!-- Title -->
+        <span class="mdl-layout-title">
+          <a class="title" href="../index.html">
+            <img
+              class="logo"
+              src="../_static/mlc-logo-with-text-landscape.svg"
+              alt="Machine Learing Compilation"
+            />
+          </a>
+        </span>
+
+        <div class="globaltoc">
+          <span class="mdl-layout-title toc">Table Of Contents</span>
+
+          <nav class="mdl-navigation">
+            <ul class="current">
+              <li class="toctree-l1">
+                <a class="reference internal" href="#mlc-models">MLC Models</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+      <main class="mdl-layout__content" tabIndex="0">
+        <script
+          type="text/javascript"
+          src="../_static/sphinx_materialdesign_theme.js "
+        ></script>
+        <header class="mdl-layout__drawer">
+          <!-- Title -->
+          <span class="mdl-layout-title">
+            <a class="title" href="../index.html">
+              <img
+                class="logo"
+                src="../_static/mlc-logo-with-text-landscape.svg"
+                alt="Machine Learing Compilation"
+              />
+            </a>
+          </span>
+
+          <div class="globaltoc">
+            <span class="mdl-layout-title toc">Table Of Contents</span>
+
+            <nav class="mdl-navigation">
+              <ul class="current">
+                <li class="toctree-l1">
+                  <a class="reference internal" href="#mlc-models"
+                    >MLC Models</a
+                  >
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </header>
+
+        <div class="document">
+          <div class="page-content" role="main">
+            <div class="section" id="end-to-end-model-execution">
+              <h1>
+                MLC Models<a
+                  class="headerlink"
+                  href="#mlc-models"
+                  title="Permalink to this heading"
+                  >¶</a
+                >
+              </h1>
+              <div class="section" id="prelude">
+                <h2>
+                  Available Models<a
+                    class="headerlink"
+                    href="#available-models"
+                    title="Permalink to this heading"
+                    >¶</a
+                  >
+                </h2>
+                <table id="model-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 70%">Model ID</th>
+                      <th style="width: 30%">Quantization</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    
+                    <tr>
+                      <td>Phi-3-mini-128k-instruct</td>
+                      <td>q0f16</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Mistral-7B-Instruct-v0.3</td>
+                      <td>q0f16</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Mistral-7B-Instruct-v0.3</td>
+                      <td>q4f16_1</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Mistral-7B-Instruct-v0.3</td>
+                      <td>q4f32_1</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Phi-3-mini-128k-instruct</td>
+                      <td>q4f16_1</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Phi-3-mini-128k-instruct</td>
+                      <td>q4f32_1</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Llama-3-8B-Instruct</td>
+                      <td>q4f32_1</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Llama-3-8B-Instruct</td>
+                      <td>q0f16</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Llama-3-8B-Instruct</td>
+                      <td>q4f16_1</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Llama-3-8B-Instruct</td>
+                      <td>q3f16_1</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Hermes-2-Pro-Llama-3-8B</td>
+                      <td>q4f32_1</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Hermes-2-Pro-Llama-3-8B</td>
+                      <td>q0f16</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Hermes-2-Pro-Llama-3-8B</td>
+                      <td>q4f16_1</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Hermes-2-Pro-Llama-3-8B</td>
+                      <td>q3f16_1</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Qwen1.5-0.5B-Chat</td>
+                      <td>q4f32_1</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Qwen1.5-0.5B-Chat</td>
+                      <td>q4f16_1</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Qwen1.5-0.5B-Chat</td>
+                      <td>q0f16</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Qwen1.5-1.8B-Chat</td>
+                      <td>q4f32_1</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Qwen1.5-1.8B-Chat</td>
+                      <td>q4f16_1</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>Qwen1.5-1.8B-Chat</td>
+                      <td>q0f16</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>TinyLlama-1.1B-Chat-v1.0</td>
+                      <td>q4f32_1</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>TinyLlama-1.1B-Chat-v1.0</td>
+                      <td>q4f16_1</td>
+                    </tr>
+                    
+                    <tr>
+                      <td>TinyLlama-1.1B-Chat-v1.0</td>
+                      <td>q0f16</td>
+                    </tr>
+                    
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="side-doc-outline">
+            <div class="side-doc-outline--content">
+              <div class="localtoc">
+                <p class="caption">
+                  <span class="caption-text">Table Of Contents</span>
+                </p>
+                <ul>
+                  <li>
+                    <a class="reference internal" href="#mlc-models"
+                      >MLC Models</a
+                    >
+                    <ul>
+                      <li>
+                        <a class="reference internal" href="#mlc-models"
+                          >MLC Models</a
+                        >
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="clearer"></div>
+        </div>
+        <div class="pagenation"></div>
+      </main>
+    </div>
+  </body>
+</html>
