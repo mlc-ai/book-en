@@ -295,9 +295,9 @@ TensorIR contains an additional construct called ``T.block``.
    Y[vi, vj] = Y[vi, vj] + A[vi, vk] * B[vk, vj]
 
 A **block** is a basic unit of computation in TensorIR. Notably, the
-block contains a few additional information than the plain NumPy code. A
-block contains a set of block axes (``vi, vj, vk``) and computations
-defined around them.
+block contains a few additional pieces of information compared to the
+plain NumPy code. A block contains a set of block axes (``vi, vj, vk``)
+and computations defined around them.
 
 .. raw:: latex
 
@@ -348,30 +348,30 @@ In our example, block Y computes the result ``Y[vi, vj]`` by reading
 values from ``A[vi, vk]`` and ``B[vk, vj]`` and perform sum over all
 possible ``vk``. In this particular example, if we fix ``vi``, ``vj`` to
 be ``(0, 1)``, and run the block for ``vk in range(0, 128)``, we can
-effectively compute ``C[0, 1]`` independent from other possible
+effectively compute ``C[0, 1]`` independently from other possible
 locations (that have different values of vi, vj).
 
 Notably, for a fixed value of vi and vj, the computation block produces
 a point value at a spatial location of Y (``Y[vi, vj]``) that is
 independent from other locations in ``Y`` (with a different ``vi, vj``
-values). we can call ``vi``, ``vj`` **spatial axes** as they directly
-corresponds to the beginning of a spatial region of buffers that the
-block writes to. The axes that involves in reduction (``vk``) are named
-as **reduce axes**.
+values). We can call ``vi``, ``vj`` **spatial axes** as they directly
+correspond to the beginning of a spatial region of buffers that the
+block writes to. The axes involved in reduction (``vk``) are named
+**reduce axes**.
 
 Why Extra Information in Block
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 One crucial observation is that the additional information (block axis
-range and their properties) makes the block to be **self-contained**
-when it comes to the iterations that it is supposed to carry out
-independent from the external loop-nest ``i``, ``j``, ``k``.
+range and their properties) makes the block **self-contained** when it
+comes to the iterations that it is supposed to carry out independently
+from the external loop-nest ``i``, ``j``, ``k``.
 
 The block axis information also provides additional properties that help
-us to validate the correctness of the external loops that are used to
-carry out the computation. For example, the above code block will result
-in an error because the loop expects an iterator of size ``128``, but we
-only bound it to a for loop of size ``127``.
+us validate the correctness of the external loops used to carry out the
+computation. For example, the code block below will result in an error
+because the loop expects an iterator of size ``128``, but we only bound
+it to a for loop of size ``127``.
 
 .. raw:: latex
 
@@ -392,8 +392,8 @@ compilation analysis. For example, while we can always parallelize over
 spatial axes, parallelizing over reduce axes will require specific
 strategies.
 
-Sugars for Block Axes Binding
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Sugar for Block Axes Binding
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In situations where each of the block axes is directly mapped to an
 outer loop iterator, we can use ``T.axis.remap`` to declare the block
@@ -465,15 +465,15 @@ function.
    T.func_attr({"global_symbol": "mm_relu", "tir.noalias": True})
 
 Here ``global_symbol`` corresponds to the name of the function, and
-``tir.noalias`` is an attribute indicating that all the buffer memories
-do not overlap. You also feel free safely skip these attributes for now
-as they won’t affect the overall understanding of the high-level
+``tir.noalias`` is an attribute indicating that all the buffer memory
+areas do not overlap. You also feel free safely skip these attributes
+for now as they won’t affect the overall understanding of the high-level
 concepts.
 
 The two decorators, ``@tvm.script.ir_module`` and ``@T.prim_func`` are
 used to indicate the type of the corresponding part.
 
-``@tvm.script.ir_module`` indicate that MyModule is an ``IRModule``.
+``@tvm.script.ir_module`` indicates that MyModule is an ``IRModule``.
 IRModule is the container object to hold a collection of tensor
 functions in machine learning compilation.
 
@@ -563,7 +563,7 @@ and covered most of the elements, including:
 
 -  Buffer declarations in parameters and intermediate temporary memory.
 -  For loop iterations.
--  **Block** and block axes properties.
+-  **Blocks** and block axes properties.
 
 In this section, we have gone through one example instance of TensorIR
 that covers the most common elements in MLC.
@@ -585,9 +585,10 @@ In the last section, we have given an example of how to write
 ways to implement the same functionality, and each implementation can
 result in different performance.
 
-We will discuss the reason behind the performance and how to leverage
-those variants in future lectures. In this lecture, let us focus on the
-ability to get different implementation variants using transformations.
+We will discuss the reason behind the performance difference and how to
+leverage those variants in future lectures. In this lecture, let us
+focus on the ability to get different implementation variants using
+transformations.
 
 .. raw:: latex
 
@@ -619,9 +620,9 @@ The above code block shows a slightly different variation of
 -  We replace the ``j`` loop with two loops, ``j0`` and ``j1``.
 -  The order of iterations changes slightly
 
-In order to get ``lnumpy_mm_relu_v2``, we have to rewrite a new function
-(or manual copy-pasting and editing). TensorIR introduces a utility
-called Schedule that allows us to do that pragmatically.
+In order to get ``lnumpy_mm_relu_v2``, we have to rewrite it into a new
+function (or manually copy-paste and edit). TensorIR introduces a
+utility called Schedule that allows us to do that pragmatically.
 
 To remind ourselves, let us look again at the current MyModule content.
 
@@ -659,6 +660,7 @@ To remind ourselves, let us look again at the current MyModule content.
     .output_html .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
     .output_html .gd { color: #A00000 } /* Generic.Deleted */
     .output_html .ge { font-style: italic } /* Generic.Emph */
+    .output_html .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
     .output_html .gr { color: #E40000 } /* Generic.Error */
     .output_html .gh { color: #000080; font-weight: bold } /* Generic.Heading */
     .output_html .gi { color: #008400 } /* Generic.Inserted */
@@ -720,7 +722,7 @@ To remind ourselves, let us look again at the current MyModule content.
     <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
         <span class="k">def</span> <span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;mm_relu&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="n">Y</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">):</span>
@@ -816,6 +818,7 @@ We can look at the result of the transformation, which is stored at
     .output_html .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
     .output_html .gd { color: #A00000 } /* Generic.Deleted */
     .output_html .ge { font-style: italic } /* Generic.Emph */
+    .output_html .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
     .output_html .gr { color: #E40000 } /* Generic.Error */
     .output_html .gh { color: #000080; font-weight: bold } /* Generic.Heading */
     .output_html .gi { color: #008400 } /* Generic.Inserted */
@@ -877,7 +880,7 @@ We can look at the result of the transformation, which is stored at
     <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
         <span class="k">def</span> <span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;mm_relu&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="n">Y</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j_0</span><span class="p">,</span> <span class="n">j_1</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">128</span><span class="p">):</span>
@@ -938,6 +941,7 @@ would be to reorder the two loops.
     .output_html .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
     .output_html .gd { color: #A00000 } /* Generic.Deleted */
     .output_html .ge { font-style: italic } /* Generic.Emph */
+    .output_html .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
     .output_html .gr { color: #E40000 } /* Generic.Error */
     .output_html .gh { color: #000080; font-weight: bold } /* Generic.Heading */
     .output_html .gi { color: #008400 } /* Generic.Inserted */
@@ -999,7 +1003,7 @@ would be to reorder the two loops.
     <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
         <span class="k">def</span> <span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;mm_relu&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="n">Y</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j_0</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">j_1</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
@@ -1066,6 +1070,7 @@ called ``reverse_compute_at`` to move block C to an inner loop of ``Y``.
     .output_html .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
     .output_html .gd { color: #A00000 } /* Generic.Deleted */
     .output_html .ge { font-style: italic } /* Generic.Emph */
+    .output_html .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
     .output_html .gr { color: #E40000 } /* Generic.Error */
     .output_html .gh { color: #000080; font-weight: bold } /* Generic.Heading */
     .output_html .gi { color: #008400 } /* Generic.Inserted */
@@ -1127,7 +1132,7 @@ called ``reverse_compute_at`` to move block C to an inner loop of ``Y``.
     <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
         <span class="k">def</span> <span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;mm_relu&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="n">Y</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j_0</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">32</span><span class="p">):</span>
@@ -1316,8 +1321,8 @@ compare the running performance of different generated functions.
 .. parsed-literal::
     :class: output
 
-    Time cost of MyModule 0.00330583 sec
-    Time cost of transformed sch.mod 0.00113609 sec
+    Time cost of MyModule 0.00272919 sec
+    Time cost of transformed sch.mod 0.000687126 sec
 
 
 It is interesting to see the running time difference between the two
@@ -1359,6 +1364,7 @@ of the code.
     .output_html .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
     .output_html .gd { color: #A00000 } /* Generic.Deleted */
     .output_html .ge { font-style: italic } /* Generic.Emph */
+    .output_html .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
     .output_html .gr { color: #E40000 } /* Generic.Error */
     .output_html .gh { color: #000080; font-weight: bold } /* Generic.Heading */
     .output_html .gi { color: #008400 } /* Generic.Inserted */
@@ -1420,7 +1426,7 @@ of the code.
     <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
         <span class="k">def</span> <span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;mm_relu&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="n">Y</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">):</span>
@@ -1474,6 +1480,7 @@ of the code.
     .output_html .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
     .output_html .gd { color: #A00000 } /* Generic.Deleted */
     .output_html .ge { font-style: italic } /* Generic.Emph */
+    .output_html .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
     .output_html .gr { color: #E40000 } /* Generic.Error */
     .output_html .gh { color: #000080; font-weight: bold } /* Generic.Heading */
     .output_html .gi { color: #008400 } /* Generic.Inserted */
@@ -1535,7 +1542,7 @@ of the code.
     <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
         <span class="k">def</span> <span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;mm_relu&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="n">Y</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j_0</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">32</span><span class="p">):</span>
@@ -1636,7 +1643,7 @@ affect the code’s performance.
 .. parsed-literal::
     :class: output
 
-    Time cost of transformed mod_transformed 0.000573686 sec
+    Time cost of transformed mod_transformed 0.000393904 sec
 
 
 
@@ -1662,6 +1669,7 @@ affect the code’s performance.
     .output_html .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
     .output_html .gd { color: #A00000 } /* Generic.Deleted */
     .output_html .ge { font-style: italic } /* Generic.Emph */
+    .output_html .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
     .output_html .gr { color: #E40000 } /* Generic.Error */
     .output_html .gh { color: #000080; font-weight: bold } /* Generic.Heading */
     .output_html .gi { color: #008400 } /* Generic.Inserted */
@@ -1723,7 +1731,7 @@ affect the code’s performance.
     <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
         <span class="k">def</span> <span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;mm_relu&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="n">Y</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j_0</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">16</span><span class="p">):</span>
@@ -1778,10 +1786,10 @@ Generate TensorIR code using Tensor Expression
 
 In many cases, our development forms are higher-level abstractions that
 are not at the loop level. So another common way to obtain TensorIR is
-pragmatically generating relevant code.
+programmatically generating relevant code.
 
 Tensor expression (te) is a domain-specific language that describes a
-sequence of computations via an expression like API.
+sequence of computations via an expression-like API.
 
 .. raw:: latex
 
@@ -1850,6 +1858,7 @@ with two input parameters (A, B) and one output parameter (C).
     .output_html .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
     .output_html .gd { color: #A00000 } /* Generic.Deleted */
     .output_html .ge { font-style: italic } /* Generic.Emph */
+    .output_html .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
     .output_html .gr { color: #E40000 } /* Generic.Error */
     .output_html .gh { color: #000080; font-weight: bold } /* Generic.Heading */
     .output_html .gi { color: #008400 } /* Generic.Inserted */
@@ -1911,7 +1920,7 @@ with two input parameters (A, B) and one output parameter (C).
     <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
         <span class="k">def</span> <span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;mm_relu&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="n">Y</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">):</span>
@@ -1936,14 +1945,14 @@ with two input parameters (A, B) and one output parameter (C).
 The tensor expression API provides a helpful tool to generate TensorIR
 functions for a given higher-level input.
 
-TensorIR Functions as Result of Transformations
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+TensorIR Functions as Results of Transformations
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In practice, we also get TensorIR functions as results of
 transformations. This happens when we start with two primitive tensor
-functions (mm and relu), then apply a pragmatic transformation to “fuse”
-them into a single primitive tensor function, ``mm_relu``. We will cover
-the details in future chapters.
+functions (mm and relu), then apply a programmatic transformation to
+“fuse” them into a single primitive tensor function, ``mm_relu``. We
+will cover the details in future chapters.
 
 Discussions
 ~~~~~~~~~~~

@@ -121,7 +121,7 @@ We can build and run ``MyModule`` as follows.
 .. parsed-literal::
     :class: output
 
-    Time cost of MyModule: 3.320 ms
+    Time cost of MyModule: 3.002 ms
 
 
 Next, we transform ``MyModule`` a bit by reorganizing the loop access
@@ -175,6 +175,7 @@ pattern.
     .highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
     .highlight .gd { color: #A00000 } /* Generic.Deleted */
     .highlight .ge { font-style: italic } /* Generic.Emph */
+    .highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
     .highlight .gr { color: #E40000 } /* Generic.Error */
     .highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
     .highlight .gi { color: #008400 } /* Generic.Inserted */
@@ -236,7 +237,7 @@ pattern.
     <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
         <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j_0</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">32</span><span class="p">):</span>
                 <span class="k">for</span> <span class="n">j_1_init</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
@@ -280,7 +281,7 @@ Then we can build and run the re-organized program.
 .. parsed-literal::
     :class: output
 
-    Time cost of MyModule=>schedule_mm: 1.684 ms
+    Time cost of MyModule=>schedule_mm: 0.709 ms
 
 
 Transformation Trace
@@ -310,7 +311,7 @@ transformed module. We can print it out using the following code.
     def apply_trace(sch: tir.Schedule) -> None:
       b0 = sch.get_block(name="C", func_name="main")
       l1, l2, l3 = sch.get_loops(block=b0)
-      l4, l5 = sch.split(loop=l2, factors=[None, 4], preserve_unit_iters=True)
+      l4, l5 = sch.split(loop=l2, factors=[None, 4], preserve_unit_iters=True, disable_predication=False)
       sch.reorder(l1, l4, l3, l5)
       b6 = sch.decompose_reduction(block=b0, loop=l3)
 
@@ -421,6 +422,7 @@ the loop bound of ``j_1`` changes each time we run the code-block.
     .highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
     .highlight .gd { color: #A00000 } /* Generic.Deleted */
     .highlight .ge { font-style: italic } /* Generic.Emph */
+    .highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
     .highlight .gr { color: #E40000 } /* Generic.Error */
     .highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
     .highlight .gi { color: #008400 } /* Generic.Inserted */
@@ -482,20 +484,20 @@ the loop bound of ``j_1`` changes each time we run the code-block.
     <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
         <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j_0</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">32</span><span class="p">):</span>
-                <span class="k">for</span> <span class="n">j_1_init</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j_0</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">j_1_init</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
                     <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;C_init&quot;</span><span class="p">):</span>
                         <span class="n">vi</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
-                        <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">j_0</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">j_1_init</span><span class="p">)</span>
+                        <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">j_0</span> <span class="o">+</span> <span class="n">j_1_init</span><span class="p">)</span>
                         <span class="n">T</span><span class="o">.</span><span class="n">reads</span><span class="p">()</span>
                         <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
                         <span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">j_1</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">j_1</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
                     <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;C_update&quot;</span><span class="p">):</span>
                         <span class="n">vi</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
-                        <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">j_0</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">j_1</span><span class="p">)</span>
+                        <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">j_0</span> <span class="o">+</span> <span class="n">j_1</span><span class="p">)</span>
                         <span class="n">vk</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
                         <span class="n">T</span><span class="o">.</span><span class="n">reads</span><span class="p">(</span><span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vk</span><span class="p">],</span> <span class="n">B</span><span class="p">[</span><span class="n">vk</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
                         <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
@@ -531,8 +533,8 @@ made in sampling.
     def apply_trace(sch: tir.Schedule) -> None:
       b0 = sch.get_block(name="C", func_name="main")
       l1, l2, l3 = sch.get_loops(block=b0)
-      v4, v5 = sch.sample_perfect_tile(loop=l2, n=2, max_innermost_factor=16, decision=[32, 4])
-      l6, l7 = sch.split(loop=l2, factors=[v4, v5], preserve_unit_iters=True)
+      v4, v5 = sch.sample_perfect_tile(loop=l2, n=2, max_innermost_factor=16, decision=[128, 1])
+      l6, l7 = sch.split(loop=l2, factors=[v4, v5], preserve_unit_iters=True, disable_predication=False)
       sch.reorder(l1, l6, l3, l7)
       b8 = sch.decompose_reduction(block=b0, loop=l3)
 
@@ -568,8 +570,8 @@ times and look at the trace.
     def apply_trace(sch: tir.Schedule) -> None:
       b0 = sch.get_block(name="C", func_name="main")
       l1, l2, l3 = sch.get_loops(block=b0)
-      v4, v5 = sch.sample_perfect_tile(loop=l2, n=2, max_innermost_factor=16, decision=[32, 4])
-      l6, l7 = sch.split(loop=l2, factors=[v4, v5], preserve_unit_iters=True)
+      v4, v5 = sch.sample_perfect_tile(loop=l2, n=2, max_innermost_factor=16, decision=[8, 16])
+      l6, l7 = sch.split(loop=l2, factors=[v4, v5], preserve_unit_iters=True, disable_predication=False)
       sch.reorder(l1, l6, l3, l7)
       b8 = sch.decompose_reduction(block=b0, loop=l3)
 
@@ -646,7 +648,7 @@ specify choices such as factor values.
     def apply_trace(sch: tir.Schedule) -> None:
       b0 = sch.get_block(name="C", func_name="main")
       l1, l2, l3 = sch.get_loops(block=b0)
-      v4, v5 = sch.sample_perfect_tile(loop=l2, n=2, max_innermost_factor=16, decision=[8, 16])
+      v4, v5 = sch.sample_perfect_tile(loop=l2, n=2, max_innermost_factor=16, decision=[32, 4])
 
 
 The schedule trace keeps track of the choices of these symbolic
@@ -685,6 +687,7 @@ look up these choices to decide how to split the loop.
     .highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
     .highlight .gd { color: #A00000 } /* Generic.Deleted */
     .highlight .ge { font-style: italic } /* Generic.Emph */
+    .highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
     .highlight .gr { color: #E40000 } /* Generic.Error */
     .highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
     .highlight .gi { color: #008400 } /* Generic.Inserted */
@@ -746,7 +749,7 @@ look up these choices to decide how to split the loop.
     <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
         <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">):</span>
                 <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">):</span>
@@ -799,8 +802,8 @@ These actions are recorded in the following trace.
     def apply_trace(sch: tir.Schedule) -> None:
       b0 = sch.get_block(name="C", func_name="main")
       l1, l2, l3 = sch.get_loops(block=b0)
-      v4, v5 = sch.sample_perfect_tile(loop=l2, n=2, max_innermost_factor=16, decision=[8, 16])
-      l6, l7 = sch.split(loop=l2, factors=[v4, v5], preserve_unit_iters=True)
+      v4, v5 = sch.sample_perfect_tile(loop=l2, n=2, max_innermost_factor=16, decision=[32, 4])
+      l6, l7 = sch.split(loop=l2, factors=[v4, v5], preserve_unit_iters=True, disable_predication=False)
       sch.reorder(l1, l6, l3, l7)
 
 
@@ -839,6 +842,7 @@ to the updated versions after the actions are taken.
     .highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
     .highlight .gd { color: #A00000 } /* Generic.Deleted */
     .highlight .ge { font-style: italic } /* Generic.Emph */
+    .highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
     .highlight .gr { color: #E40000 } /* Generic.Error */
     .highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
     .highlight .gi { color: #008400 } /* Generic.Inserted */
@@ -900,12 +904,12 @@ to the updated versions after the actions are taken.
     <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
         <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j_0</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">j_1</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">16</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j_0</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">j_1</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
                 <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">):</span>
                     <span class="n">vi</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
-                    <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">j_0</span> <span class="o">*</span> <span class="mi">16</span> <span class="o">+</span> <span class="n">j_1</span><span class="p">)</span>
+                    <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">j_0</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">j_1</span><span class="p">)</span>
                     <span class="n">vk</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
                     <span class="n">T</span><span class="o">.</span><span class="n">reads</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vk</span><span class="p">],</span> <span class="n">B</span><span class="p">[</span><span class="n">vk</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
                     <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
@@ -939,7 +943,7 @@ We can do some further transformations to get to the final state.
 .. parsed-literal::
     :class: output
 
-    tir.BlockRV(0x48cda30)
+    tir.BlockRV(0x3b23430)
 
 
 
@@ -975,6 +979,7 @@ We can do some further transformations to get to the final state.
     .highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
     .highlight .gd { color: #A00000 } /* Generic.Deleted */
     .highlight .ge { font-style: italic } /* Generic.Emph */
+    .highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
     .highlight .gr { color: #E40000 } /* Generic.Error */
     .highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
     .highlight .gi { color: #008400 } /* Generic.Inserted */
@@ -1036,20 +1041,20 @@ We can do some further transformations to get to the final state.
     <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
         <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j_0</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
-                <span class="k">for</span> <span class="n">j_1_init</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j_0</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">32</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">j_1_init</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
                     <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;C_init&quot;</span><span class="p">):</span>
                         <span class="n">vi</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
-                        <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">j_0</span> <span class="o">*</span> <span class="mi">16</span> <span class="o">+</span> <span class="n">j_1_init</span><span class="p">)</span>
+                        <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">j_0</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">j_1_init</span><span class="p">)</span>
                         <span class="n">T</span><span class="o">.</span><span class="n">reads</span><span class="p">()</span>
                         <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
                         <span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">j_1</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">16</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">j_1</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
                     <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;C_update&quot;</span><span class="p">):</span>
                         <span class="n">vi</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
-                        <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">j_0</span> <span class="o">*</span> <span class="mi">16</span> <span class="o">+</span> <span class="n">j_1</span><span class="p">)</span>
+                        <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">j_0</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">j_1</span><span class="p">)</span>
                         <span class="n">vk</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
                         <span class="n">T</span><span class="o">.</span><span class="n">reads</span><span class="p">(</span><span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vk</span><span class="p">],</span> <span class="n">B</span><span class="p">[</span><span class="n">vk</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
                         <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
@@ -1116,49 +1121,49 @@ benchmark, then book keep the best one in history.
 .. parsed-literal::
     :class: output
 
-    =====Attempt 0, time-cost: 1.429 ms====
+    =====Attempt 0, time-cost: 1.498 ms====
     # from tvm import tir
     def apply_trace(sch: tir.Schedule) -> None:
       b0 = sch.get_block(name="C", func_name="main")
       l1, l2, l3 = sch.get_loops(block=b0)
-      v4, v5 = sch.sample_perfect_tile(loop=l2, n=2, max_innermost_factor=16, decision=[16, 8])
-      l6, l7 = sch.split(loop=l2, factors=[v4, v5], preserve_unit_iters=True)
+      v4, v5 = sch.sample_perfect_tile(loop=l2, n=2, max_innermost_factor=16, decision=[64, 2])
+      l6, l7 = sch.split(loop=l2, factors=[v4, v5], preserve_unit_iters=True, disable_predication=False)
       sch.reorder(l1, l6, l3, l7)
       b8 = sch.decompose_reduction(block=b0, loop=l3)
-    =====Attempt 1, time-cost: 1.229 ms====
+    =====Attempt 1, time-cost: 2.524 ms====
+    # from tvm import tir
+    def apply_trace(sch: tir.Schedule) -> None:
+      b0 = sch.get_block(name="C", func_name="main")
+      l1, l2, l3 = sch.get_loops(block=b0)
+      v4, v5 = sch.sample_perfect_tile(loop=l2, n=2, max_innermost_factor=16, decision=[128, 1])
+      l6, l7 = sch.split(loop=l2, factors=[v4, v5], preserve_unit_iters=True, disable_predication=False)
+      sch.reorder(l1, l6, l3, l7)
+      b8 = sch.decompose_reduction(block=b0, loop=l3)
+    =====Attempt 2, time-cost: 0.304 ms====
     # from tvm import tir
     def apply_trace(sch: tir.Schedule) -> None:
       b0 = sch.get_block(name="C", func_name="main")
       l1, l2, l3 = sch.get_loops(block=b0)
       v4, v5 = sch.sample_perfect_tile(loop=l2, n=2, max_innermost_factor=16, decision=[8, 16])
-      l6, l7 = sch.split(loop=l2, factors=[v4, v5], preserve_unit_iters=True)
+      l6, l7 = sch.split(loop=l2, factors=[v4, v5], preserve_unit_iters=True, disable_predication=False)
       sch.reorder(l1, l6, l3, l7)
       b8 = sch.decompose_reduction(block=b0, loop=l3)
-    =====Attempt 2, time-cost: 1.688 ms====
-    # from tvm import tir
-    def apply_trace(sch: tir.Schedule) -> None:
-      b0 = sch.get_block(name="C", func_name="main")
-      l1, l2, l3 = sch.get_loops(block=b0)
-      v4, v5 = sch.sample_perfect_tile(loop=l2, n=2, max_innermost_factor=16, decision=[32, 4])
-      l6, l7 = sch.split(loop=l2, factors=[v4, v5], preserve_unit_iters=True)
-      sch.reorder(l1, l6, l3, l7)
-      b8 = sch.decompose_reduction(block=b0, loop=l3)
-    =====Attempt 3, time-cost: 1.431 ms====
+    =====Attempt 3, time-cost: 0.397 ms====
     # from tvm import tir
     def apply_trace(sch: tir.Schedule) -> None:
       b0 = sch.get_block(name="C", func_name="main")
       l1, l2, l3 = sch.get_loops(block=b0)
       v4, v5 = sch.sample_perfect_tile(loop=l2, n=2, max_innermost_factor=16, decision=[16, 8])
-      l6, l7 = sch.split(loop=l2, factors=[v4, v5], preserve_unit_iters=True)
+      l6, l7 = sch.split(loop=l2, factors=[v4, v5], preserve_unit_iters=True, disable_predication=False)
       sch.reorder(l1, l6, l3, l7)
       b8 = sch.decompose_reduction(block=b0, loop=l3)
-    =====Attempt 4, time-cost: 1.690 ms====
+    =====Attempt 4, time-cost: 2.572 ms====
     # from tvm import tir
     def apply_trace(sch: tir.Schedule) -> None:
       b0 = sch.get_block(name="C", func_name="main")
       l1, l2, l3 = sch.get_loops(block=b0)
-      v4, v5 = sch.sample_perfect_tile(loop=l2, n=2, max_innermost_factor=16, decision=[32, 4])
-      l6, l7 = sch.split(loop=l2, factors=[v4, v5], preserve_unit_iters=True)
+      v4, v5 = sch.sample_perfect_tile(loop=l2, n=2, max_innermost_factor=16, decision=[128, 1])
+      l6, l7 = sch.split(loop=l2, factors=[v4, v5], preserve_unit_iters=True, disable_predication=False)
       sch.reorder(l1, l6, l3, l7)
       b8 = sch.decompose_reduction(block=b0, loop=l3)
 
@@ -1187,7 +1192,7 @@ returns the best run throughout five trials.
       b0 = sch.get_block(name="C", func_name="main")
       l1, l2, l3 = sch.get_loops(block=b0)
       v4, v5 = sch.sample_perfect_tile(loop=l2, n=2, max_innermost_factor=16, decision=[8, 16])
-      l6, l7 = sch.split(loop=l2, factors=[v4, v5], preserve_unit_iters=True)
+      l6, l7 = sch.split(loop=l2, factors=[v4, v5], preserve_unit_iters=True, disable_predication=False)
       sch.reorder(l1, l6, l3, l7)
       b8 = sch.decompose_reduction(block=b0, loop=l3)
 
@@ -1226,7 +1231,6 @@ space**.
         num_trials_per_iter=64,
         space=ms.space_generator.ScheduleFn(stochastic_schedule_mm),
         work_dir="./tune_tmp",
-        task_name="main"
     )
     
     sch = ms.tir_integration.compile_tir(database, MyModule, "llvm --num-cores=1")
@@ -1239,7 +1243,10 @@ space**.
 .. parsed-literal::
     :class: output
 
-    2023-04-05 15:51:06 [INFO] [task_scheduler.cc:260] Task #0 has finished. Remaining task(s): 0
+    2024-06-04 23:57:56 [INFO] Logging directory: ./tune_tmp/logs
+    2024-06-04 23:57:56 [INFO] LocalBuilder: max_workers = 2
+    2024-06-04 23:57:57 [INFO] LocalRunner: max_workers = 1
+    2024-06-04 23:57:58 [INFO] [task_scheduler.cc:159] Initializing Task #0: "main"
 
 
 
@@ -1279,9 +1286,453 @@ space**.
           <td>main</td>
           <td>4194304</td>
           <td>1</td>
-          <td>3.4113</td>
-          <td>1229.5386</td>
-          <td>1229.5386</td>
+          <td>N/A</td>
+          <td>N/A</td>
+          <td>N/A</td>
+          <td>0</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
+.. parsed-literal::
+    :class: output
+
+    2024-06-04 23:57:58 [DEBUG] [task_scheduler.cc:318] 
+     ID | Name |    FLOP | Weight | Speed (GFLOPS) | Latency (us) | Weighted Latency (us) | Trials | Done 
+    ------------------------------------------------------------------------------------------------------
+      0 | main | 4194304 |      1 |            N/A |          N/A |                   N/A |      0 |      
+    ------------------------------------------------------------------------------------------------------
+    Total trials: 0
+    Total latency (us): 0
+    
+    
+    Total trials: 0
+    Total latency (us): 0
+    
+    2024-06-04 23:57:58 [INFO] [task_scheduler.cc:180] TaskScheduler picks Task #0: "main"
+    2024-06-04 23:57:59 [INFO] [task_scheduler.cc:193] Sending 5 sample(s) to builder
+    2024-06-04 23:58:00 [INFO] [task_scheduler.cc:195] Sending 5 sample(s) to runner
+    2024-06-04 23:58:01 [DEBUG] XGB iter   0: tr-p-rmse: 0.318671	tr-a-peak@32: 0.936172	tr-rmse: 0.334472	tr-rmse: 0.334472
+    2024-06-04 23:58:01 [DEBUG] XGB iter  25: tr-p-rmse: 0.138828	tr-a-peak@32: 1.000000	tr-rmse: 0.072936	tr-rmse: 0.072936
+    2024-06-04 23:58:02 [DEBUG] XGB iter  50: tr-p-rmse: 0.126058	tr-a-peak@32: 1.000000	tr-rmse: 0.066438	tr-rmse: 0.066438
+    2024-06-04 23:58:02 [DEBUG] XGB iter  75: tr-p-rmse: 0.125189	tr-a-peak@32: 1.000000	tr-rmse: 0.066418	tr-rmse: 0.066418
+    2024-06-04 23:58:02 [DEBUG] XGB iter 100: tr-p-rmse: 0.125169	tr-a-peak@32: 1.000000	tr-rmse: 0.066418	tr-rmse: 0.066418
+    2024-06-04 23:58:02 [DEBUG] XGB iter 125: tr-p-rmse: 0.125168	tr-a-peak@32: 1.000000	tr-rmse: 0.066418	tr-rmse: 0.066418
+    2024-06-04 23:58:03 [DEBUG] XGB iter 150: tr-p-rmse: 0.125168	tr-a-peak@32: 1.000000	tr-rmse: 0.066418	tr-rmse: 0.066418
+    2024-06-04 23:58:03 [DEBUG] XGB stopped. Best iteration: [101] tr-p-rmse:0.12517	tr-a-peak@32:1.00000	tr-rmse:0.06642	tr-rmse:0.06642 
+    2024-06-04 23:58:03 [INFO] [task_scheduler.cc:237] [Updated] Task #0: "main"
+
+
+
+.. raw:: html
+
+    <div>
+    <style scoped>
+        .dataframe tbody tr th:only-of-type {
+            vertical-align: middle;
+        }
+    
+        .dataframe tbody tr th {
+            vertical-align: top;
+        }
+    
+        .dataframe thead th {
+            text-align: right;
+        }
+    </style>
+    <table border="1" class="dataframe">
+      <thead>
+        <tr style="text-align: right;">
+          <th></th>
+          <th>Name</th>
+          <th>FLOP</th>
+          <th>Weight</th>
+          <th>Speed (GFLOPS)</th>
+          <th>Latency (us)</th>
+          <th>Weighted Latency (us)</th>
+          <th>Trials</th>
+          <th>Done</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>0</th>
+          <td>main</td>
+          <td>4194304</td>
+          <td>1</td>
+          <td>15.6179</td>
+          <td>268.5567</td>
+          <td>268.5567</td>
+          <td>5</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
+.. parsed-literal::
+    :class: output
+
+    
+    Total trials: 5
+    Total latency (us): 268.557
+    
+    2024-06-04 23:58:03 [DEBUG] [task_scheduler.cc:318] 
+     ID | Name |    FLOP | Weight | Speed (GFLOPS) | Latency (us) | Weighted Latency (us) | Trials | Done 
+    ------------------------------------------------------------------------------------------------------
+      0 | main | 4194304 |      1 |        15.6179 |     268.5567 |              268.5567 |      5 |      
+    ------------------------------------------------------------------------------------------------------
+    Total trials: 5
+    Total latency (us): 268.557
+    
+    2024-06-04 23:58:03 [INFO] [task_scheduler.cc:180] TaskScheduler picks Task #0: "main"
+    2024-06-04 23:58:03 [INFO] [task_scheduler.cc:193] Sending 0 sample(s) to builder
+    2024-06-04 23:58:03 [INFO] [task_scheduler.cc:195] Sending 0 sample(s) to runner
+    2024-06-04 23:58:03 [INFO] [task_scheduler.cc:237] [Updated] Task #0: "main"
+
+
+
+.. raw:: html
+
+    <div>
+    <style scoped>
+        .dataframe tbody tr th:only-of-type {
+            vertical-align: middle;
+        }
+    
+        .dataframe tbody tr th {
+            vertical-align: top;
+        }
+    
+        .dataframe thead th {
+            text-align: right;
+        }
+    </style>
+    <table border="1" class="dataframe">
+      <thead>
+        <tr style="text-align: right;">
+          <th></th>
+          <th>Name</th>
+          <th>FLOP</th>
+          <th>Weight</th>
+          <th>Speed (GFLOPS)</th>
+          <th>Latency (us)</th>
+          <th>Weighted Latency (us)</th>
+          <th>Trials</th>
+          <th>Done</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>0</th>
+          <td>main</td>
+          <td>4194304</td>
+          <td>1</td>
+          <td>15.6179</td>
+          <td>268.5567</td>
+          <td>268.5567</td>
+          <td>5</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
+.. parsed-literal::
+    :class: output
+
+    
+    Total trials: 5
+    Total latency (us): 268.557
+    
+    2024-06-04 23:58:03 [DEBUG] [task_scheduler.cc:318] 
+     ID | Name |    FLOP | Weight | Speed (GFLOPS) | Latency (us) | Weighted Latency (us) | Trials | Done 
+    ------------------------------------------------------------------------------------------------------
+      0 | main | 4194304 |      1 |        15.6179 |     268.5567 |              268.5567 |      5 |      
+    ------------------------------------------------------------------------------------------------------
+    Total trials: 5
+    Total latency (us): 268.557
+    
+    2024-06-04 23:58:03 [INFO] [task_scheduler.cc:180] TaskScheduler picks Task #0: "main"
+    2024-06-04 23:58:04 [INFO] [task_scheduler.cc:193] Sending 0 sample(s) to builder
+    2024-06-04 23:58:04 [INFO] [task_scheduler.cc:195] Sending 0 sample(s) to runner
+    2024-06-04 23:58:04 [INFO] [task_scheduler.cc:237] [Updated] Task #0: "main"
+
+
+
+.. raw:: html
+
+    <div>
+    <style scoped>
+        .dataframe tbody tr th:only-of-type {
+            vertical-align: middle;
+        }
+    
+        .dataframe tbody tr th {
+            vertical-align: top;
+        }
+    
+        .dataframe thead th {
+            text-align: right;
+        }
+    </style>
+    <table border="1" class="dataframe">
+      <thead>
+        <tr style="text-align: right;">
+          <th></th>
+          <th>Name</th>
+          <th>FLOP</th>
+          <th>Weight</th>
+          <th>Speed (GFLOPS)</th>
+          <th>Latency (us)</th>
+          <th>Weighted Latency (us)</th>
+          <th>Trials</th>
+          <th>Done</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>0</th>
+          <td>main</td>
+          <td>4194304</td>
+          <td>1</td>
+          <td>15.6179</td>
+          <td>268.5567</td>
+          <td>268.5567</td>
+          <td>5</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
+.. parsed-literal::
+    :class: output
+
+    
+    Total trials: 5
+    Total latency (us): 268.557
+    
+    2024-06-04 23:58:04 [DEBUG] [task_scheduler.cc:318] 
+     ID | Name |    FLOP | Weight | Speed (GFLOPS) | Latency (us) | Weighted Latency (us) | Trials | Done 
+    ------------------------------------------------------------------------------------------------------
+      0 | main | 4194304 |      1 |        15.6179 |     268.5567 |              268.5567 |      5 |      
+    ------------------------------------------------------------------------------------------------------
+    Total trials: 5
+    Total latency (us): 268.557
+    
+    2024-06-04 23:58:04 [INFO] [task_scheduler.cc:180] TaskScheduler picks Task #0: "main"
+    2024-06-04 23:58:05 [INFO] [task_scheduler.cc:193] Sending 0 sample(s) to builder
+    2024-06-04 23:58:05 [INFO] [task_scheduler.cc:195] Sending 0 sample(s) to runner
+    2024-06-04 23:58:05 [INFO] [task_scheduler.cc:237] [Updated] Task #0: "main"
+
+
+
+.. raw:: html
+
+    <div>
+    <style scoped>
+        .dataframe tbody tr th:only-of-type {
+            vertical-align: middle;
+        }
+    
+        .dataframe tbody tr th {
+            vertical-align: top;
+        }
+    
+        .dataframe thead th {
+            text-align: right;
+        }
+    </style>
+    <table border="1" class="dataframe">
+      <thead>
+        <tr style="text-align: right;">
+          <th></th>
+          <th>Name</th>
+          <th>FLOP</th>
+          <th>Weight</th>
+          <th>Speed (GFLOPS)</th>
+          <th>Latency (us)</th>
+          <th>Weighted Latency (us)</th>
+          <th>Trials</th>
+          <th>Done</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>0</th>
+          <td>main</td>
+          <td>4194304</td>
+          <td>1</td>
+          <td>15.6179</td>
+          <td>268.5567</td>
+          <td>268.5567</td>
+          <td>5</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
+.. parsed-literal::
+    :class: output
+
+    2024-06-04 23:58:05 [DEBUG] [task_scheduler.cc:318] 
+     ID | Name |    FLOP | Weight | Speed (GFLOPS) | Latency (us) | Weighted Latency (us) | Trials | Done 
+    ------------------------------------------------------------------------------------------------------
+      0 | main | 4194304 |      1 |        15.6179 |     268.5567 |              268.5567 |      5 |      
+    ------------------------------------------------------------------------------------------------------
+    Total trials: 5
+    Total latency (us): 268.557
+    
+    
+    Total trials: 5
+    Total latency (us): 268.557
+    
+    2024-06-04 23:58:05 [INFO] [task_scheduler.cc:180] TaskScheduler picks Task #0: "main"
+    2024-06-04 23:58:06 [INFO] [task_scheduler.cc:193] Sending 0 sample(s) to builder
+    2024-06-04 23:58:06 [INFO] [task_scheduler.cc:195] Sending 0 sample(s) to runner
+    2024-06-04 23:58:06 [INFO] [task_scheduler.cc:237] [Updated] Task #0: "main"
+
+
+
+.. raw:: html
+
+    <div>
+    <style scoped>
+        .dataframe tbody tr th:only-of-type {
+            vertical-align: middle;
+        }
+    
+        .dataframe tbody tr th {
+            vertical-align: top;
+        }
+    
+        .dataframe thead th {
+            text-align: right;
+        }
+    </style>
+    <table border="1" class="dataframe">
+      <thead>
+        <tr style="text-align: right;">
+          <th></th>
+          <th>Name</th>
+          <th>FLOP</th>
+          <th>Weight</th>
+          <th>Speed (GFLOPS)</th>
+          <th>Latency (us)</th>
+          <th>Weighted Latency (us)</th>
+          <th>Trials</th>
+          <th>Done</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>0</th>
+          <td>main</td>
+          <td>4194304</td>
+          <td>1</td>
+          <td>15.6179</td>
+          <td>268.5567</td>
+          <td>268.5567</td>
+          <td>5</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
+.. parsed-literal::
+    :class: output
+
+    2024-06-04 23:58:06 [DEBUG] [task_scheduler.cc:318] 
+     ID | Name |    FLOP | Weight | Speed (GFLOPS) | Latency (us) | Weighted Latency (us) | Trials | Done 
+    ------------------------------------------------------------------------------------------------------
+      0 | main | 4194304 |      1 |        15.6179 |     268.5567 |              268.5567 |      5 |      
+    ------------------------------------------------------------------------------------------------------
+    Total trials: 5
+    Total latency (us): 268.557
+    
+    
+    Total trials: 5
+    Total latency (us): 268.557
+    
+    2024-06-04 23:58:06 [INFO] [task_scheduler.cc:180] TaskScheduler picks Task #0: "main"
+    2024-06-04 23:58:06 [INFO] [task_scheduler.cc:260] Task #0 has finished. Remaining task(s): 0
+
+
+
+.. raw:: html
+
+    <div>
+    <style scoped>
+        .dataframe tbody tr th:only-of-type {
+            vertical-align: middle;
+        }
+    
+        .dataframe tbody tr th {
+            vertical-align: top;
+        }
+    
+        .dataframe thead th {
+            text-align: right;
+        }
+    </style>
+    <table border="1" class="dataframe">
+      <thead>
+        <tr style="text-align: right;">
+          <th></th>
+          <th>Name</th>
+          <th>FLOP</th>
+          <th>Weight</th>
+          <th>Speed (GFLOPS)</th>
+          <th>Latency (us)</th>
+          <th>Weighted Latency (us)</th>
+          <th>Trials</th>
+          <th>Done</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>0</th>
+          <td>main</td>
+          <td>4194304</td>
+          <td>1</td>
+          <td>15.6179</td>
+          <td>268.5567</td>
+          <td>268.5567</td>
           <td>5</td>
           <td>Y</td>
         </tr>
@@ -1297,17 +1748,17 @@ space**.
 .. parsed-literal::
     :class: output
 
-    2023-04-05 15:51:06 [DEBUG] [task_scheduler.cc:318] 
+    2024-06-04 23:58:06 [DEBUG] [task_scheduler.cc:318] 
      ID | Name |    FLOP | Weight | Speed (GFLOPS) | Latency (us) | Weighted Latency (us) | Trials | Done 
     ------------------------------------------------------------------------------------------------------
-      0 | main | 4194304 |      1 |         3.4113 |    1229.5386 |             1229.5386 |      5 |    Y 
+      0 | main | 4194304 |      1 |        15.6179 |     268.5567 |              268.5567 |      5 |    Y 
     ------------------------------------------------------------------------------------------------------
     Total trials: 5
-    Total latency (us): 1229.54
+    Total latency (us): 268.557
     
     
     Total trials: 5
-    Total latency (us): 1229.54
+    Total latency (us): 268.557
     
 
 
@@ -1323,19 +1774,6 @@ tuning process.
     sch.trace.show()
 
 
-.. raw:: latex
-
-   \diilbookstyleoutputcell
-
-.. parsed-literal::
-    :class: output
-
-    /usr/share/miniconda/envs/mlc/lib/python3.8/site-packages/tvm/script/highlight.py:117: UserWarning: No module named 'black'
-    To print formatted TVM script, please install the formatter 'Black':
-    /usr/share/miniconda/envs/mlc/bin/python -m pip install "black==22.3.0" --upgrade --user
-      warnings.warn(
-
-
 
 .. raw:: html
 
@@ -1344,7 +1782,7 @@ tuning process.
       b0 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>get_block(name<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;C&quot;</span>, func_name<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;main&quot;</span>)
       l1, l2, l3 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>get_loops(block<span style="color: #AA22FF; font-weight: bold">=</span>b0)
       v4, v5 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>sample_perfect_tile(loop<span style="color: #AA22FF; font-weight: bold">=</span>l2, n<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">2</span>, max_innermost_factor<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">16</span>, decision<span style="color: #AA22FF; font-weight: bold">=</span>[<span style="color: #008000">8</span>, <span style="color: #008000">16</span>])
-      l6, l7 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>split(loop<span style="color: #AA22FF; font-weight: bold">=</span>l2, factors<span style="color: #AA22FF; font-weight: bold">=</span>[v4, v5], preserve_unit_iters<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">True</span>)
+      l6, l7 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>split(loop<span style="color: #AA22FF; font-weight: bold">=</span>l2, factors<span style="color: #AA22FF; font-weight: bold">=</span>[v4, v5], preserve_unit_iters<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">True</span>, disable_predication<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">False</span>)
       sch<span style="color: #AA22FF; font-weight: bold">.</span>reorder(l1, l6, l3, l7)
       b8 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>decompose_reduction(block<span style="color: #AA22FF; font-weight: bold">=</span>b0, loop<span style="color: #AA22FF; font-weight: bold">=</span>l3)
       sch<span style="color: #AA22FF; font-weight: bold">.</span>enter_postproc()
@@ -1384,6 +1822,7 @@ tuning process.
     .highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
     .highlight .gd { color: #A00000 } /* Generic.Deleted */
     .highlight .ge { font-style: italic } /* Generic.Emph */
+    .highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
     .highlight .gr { color: #E40000 } /* Generic.Error */
     .highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
     .highlight .gi { color: #008400 } /* Generic.Inserted */
@@ -1445,7 +1884,7 @@ tuning process.
     <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
         <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j_0</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
                 <span class="k">for</span> <span class="n">j_1_init</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">):</span>
@@ -1487,7 +1926,7 @@ tuning process.
 .. parsed-literal::
     :class: output
 
-    Time cost of MyModule after tuning: 1.230 ms
+    Time cost of MyModule after tuning: 0.180 ms
 
 
 Leverage Default AutoScheduling
@@ -1521,7 +1960,6 @@ future chapters.
         max_trials_global=64,
         num_trials_per_iter=64,
         work_dir="./tune_tmp",
-        task_name="main",
     )
     sch = ms.tir_integration.compile_tir(database, MyModule, "llvm --num-cores=1")
 
@@ -1533,7 +1971,10 @@ future chapters.
 .. parsed-literal::
     :class: output
 
-    2023-04-05 15:52:08 [INFO] [task_scheduler.cc:260] Task #0 has finished. Remaining task(s): 0
+    2024-06-04 23:58:06 [INFO] Logging directory: ./tune_tmp/logs
+    2024-06-04 23:58:06 [INFO] LocalBuilder: max_workers = 2
+    2024-06-04 23:58:07 [INFO] LocalRunner: max_workers = 1
+    2024-06-04 23:58:08 [INFO] [task_scheduler.cc:159] Initializing Task #0: "main"
 
 
 
@@ -1573,9 +2014,157 @@ future chapters.
           <td>main</td>
           <td>4194304</td>
           <td>1</td>
-          <td>20.4806</td>
-          <td>204.7938</td>
-          <td>204.7938</td>
+          <td>N/A</td>
+          <td>N/A</td>
+          <td>N/A</td>
+          <td>0</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
+.. parsed-literal::
+    :class: output
+
+    2024-06-04 23:58:08 [DEBUG] [task_scheduler.cc:318] 
+     ID | Name |    FLOP | Weight | Speed (GFLOPS) | Latency (us) | Weighted Latency (us) | Trials | Done 
+    ------------------------------------------------------------------------------------------------------
+      0 | main | 4194304 |      1 |            N/A |          N/A |                   N/A |      0 |      
+    ------------------------------------------------------------------------------------------------------
+    Total trials: 0
+    Total latency (us): 0
+    
+    
+    Total trials: 0
+    Total latency (us): 0
+    
+    2024-06-04 23:58:08 [INFO] [task_scheduler.cc:180] TaskScheduler picks Task #0: "main"
+    2024-06-04 23:58:11 [INFO] [task_scheduler.cc:193] Sending 64 sample(s) to builder
+    2024-06-04 23:58:31 [INFO] [task_scheduler.cc:195] Sending 64 sample(s) to runner
+    2024-06-04 23:58:44 [DEBUG] XGB iter   0: tr-p-rmse: 0.401228	tr-a-peak@32: 1.000000	tr-rmse: 0.269024	tr-rmse: 0.269024
+    2024-06-04 23:58:44 [DEBUG] XGB iter  25: tr-p-rmse: 0.033271	tr-a-peak@32: 1.000000	tr-rmse: 0.295848	tr-rmse: 0.295848
+    2024-06-04 23:58:45 [DEBUG] XGB iter  50: tr-p-rmse: 0.033266	tr-a-peak@32: 1.000000	tr-rmse: 0.295855	tr-rmse: 0.295855
+    2024-06-04 23:58:45 [DEBUG] XGB iter  75: tr-p-rmse: 0.033266	tr-a-peak@32: 1.000000	tr-rmse: 0.295855	tr-rmse: 0.295855
+    2024-06-04 23:58:45 [DEBUG] XGB stopped. Best iteration: [33] tr-p-rmse:0.03327	tr-a-peak@32:1.00000	tr-rmse:0.29585	tr-rmse:0.29585 
+    2024-06-04 23:58:45 [INFO] [task_scheduler.cc:237] [Updated] Task #0: "main"
+
+
+
+.. raw:: html
+
+    <div>
+    <style scoped>
+        .dataframe tbody tr th:only-of-type {
+            vertical-align: middle;
+        }
+    
+        .dataframe tbody tr th {
+            vertical-align: top;
+        }
+    
+        .dataframe thead th {
+            text-align: right;
+        }
+    </style>
+    <table border="1" class="dataframe">
+      <thead>
+        <tr style="text-align: right;">
+          <th></th>
+          <th>Name</th>
+          <th>FLOP</th>
+          <th>Weight</th>
+          <th>Speed (GFLOPS)</th>
+          <th>Latency (us)</th>
+          <th>Weighted Latency (us)</th>
+          <th>Trials</th>
+          <th>Done</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>0</th>
+          <td>main</td>
+          <td>4194304</td>
+          <td>1</td>
+          <td>32.2832</td>
+          <td>129.9223</td>
+          <td>129.9223</td>
+          <td>64</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
+.. parsed-literal::
+    :class: output
+
+    
+    Total trials: 64
+    Total latency (us): 129.922
+    
+    2024-06-04 23:58:45 [DEBUG] [task_scheduler.cc:318] 
+     ID | Name |    FLOP | Weight | Speed (GFLOPS) | Latency (us) | Weighted Latency (us) | Trials | Done 
+    ------------------------------------------------------------------------------------------------------
+      0 | main | 4194304 |      1 |        32.2832 |     129.9223 |              129.9223 |     64 |      
+    ------------------------------------------------------------------------------------------------------
+    Total trials: 64
+    Total latency (us): 129.922
+    
+    2024-06-04 23:58:45 [INFO] [task_scheduler.cc:260] Task #0 has finished. Remaining task(s): 0
+
+
+
+.. raw:: html
+
+    <div>
+    <style scoped>
+        .dataframe tbody tr th:only-of-type {
+            vertical-align: middle;
+        }
+    
+        .dataframe tbody tr th {
+            vertical-align: top;
+        }
+    
+        .dataframe thead th {
+            text-align: right;
+        }
+    </style>
+    <table border="1" class="dataframe">
+      <thead>
+        <tr style="text-align: right;">
+          <th></th>
+          <th>Name</th>
+          <th>FLOP</th>
+          <th>Weight</th>
+          <th>Speed (GFLOPS)</th>
+          <th>Latency (us)</th>
+          <th>Weighted Latency (us)</th>
+          <th>Trials</th>
+          <th>Done</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>0</th>
+          <td>main</td>
+          <td>4194304</td>
+          <td>1</td>
+          <td>32.2832</td>
+          <td>129.9223</td>
+          <td>129.9223</td>
           <td>64</td>
           <td>Y</td>
         </tr>
@@ -1593,15 +2182,15 @@ future chapters.
 
     
     Total trials: 64
-    Total latency (us): 204.794
+    Total latency (us): 129.922
     
-    2023-04-05 15:52:08 [DEBUG] [task_scheduler.cc:318] 
+    2024-06-04 23:58:45 [DEBUG] [task_scheduler.cc:318] 
      ID | Name |    FLOP | Weight | Speed (GFLOPS) | Latency (us) | Weighted Latency (us) | Trials | Done 
     ------------------------------------------------------------------------------------------------------
-      0 | main | 4194304 |      1 |        20.4806 |     204.7938 |              204.7938 |     64 |    Y 
+      0 | main | 4194304 |      1 |        32.2832 |     129.9223 |              129.9223 |     64 |    Y 
     ------------------------------------------------------------------------------------------------------
     Total trials: 64
-    Total latency (us): 204.794
+    Total latency (us): 129.922
     
 
 
@@ -1623,7 +2212,7 @@ future chapters.
 .. parsed-literal::
     :class: output
 
-    Time cost of MyModule after tuning: 0.209 ms
+    Time cost of MyModule after tuning: 0.148 ms
 
 
 The result gets much faster than our original code. We can take a
@@ -1644,19 +2233,6 @@ high level, the trace involves:
     sch.trace.show()
 
 
-.. raw:: latex
-
-   \diilbookstyleoutputcell
-
-.. parsed-literal::
-    :class: output
-
-    /usr/share/miniconda/envs/mlc/lib/python3.8/site-packages/tvm/script/highlight.py:117: UserWarning: No module named 'black'
-    To print formatted TVM script, please install the formatter 'Black':
-    /usr/share/miniconda/envs/mlc/bin/python -m pip install "black==22.3.0" --upgrade --user
-      warnings.warn(
-
-
 
 .. raw:: html
 
@@ -1666,31 +2242,38 @@ high level, the trace involves:
       b1 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>get_block(name<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;root&quot;</span>, func_name<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;main&quot;</span>)
       sch<span style="color: #AA22FF; font-weight: bold">.</span>annotate(block_or_loop<span style="color: #AA22FF; font-weight: bold">=</span>b0, ann_key<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;meta_schedule.tiling_structure&quot;</span>, ann_val<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;SSRSRS&quot;</span>)
       l2, l3, l4 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>get_loops(block<span style="color: #AA22FF; font-weight: bold">=</span>b0)
-      v5, v6, v7, v8 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>sample_perfect_tile(loop<span style="color: #AA22FF; font-weight: bold">=</span>l2, n<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">4</span>, max_innermost_factor<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">64</span>, decision<span style="color: #AA22FF; font-weight: bold">=</span>[<span style="color: #008000">1</span>, <span style="color: #008000">32</span>, <span style="color: #008000">1</span>, <span style="color: #008000">4</span>])
-      l9, l10, l11, l12 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>split(loop<span style="color: #AA22FF; font-weight: bold">=</span>l2, factors<span style="color: #AA22FF; font-weight: bold">=</span>[v5, v6, v7, v8], preserve_unit_iters<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">True</span>)
-      v13, v14, v15, v16 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>sample_perfect_tile(loop<span style="color: #AA22FF; font-weight: bold">=</span>l3, n<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">4</span>, max_innermost_factor<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">64</span>, decision<span style="color: #AA22FF; font-weight: bold">=</span>[<span style="color: #008000">1</span>, <span style="color: #008000">128</span>, <span style="color: #008000">1</span>, <span style="color: #008000">1</span>])
-      l17, l18, l19, l20 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>split(loop<span style="color: #AA22FF; font-weight: bold">=</span>l3, factors<span style="color: #AA22FF; font-weight: bold">=</span>[v13, v14, v15, v16], preserve_unit_iters<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">True</span>)
-      v21, v22 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>sample_perfect_tile(loop<span style="color: #AA22FF; font-weight: bold">=</span>l4, n<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">2</span>, max_innermost_factor<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">64</span>, decision<span style="color: #AA22FF; font-weight: bold">=</span>[<span style="color: #008000">16</span>, <span style="color: #008000">8</span>])
-      l23, l24 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>split(loop<span style="color: #AA22FF; font-weight: bold">=</span>l4, factors<span style="color: #AA22FF; font-weight: bold">=</span>[v21, v22], preserve_unit_iters<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">True</span>)
+      v5, v6, v7, v8 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>sample_perfect_tile(loop<span style="color: #AA22FF; font-weight: bold">=</span>l2, n<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">4</span>, max_innermost_factor<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">64</span>, decision<span style="color: #AA22FF; font-weight: bold">=</span>[<span style="color: #008000">1</span>, <span style="color: #008000">2</span>, <span style="color: #008000">32</span>, <span style="color: #008000">2</span>])
+      l9, l10, l11, l12 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>split(loop<span style="color: #AA22FF; font-weight: bold">=</span>l2, factors<span style="color: #AA22FF; font-weight: bold">=</span>[v5, v6, v7, v8], preserve_unit_iters<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">True</span>, disable_predication<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">False</span>)
+      v13, v14, v15, v16 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>sample_perfect_tile(loop<span style="color: #AA22FF; font-weight: bold">=</span>l3, n<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">4</span>, max_innermost_factor<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">64</span>, decision<span style="color: #AA22FF; font-weight: bold">=</span>[<span style="color: #008000">1</span>, <span style="color: #008000">2</span>, <span style="color: #008000">4</span>, <span style="color: #008000">16</span>])
+      l17, l18, l19, l20 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>split(loop<span style="color: #AA22FF; font-weight: bold">=</span>l3, factors<span style="color: #AA22FF; font-weight: bold">=</span>[v13, v14, v15, v16], preserve_unit_iters<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">True</span>, disable_predication<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">False</span>)
+      v21, v22 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>sample_perfect_tile(loop<span style="color: #AA22FF; font-weight: bold">=</span>l4, n<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">2</span>, max_innermost_factor<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">64</span>, decision<span style="color: #AA22FF; font-weight: bold">=</span>[<span style="color: #008000">8</span>, <span style="color: #008000">16</span>])
+      l23, l24 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>split(loop<span style="color: #AA22FF; font-weight: bold">=</span>l4, factors<span style="color: #AA22FF; font-weight: bold">=</span>[v21, v22], preserve_unit_iters<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">True</span>, disable_predication<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">False</span>)
       sch<span style="color: #AA22FF; font-weight: bold">.</span>reorder(l9, l17, l10, l18, l23, l11, l19, l24, l12, l20)
+      b25 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>cache_write(block<span style="color: #AA22FF; font-weight: bold">=</span>b0, write_buffer_index<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">0</span>, storage_scope<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;global&quot;</span>)
+      sch<span style="color: #AA22FF; font-weight: bold">.</span>reverse_compute_at(block<span style="color: #AA22FF; font-weight: bold">=</span>b25, loop<span style="color: #AA22FF; font-weight: bold">=</span>l18, preserve_unit_loops<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">True</span>, index<span style="color: #AA22FF; font-weight: bold">=-</span><span style="color: #008000">1</span>)
       sch<span style="color: #AA22FF; font-weight: bold">.</span>annotate(block_or_loop<span style="color: #AA22FF; font-weight: bold">=</span>b1, ann_key<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;meta_schedule.parallel&quot;</span>, ann_val<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">16</span>)
       sch<span style="color: #AA22FF; font-weight: bold">.</span>annotate(block_or_loop<span style="color: #AA22FF; font-weight: bold">=</span>b1, ann_key<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;meta_schedule.vectorize&quot;</span>, ann_val<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">64</span>)
-      v25 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>sample_categorical(candidates<span style="color: #AA22FF; font-weight: bold">=</span>[<span style="color: #008000">0</span>, <span style="color: #008000">16</span>, <span style="color: #008000">64</span>, <span style="color: #008000">512</span>], probs<span style="color: #AA22FF; font-weight: bold">=</span>[<span style="color: #008000">0.25</span>, <span style="color: #008000">0.25</span>, <span style="color: #008000">0.25</span>, <span style="color: #008000">0.25</span>], decision<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">3</span>)
-      sch<span style="color: #AA22FF; font-weight: bold">.</span>annotate(block_or_loop<span style="color: #AA22FF; font-weight: bold">=</span>b1, ann_key<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;meta_schedule.unroll_explicit&quot;</span>, ann_val<span style="color: #AA22FF; font-weight: bold">=</span>v25)
+      v26 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>sample_categorical(candidates<span style="color: #AA22FF; font-weight: bold">=</span>[<span style="color: #008000">0</span>, <span style="color: #008000">16</span>, <span style="color: #008000">64</span>, <span style="color: #008000">512</span>], probs<span style="color: #AA22FF; font-weight: bold">=</span>[<span style="color: #008000">0.25</span>, <span style="color: #008000">0.25</span>, <span style="color: #008000">0.25</span>, <span style="color: #008000">0.25</span>], decision<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">2</span>)
+      sch<span style="color: #AA22FF; font-weight: bold">.</span>annotate(block_or_loop<span style="color: #AA22FF; font-weight: bold">=</span>b1, ann_key<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;meta_schedule.unroll_explicit&quot;</span>, ann_val<span style="color: #AA22FF; font-weight: bold">=</span>v26)
       sch<span style="color: #AA22FF; font-weight: bold">.</span>enter_postproc()
-      b26 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>get_block(name<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;root&quot;</span>, func_name<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;main&quot;</span>)
-      sch<span style="color: #AA22FF; font-weight: bold">.</span>unannotate(block_or_loop<span style="color: #AA22FF; font-weight: bold">=</span>b26, ann_key<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;meta_schedule.parallel&quot;</span>)
-      sch<span style="color: #AA22FF; font-weight: bold">.</span>unannotate(block_or_loop<span style="color: #AA22FF; font-weight: bold">=</span>b26, ann_key<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;meta_schedule.vectorize&quot;</span>)
-      sch<span style="color: #AA22FF; font-weight: bold">.</span>unannotate(block_or_loop<span style="color: #AA22FF; font-weight: bold">=</span>b26, ann_key<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;meta_schedule.unroll_explicit&quot;</span>)
-      b27, <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>get_child_blocks(b26)
-      l28, l29, l30, l31, l32, l33, l34, l35, l36, l37 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>get_loops(block<span style="color: #AA22FF; font-weight: bold">=</span>b27)
-      l38 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>fuse(l28, l29, l30, preserve_unit_iters<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">True</span>)
-      sch<span style="color: #AA22FF; font-weight: bold">.</span>parallel(loop<span style="color: #AA22FF; font-weight: bold">=</span>l38)
-      sch<span style="color: #AA22FF; font-weight: bold">.</span>annotate(block_or_loop<span style="color: #AA22FF; font-weight: bold">=</span>l38, ann_key<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;pragma_auto_unroll_max_step&quot;</span>, ann_val<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">512</span>)
-      sch<span style="color: #AA22FF; font-weight: bold">.</span>annotate(block_or_loop<span style="color: #AA22FF; font-weight: bold">=</span>l38, ann_key<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;pragma_unroll_explicit&quot;</span>, ann_val<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">1</span>)
-      b39 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>get_block(name<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;C&quot;</span>, func_name<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;main&quot;</span>)
-      l40, l41, l42, l43, l44, l45, l46, l47 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>get_loops(block<span style="color: #AA22FF; font-weight: bold">=</span>b39)
-      b48 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>decompose_reduction(block<span style="color: #AA22FF; font-weight: bold">=</span>b39, loop<span style="color: #AA22FF; font-weight: bold">=</span>l42)
+      b27 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>get_block(name<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;root&quot;</span>, func_name<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;main&quot;</span>)
+      sch<span style="color: #AA22FF; font-weight: bold">.</span>unannotate(block_or_loop<span style="color: #AA22FF; font-weight: bold">=</span>b27, ann_key<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;meta_schedule.parallel&quot;</span>)
+      sch<span style="color: #AA22FF; font-weight: bold">.</span>unannotate(block_or_loop<span style="color: #AA22FF; font-weight: bold">=</span>b27, ann_key<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;meta_schedule.vectorize&quot;</span>)
+      sch<span style="color: #AA22FF; font-weight: bold">.</span>unannotate(block_or_loop<span style="color: #AA22FF; font-weight: bold">=</span>b27, ann_key<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;meta_schedule.unroll_explicit&quot;</span>)
+      b28, b29 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>get_child_blocks(b27)
+      l30, l31, l32, l33, l34, l35, l36, l37, l38, l39 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>get_loops(block<span style="color: #AA22FF; font-weight: bold">=</span>b28)
+      l40 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>fuse(l30, l31, l32, l33, preserve_unit_iters<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">True</span>)
+      sch<span style="color: #AA22FF; font-weight: bold">.</span>parallel(loop<span style="color: #AA22FF; font-weight: bold">=</span>l40)
+      l41 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>fuse(l39, preserve_unit_iters<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">True</span>)
+      sch<span style="color: #AA22FF; font-weight: bold">.</span>vectorize(loop<span style="color: #AA22FF; font-weight: bold">=</span>l41)
+      sch<span style="color: #AA22FF; font-weight: bold">.</span>annotate(block_or_loop<span style="color: #AA22FF; font-weight: bold">=</span>l40, ann_key<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;pragma_auto_unroll_max_step&quot;</span>, ann_val<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">64</span>)
+      sch<span style="color: #AA22FF; font-weight: bold">.</span>annotate(block_or_loop<span style="color: #AA22FF; font-weight: bold">=</span>l40, ann_key<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;pragma_unroll_explicit&quot;</span>, ann_val<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000">1</span>)
+      l42, l43, l44 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>get_loops(block<span style="color: #AA22FF; font-weight: bold">=</span>b29)
+      l45 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>fuse(l44, preserve_unit_iters<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">True</span>)
+      sch<span style="color: #AA22FF; font-weight: bold">.</span>vectorize(loop<span style="color: #AA22FF; font-weight: bold">=</span>l45)
+      b46 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>get_block(name<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;C&quot;</span>, func_name<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;main&quot;</span>)
+      l47, l48, l49, l50, l51, l52, l53 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>get_loops(block<span style="color: #AA22FF; font-weight: bold">=</span>b46)
+      b54 <span style="color: #AA22FF; font-weight: bold">=</span> sch<span style="color: #AA22FF; font-weight: bold">.</span>decompose_reduction(block<span style="color: #AA22FF; font-weight: bold">=</span>b46, loop<span style="color: #AA22FF; font-weight: bold">=</span>l48)
     </pre></div>
 
 
@@ -1727,6 +2310,7 @@ high level, the trace involves:
     .highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
     .highlight .gd { color: #A00000 } /* Generic.Deleted */
     .highlight .ge { font-style: italic } /* Generic.Emph */
+    .highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
     .highlight .gr { color: #E40000 } /* Generic.Error */
     .highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
     .highlight .gi { color: #008400 } /* Generic.Inserted */
@@ -1788,27 +2372,37 @@ high level, the trace involves:
     <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
         <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
-            <span class="k">for</span> <span class="n">i_0_j_0_i_1_fused</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">parallel</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;pragma_auto_unroll_max_step&quot;</span><span class="p">:</span> <span class="mi">512</span><span class="p">,</span> <span class="s2">&quot;pragma_unroll_explicit&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}):</span>
-                <span class="k">for</span> <span class="n">j_1</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">128</span><span class="p">):</span>
-                    <span class="k">for</span> <span class="n">i_2_init</span><span class="p">,</span> <span class="n">j_2_init</span><span class="p">,</span> <span class="n">i_3_init</span><span class="p">,</span> <span class="n">j_3_init</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">C_global</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">i_0_j_0_i_1_j_1_fused</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">parallel</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;pragma_auto_unroll_max_step&quot;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span> <span class="s2">&quot;pragma_unroll_explicit&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}):</span>
+                <span class="k">for</span> <span class="n">i_2_init</span><span class="p">,</span> <span class="n">j_2_init</span><span class="p">,</span> <span class="n">i_3_init</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">j_3_fused_init</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">vectorized</span><span class="p">(</span><span class="mi">16</span><span class="p">):</span>
                         <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;C_init&quot;</span><span class="p">):</span>
-                            <span class="n">vi</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">i_0_j_0_i_1_fused</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">i_2_init</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">i_3_init</span><span class="p">)</span>
-                            <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">j_1</span> <span class="o">+</span> <span class="n">j_2_init</span> <span class="o">+</span> <span class="n">j_3_init</span><span class="p">)</span>
+                            <span class="n">vi</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">i_0_j_0_i_1_j_1_fused</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">64</span> <span class="o">+</span> <span class="n">i_2_init</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">i_3_init</span><span class="p">)</span>
+                            <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">i_0_j_0_i_1_j_1_fused</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">64</span> <span class="o">+</span> <span class="n">j_2_init</span> <span class="o">*</span> <span class="mi">16</span> <span class="o">+</span> <span class="n">j_3_fused_init</span><span class="p">)</span>
                             <span class="n">T</span><span class="o">.</span><span class="n">reads</span><span class="p">()</span>
-                            <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
+                            <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">C_global</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
                             <span class="n">T</span><span class="o">.</span><span class="n">block_attr</span><span class="p">({</span><span class="s2">&quot;meta_schedule.tiling_structure&quot;</span><span class="p">:</span> <span class="s2">&quot;SSRSRS&quot;</span><span class="p">})</span>
-                            <span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-                    <span class="k">for</span> <span class="n">k_0</span><span class="p">,</span> <span class="n">i_2</span><span class="p">,</span> <span class="n">j_2</span><span class="p">,</span> <span class="n">k_1</span><span class="p">,</span> <span class="n">i_3</span><span class="p">,</span> <span class="n">j_3</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+                            <span class="n">C_global</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">k_0</span><span class="p">,</span> <span class="n">i_2</span><span class="p">,</span> <span class="n">j_2</span><span class="p">,</span> <span class="n">k_1</span><span class="p">,</span> <span class="n">i_3</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">j_3_fused</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">vectorized</span><span class="p">(</span><span class="mi">16</span><span class="p">):</span>
                         <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;C_update&quot;</span><span class="p">):</span>
-                            <span class="n">vi</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">i_0_j_0_i_1_fused</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">i_2</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="n">i_3</span><span class="p">)</span>
-                            <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">j_1</span> <span class="o">+</span> <span class="n">j_2</span> <span class="o">+</span> <span class="n">j_3</span><span class="p">)</span>
-                            <span class="n">vk</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">k_0</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">+</span> <span class="n">k_1</span><span class="p">)</span>
-                            <span class="n">T</span><span class="o">.</span><span class="n">reads</span><span class="p">(</span><span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vk</span><span class="p">],</span> <span class="n">B</span><span class="p">[</span><span class="n">vk</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
-                            <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
+                            <span class="n">vi</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">i_0_j_0_i_1_j_1_fused</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">64</span> <span class="o">+</span> <span class="n">i_2</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">i_3</span><span class="p">)</span>
+                            <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">i_0_j_0_i_1_j_1_fused</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">64</span> <span class="o">+</span> <span class="n">j_2</span> <span class="o">*</span> <span class="mi">16</span> <span class="o">+</span> <span class="n">j_3_fused</span><span class="p">)</span>
+                            <span class="n">vk</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">k_0</span> <span class="o">*</span> <span class="mi">16</span> <span class="o">+</span> <span class="n">k_1</span><span class="p">)</span>
+                            <span class="n">T</span><span class="o">.</span><span class="n">reads</span><span class="p">(</span><span class="n">C_global</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vk</span><span class="p">],</span> <span class="n">B</span><span class="p">[</span><span class="n">vk</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
+                            <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">C_global</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
                             <span class="n">T</span><span class="o">.</span><span class="n">block_attr</span><span class="p">({</span><span class="s2">&quot;meta_schedule.tiling_structure&quot;</span><span class="p">:</span> <span class="s2">&quot;SSRSRS&quot;</span><span class="p">})</span>
-                            <span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">+</span> <span class="n">A</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vk</span><span class="p">]</span> <span class="o">*</span> <span class="n">B</span><span class="p">[</span><span class="n">vk</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span>
+                            <span class="n">C_global</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">C_global</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">+</span> <span class="n">A</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vk</span><span class="p">]</span> <span class="o">*</span> <span class="n">B</span><span class="p">[</span><span class="n">vk</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">ax0</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">64</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">ax1_fused</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">vectorized</span><span class="p">(</span><span class="mi">64</span><span class="p">):</span>
+                        <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;C_global&quot;</span><span class="p">):</span>
+                            <span class="n">v0</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">i_0_j_0_i_1_j_1_fused</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">64</span> <span class="o">+</span> <span class="n">ax0</span><span class="p">)</span>
+                            <span class="n">v1</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">i_0_j_0_i_1_j_1_fused</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">*</span> <span class="mi">64</span> <span class="o">+</span> <span class="n">ax1_fused</span><span class="p">)</span>
+                            <span class="n">T</span><span class="o">.</span><span class="n">reads</span><span class="p">(</span><span class="n">C_global</span><span class="p">[</span><span class="n">v0</span><span class="p">,</span> <span class="n">v1</span><span class="p">])</span>
+                            <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">C</span><span class="p">[</span><span class="n">v0</span><span class="p">,</span> <span class="n">v1</span><span class="p">])</span>
+                            <span class="n">C</span><span class="p">[</span><span class="n">v0</span><span class="p">,</span> <span class="n">v1</span><span class="p">]</span> <span class="o">=</span> <span class="n">C_global</span><span class="p">[</span><span class="n">v0</span><span class="p">,</span> <span class="n">v1</span><span class="p">]</span>
     </pre></div>
     
 
@@ -1920,7 +2514,7 @@ We will reuse the two-layer MLP example from the last chapter.
 .. parsed-literal::
     :class: output
 
-    Class: Sandal
+    Class: Dress
 
 
 We also download pre-packed model parameters that we will use in our
@@ -2053,7 +2647,7 @@ We can bind the parameters and see if it gives the correct prediction.
 .. parsed-literal::
     :class: output
 
-    MyModuleWithParams Prediction: Sandal
+    MyModuleWithParams Prediction: Dress
 
 
 The following code evaluates the run time cost of the module before the
@@ -2079,7 +2673,7 @@ magnitude.
 .. parsed-literal::
     :class: output
 
-    MyModuleWithParams time-cost: 0.236435 ms
+    MyModuleWithParams time-cost: 0.140409 ms
 
 
 We are now ready to tune the ``linear0``. Our overall process is
@@ -2124,6 +2718,7 @@ and pass it to tune
     .highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
     .highlight .gd { color: #A00000 } /* Generic.Deleted */
     .highlight .ge { font-style: italic } /* Generic.Emph */
+    .highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
     .highlight .gr { color: #E40000 } /* Generic.Error */
     .highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
     .highlight .gi { color: #008400 } /* Generic.Inserted */
@@ -2185,7 +2780,7 @@ and pass it to tune
     <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
         <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">784</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">W</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">784</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">Z</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;main&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="n">Y</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_buffer</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">784</span><span class="p">):</span>
@@ -2220,7 +2815,6 @@ and pass it to tune
         max_trials_global=64,
         num_trials_per_iter=64,
         work_dir="./tune_tmp",
-        task_name="main",
     )
     sch = ms.tir_integration.compile_tir(database, mod_linear, "llvm --num-cores=1")
 
@@ -2232,7 +2826,10 @@ and pass it to tune
 .. parsed-literal::
     :class: output
 
-    2023-04-05 15:53:09 [INFO] [task_scheduler.cc:260] Task #0 has finished. Remaining task(s): 0
+    2024-06-04 23:58:53 [INFO] Logging directory: ./tune_tmp/logs
+    2024-06-04 23:58:53 [INFO] LocalBuilder: max_workers = 2
+    2024-06-04 23:58:54 [INFO] LocalRunner: max_workers = 1
+    2024-06-04 23:58:54 [INFO] [task_scheduler.cc:159] Initializing Task #0: "main"
 
 
 
@@ -2272,11 +2869,89 @@ and pass it to tune
           <td>main</td>
           <td>200832</td>
           <td>1</td>
-          <td>8.1492</td>
-          <td>24.6443</td>
-          <td>24.6443</td>
+          <td>N/A</td>
+          <td>N/A</td>
+          <td>N/A</td>
+          <td>0</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
+.. parsed-literal::
+    :class: output
+
+    2024-06-04 23:58:54 [DEBUG] [task_scheduler.cc:318] 
+     ID | Name |   FLOP | Weight | Speed (GFLOPS) | Latency (us) | Weighted Latency (us) | Trials | Done 
+    -----------------------------------------------------------------------------------------------------
+      0 | main | 200832 |      1 |            N/A |          N/A |                   N/A |      0 |      
+    -----------------------------------------------------------------------------------------------------
+    Total trials: 0
+    Total latency (us): 0
+    
+    
+    Total trials: 0
+    Total latency (us): 0
+    
+    2024-06-04 23:58:54 [INFO] [task_scheduler.cc:180] TaskScheduler picks Task #0: "main"
+    2024-06-04 23:58:58 [INFO] [task_scheduler.cc:193] Sending 64 sample(s) to builder
+    2024-06-04 23:59:35 [INFO] [task_scheduler.cc:195] Sending 64 sample(s) to runner
+    2024-06-04 23:59:51 [DEBUG] XGB iter   0: tr-p-rmse: 0.244189	tr-a-peak@32: 0.995568	tr-rmse: 0.299671	tr-rmse: 0.299671
+    2024-06-04 23:59:52 [DEBUG] XGB iter  25: tr-p-rmse: 0.022989	tr-a-peak@32: 1.000000	tr-rmse: 0.367962	tr-rmse: 0.367962
+    2024-06-04 23:59:52 [DEBUG] XGB iter  50: tr-p-rmse: 0.022986	tr-a-peak@32: 1.000000	tr-rmse: 0.367970	tr-rmse: 0.367970
+    2024-06-04 23:59:52 [DEBUG] XGB iter  75: tr-p-rmse: 0.022986	tr-a-peak@32: 1.000000	tr-rmse: 0.367970	tr-rmse: 0.367970
+    2024-06-04 23:59:52 [DEBUG] XGB stopped. Best iteration: [30] tr-p-rmse:0.02299	tr-a-peak@32:1.00000	tr-rmse:0.36797	tr-rmse:0.36797 
+    2024-06-04 23:59:52 [INFO] [task_scheduler.cc:237] [Updated] Task #0: "main"
+
+
+
+.. raw:: html
+
+    <div>
+    <style scoped>
+        .dataframe tbody tr th:only-of-type {
+            vertical-align: middle;
+        }
+    
+        .dataframe tbody tr th {
+            vertical-align: top;
+        }
+    
+        .dataframe thead th {
+            text-align: right;
+        }
+    </style>
+    <table border="1" class="dataframe">
+      <thead>
+        <tr style="text-align: right;">
+          <th></th>
+          <th>Name</th>
+          <th>FLOP</th>
+          <th>Weight</th>
+          <th>Speed (GFLOPS)</th>
+          <th>Latency (us)</th>
+          <th>Weighted Latency (us)</th>
+          <th>Trials</th>
+          <th>Done</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>0</th>
+          <td>main</td>
+          <td>200832</td>
+          <td>1</td>
+          <td>6.4931</td>
+          <td>30.9301</td>
+          <td>30.9301</td>
           <td>64</td>
-          <td>Y</td>
+          <td></td>
         </tr>
       </tbody>
     </table>
@@ -2292,15 +2967,85 @@ and pass it to tune
 
     
     Total trials: 64
-    Total latency (us): 24.6443
+    Total latency (us): 30.9301
     
-    2023-04-05 15:53:09 [DEBUG] [task_scheduler.cc:318] 
+    2024-06-04 23:59:52 [DEBUG] [task_scheduler.cc:318] 
      ID | Name |   FLOP | Weight | Speed (GFLOPS) | Latency (us) | Weighted Latency (us) | Trials | Done 
     -----------------------------------------------------------------------------------------------------
-      0 | main | 200832 |      1 |         8.1492 |      24.6443 |               24.6443 |     64 |    Y 
+      0 | main | 200832 |      1 |         6.4931 |      30.9301 |               30.9301 |     64 |      
     -----------------------------------------------------------------------------------------------------
     Total trials: 64
-    Total latency (us): 24.6443
+    Total latency (us): 30.9301
+    
+    2024-06-04 23:59:52 [INFO] [task_scheduler.cc:260] Task #0 has finished. Remaining task(s): 0
+
+
+
+.. raw:: html
+
+    <div>
+    <style scoped>
+        .dataframe tbody tr th:only-of-type {
+            vertical-align: middle;
+        }
+    
+        .dataframe tbody tr th {
+            vertical-align: top;
+        }
+    
+        .dataframe thead th {
+            text-align: right;
+        }
+    </style>
+    <table border="1" class="dataframe">
+      <thead>
+        <tr style="text-align: right;">
+          <th></th>
+          <th>Name</th>
+          <th>FLOP</th>
+          <th>Weight</th>
+          <th>Speed (GFLOPS)</th>
+          <th>Latency (us)</th>
+          <th>Weighted Latency (us)</th>
+          <th>Trials</th>
+          <th>Done</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>0</th>
+          <td>main</td>
+          <td>200832</td>
+          <td>1</td>
+          <td>6.4931</td>
+          <td>30.9301</td>
+          <td>30.9301</td>
+          <td>64</td>
+          <td>Y</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+
+.. raw:: latex
+
+   \diilbookstyleoutputcell
+
+.. parsed-literal::
+    :class: output
+
+    2024-06-04 23:59:52 [DEBUG] [task_scheduler.cc:318] 
+     ID | Name |   FLOP | Weight | Speed (GFLOPS) | Latency (us) | Weighted Latency (us) | Trials | Done 
+    -----------------------------------------------------------------------------------------------------
+      0 | main | 200832 |      1 |         6.4931 |      30.9301 |               30.9301 |     64 |    Y 
+    -----------------------------------------------------------------------------------------------------
+    Total trials: 64
+    Total latency (us): 30.9301
+    
+    
+    Total trials: 64
+    Total latency (us): 30.9301
     
 
 
@@ -2345,6 +3090,7 @@ after tuning. We can do that by first getting a ``global_var``, a
     .highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
     .highlight .gd { color: #A00000 } /* Generic.Deleted */
     .highlight .ge { font-style: italic } /* Generic.Emph */
+    .highlight .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
     .highlight .gr { color: #E40000 } /* Generic.Error */
     .highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
     .highlight .gi { color: #008400 } /* Generic.Inserted */
@@ -2407,34 +3153,34 @@ after tuning. We can do that by first getting a ``global_var``, a
     <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
         <span class="k">def</span> <span class="nf">linear0</span><span class="p">(</span><span class="n">X</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">784</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">W</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">784</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">Z</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;linear0&quot;</span><span class="p">,</span> <span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="n">Y</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_buffer</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
-            <span class="k">for</span> <span class="n">i_0</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">serial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;pragma_auto_unroll_max_step&quot;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span> <span class="s2">&quot;pragma_unroll_explicit&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}):</span>
-                <span class="k">for</span> <span class="n">j_0</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
-                    <span class="k">for</span> <span class="n">i_1</span><span class="p">,</span> <span class="n">j_1</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">16</span><span class="p">):</span>
-                        <span class="k">for</span> <span class="n">i_2_init</span><span class="p">,</span> <span class="n">j_2_init</span><span class="p">,</span> <span class="n">i_3_init</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
-                            <span class="k">for</span> <span class="n">j_3_fused_init</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">vectorized</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
-                                <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;Y_init&quot;</span><span class="p">):</span>
-                                    <span class="n">vi</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">i_0</span> <span class="o">+</span> <span class="n">i_1</span> <span class="o">+</span> <span class="n">i_2_init</span> <span class="o">+</span> <span class="n">i_3_init</span><span class="p">)</span>
-                                    <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">j_0</span> <span class="o">*</span> <span class="mi">128</span> <span class="o">+</span> <span class="n">j_1</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">+</span> <span class="n">j_2_init</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">j_3_fused_init</span><span class="p">)</span>
-                                    <span class="n">T</span><span class="o">.</span><span class="n">reads</span><span class="p">()</span>
-                                    <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
-                                    <span class="n">T</span><span class="o">.</span><span class="n">block_attr</span><span class="p">({</span><span class="s2">&quot;meta_schedule.tiling_structure&quot;</span><span class="p">:</span> <span class="s2">&quot;SSRSRS&quot;</span><span class="p">})</span>
-                                    <span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-                        <span class="k">for</span> <span class="n">k_0</span><span class="p">,</span> <span class="n">i_2</span><span class="p">,</span> <span class="n">j_2</span><span class="p">,</span> <span class="n">k_1</span><span class="p">,</span> <span class="n">i_3</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">784</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
-                            <span class="k">for</span> <span class="n">j_3_fused</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">vectorized</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
-                                <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;Y_update&quot;</span><span class="p">):</span>
-                                    <span class="n">vi</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">i_0</span> <span class="o">+</span> <span class="n">i_1</span> <span class="o">+</span> <span class="n">i_2</span> <span class="o">+</span> <span class="n">i_3</span><span class="p">)</span>
-                                    <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">j_0</span> <span class="o">*</span> <span class="mi">128</span> <span class="o">+</span> <span class="n">j_1</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">+</span> <span class="n">j_2</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">j_3_fused</span><span class="p">)</span>
-                                    <span class="n">vk</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="mi">784</span><span class="p">,</span> <span class="n">k_0</span> <span class="o">+</span> <span class="n">k_1</span><span class="p">)</span>
-                                    <span class="n">T</span><span class="o">.</span><span class="n">reads</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vk</span><span class="p">],</span> <span class="n">W</span><span class="p">[</span><span class="n">vj</span><span class="p">,</span> <span class="n">vk</span><span class="p">])</span>
-                                    <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
-                                    <span class="n">T</span><span class="o">.</span><span class="n">block_attr</span><span class="p">({</span><span class="s2">&quot;meta_schedule.tiling_structure&quot;</span><span class="p">:</span> <span class="s2">&quot;SSRSRS&quot;</span><span class="p">})</span>
-                                    <span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">+</span> <span class="n">X</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vk</span><span class="p">]</span> <span class="o">*</span> <span class="n">W</span><span class="p">[</span><span class="n">vj</span><span class="p">,</span> <span class="n">vk</span><span class="p">]</span>
-                    <span class="k">for</span> <span class="n">ax0</span><span class="p">,</span> <span class="n">ax1</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i_0_j_0_i_1_j_1_fused</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">parallel</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;pragma_auto_unroll_max_step&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;pragma_unroll_explicit&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}):</span>
+                <span class="k">for</span> <span class="n">i_2_init</span><span class="p">,</span> <span class="n">j_2_init</span><span class="p">,</span> <span class="n">i_3_init</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">j_3_fused_init</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">vectorized</span><span class="p">(</span><span class="mi">16</span><span class="p">):</span>
+                        <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;Y_init&quot;</span><span class="p">):</span>
+                            <span class="n">vi</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">i_2_init</span> <span class="o">+</span> <span class="n">i_3_init</span><span class="p">)</span>
+                            <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">i_0_j_0_i_1_j_1_fused</span> <span class="o">*</span> <span class="mi">16</span> <span class="o">+</span> <span class="n">j_2_init</span> <span class="o">*</span> <span class="mi">16</span> <span class="o">+</span> <span class="n">j_3_fused_init</span><span class="p">)</span>
+                            <span class="n">T</span><span class="o">.</span><span class="n">reads</span><span class="p">()</span>
+                            <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
+                            <span class="n">T</span><span class="o">.</span><span class="n">block_attr</span><span class="p">({</span><span class="s2">&quot;meta_schedule.tiling_structure&quot;</span><span class="p">:</span> <span class="s2">&quot;SSRSRS&quot;</span><span class="p">})</span>
+                            <span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">k_0</span><span class="p">,</span> <span class="n">i_2</span><span class="p">,</span> <span class="n">j_2</span><span class="p">,</span> <span class="n">k_1</span><span class="p">,</span> <span class="n">i_3</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">784</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">j_3_fused</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">vectorized</span><span class="p">(</span><span class="mi">16</span><span class="p">):</span>
+                        <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;Y_update&quot;</span><span class="p">):</span>
+                            <span class="n">vi</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">i_2</span> <span class="o">+</span> <span class="n">i_3</span><span class="p">)</span>
+                            <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">i_0_j_0_i_1_j_1_fused</span> <span class="o">*</span> <span class="mi">16</span> <span class="o">+</span> <span class="n">j_2</span> <span class="o">*</span> <span class="mi">16</span> <span class="o">+</span> <span class="n">j_3_fused</span><span class="p">)</span>
+                            <span class="n">vk</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="mi">784</span><span class="p">,</span> <span class="n">k_0</span> <span class="o">+</span> <span class="n">k_1</span><span class="p">)</span>
+                            <span class="n">T</span><span class="o">.</span><span class="n">reads</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vk</span><span class="p">],</span> <span class="n">W</span><span class="p">[</span><span class="n">vj</span><span class="p">,</span> <span class="n">vk</span><span class="p">])</span>
+                            <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
+                            <span class="n">T</span><span class="o">.</span><span class="n">block_attr</span><span class="p">({</span><span class="s2">&quot;meta_schedule.tiling_structure&quot;</span><span class="p">:</span> <span class="s2">&quot;SSRSRS&quot;</span><span class="p">})</span>
+                            <span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">+</span> <span class="n">X</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vk</span><span class="p">]</span> <span class="o">*</span> <span class="n">W</span><span class="p">[</span><span class="n">vj</span><span class="p">,</span> <span class="n">vk</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">ax0</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">ax1_fused</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">vectorized</span><span class="p">(</span><span class="mi">16</span><span class="p">):</span>
                         <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">):</span>
-                            <span class="n">vi</span><span class="p">,</span> <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">remap</span><span class="p">(</span><span class="s2">&quot;SS&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">ax0</span><span class="p">,</span> <span class="n">ax1</span><span class="p">])</span>
+                            <span class="n">vi</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ax0</span><span class="p">)</span>
+                            <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">i_0_j_0_i_1_j_1_fused</span> <span class="o">*</span> <span class="mi">16</span> <span class="o">+</span> <span class="n">ax1_fused</span><span class="p">)</span>
                             <span class="n">T</span><span class="o">.</span><span class="n">reads</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">],</span> <span class="n">B</span><span class="p">[</span><span class="n">vj</span><span class="p">])</span>
                             <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">Z</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
                             <span class="n">Z</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">+</span> <span class="n">B</span><span class="p">[</span><span class="n">vj</span><span class="p">]</span>
@@ -2479,7 +3225,7 @@ We can find that the ``linear0`` has been replaced in the above code.
 .. parsed-literal::
     :class: output
 
-    MyModuleWithParams2 Prediction: Sandal
+    MyModuleWithParams2 Prediction: Dress
 
 
 Running the code again, we can find that we get an observable amount of
@@ -2503,7 +3249,7 @@ time reduction, mainly thanks to the new ``linear0`` function.
 .. parsed-literal::
     :class: output
 
-    MyModuleWithParams2 time-cost: 0.0982011 ms
+    MyModuleWithParams2 time-cost: 0.115026 ms
 
 
 Discussions

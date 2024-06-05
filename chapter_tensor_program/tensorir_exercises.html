@@ -25,7 +25,7 @@
     <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/d2l.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <link rel="shortcut icon" href="../_static/mlc-favicon.png"/>
+    <link rel="shortcut icon" href="../_static/mlc-favicon.ico"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="3. End to End Model Execution" href="../chapter_end_to_end/index.html" />
@@ -217,9 +217,9 @@ a TensorIR function.</p>
 computation abstraction (e.g., <code class="docutils literal notranslate"><span class="pre">ndarray</span> <span class="pre">+</span> <span class="pre">ndarray</span></code>) to low-level
 python implementation (standard for loops with element access and
 operation)</p>
-<p>Notably, the initial value of the o utput array (or buffer) is not
-always <code class="docutils literal notranslate"><span class="pre">0</span></code>. We need to write or initialize it in our implementation,
-which is important for reduction operator (e.g. matmul and conv)</p>
+<p>Notably, the initial value of the output array (or buffer) is not always
+<code class="docutils literal notranslate"><span class="pre">0</span></code>. We need to write or initialize it in our implementation, which is
+important for reduction operator (e.g. matmul and conv)</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># low-level numpy version</span>
 <span class="k">def</span> <span class="nf">lnumpy_add</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
@@ -377,8 +377,8 @@ operations that common appear in models such as transformers.</p>
 <div class="section" id="parallel-vectorize-and-unroll">
 <h3><span class="section-number">2.5.2.1. </span>Parallel, Vectorize and Unroll<a class="headerlink" href="#parallel-vectorize-and-unroll" title="Permalink to this heading">¶</a></h3>
 <p>First, we introduce some new primitives, <code class="docutils literal notranslate"><span class="pre">parallel</span></code>, <code class="docutils literal notranslate"><span class="pre">vectorize</span></code> and
-<code class="docutils literal notranslate"><span class="pre">unroll</span></code>. These three primitives operates on loops to indicate how
-this loop execute. Here is the example:</p>
+<code class="docutils literal notranslate"><span class="pre">unroll</span></code>. These three primitives operate on loops to indicate how this
+loop executes. Here is the example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@tvm</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">ir_module</span>
 <span class="k">class</span> <span class="nc">MyAdd</span><span class="p">:</span>
   <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
@@ -421,6 +421,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .output_html .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
 .output_html .gd { color: #A00000 } /* Generic.Deleted */
 .output_html .ge { font-style: italic } /* Generic.Emph */
+.output_html .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
 .output_html .gr { color: #E40000 } /* Generic.Error */
 .output_html .gh { color: #000080; font-weight: bold } /* Generic.Heading */
 .output_html .gi { color: #008400 } /* Generic.Inserted */
@@ -482,7 +483,6 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
     <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
     <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">)):</span>
-        <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;add&quot;</span><span class="p">})</span>
         <span class="c1"># with T.block(&quot;root&quot;):</span>
         <span class="k">for</span> <span class="n">i_0</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">parallel</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">i_1</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">unroll</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>

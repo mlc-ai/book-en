@@ -124,7 +124,7 @@ We can plot out the image instance that we want to be able to predict.
 .. parsed-literal::
     :class: output
 
-    Class: Sandal
+    Class: T-shirt/top
 
 
 Download Model Parameters
@@ -191,10 +191,10 @@ Let us begin by reviewing a Numpy implementation of the model.
 .. parsed-literal::
     :class: output
 
-    [[-26.194868  -34.8678    -24.12358   -20.510454  -18.109476   12.921284
-      -17.477413   -4.9815836  -7.2966995  -6.3170166]]
-    [5]
-    NumPy-MLP Prediction: Sandal
+    [[ 16.492514   -9.319946   -1.3977761  -7.6737294 -19.890661  -19.210732
+        7.6732693 -26.277058  -10.610296  -29.9112   ]]
+    [0]
+    NumPy-MLP Prediction: T-shirt/top
 
 
 The above example code shows the high-level array operations to perform
@@ -282,7 +282,7 @@ model.
 .. parsed-literal::
     :class: output
 
-    Low-level Numpy MLP Prediction: Sandal
+    Low-level Numpy MLP Prediction: T-shirt/top
 
 
 Constructing an End to End IRModule in TVMScript
@@ -528,7 +528,7 @@ the low-level numpy execution code as:
 .. parsed-literal::
     :class: output
 
-    Low-level Numpy with CallTIR Prediction: Sandal
+    Low-level Numpy with CallTIR Prediction: T-shirt/top
 
 
 In practice, the lowest-level implementation will have explicit memory
@@ -646,6 +646,7 @@ have.
     .output_html .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
     .output_html .gd { color: #A00000 } /* Generic.Deleted */
     .output_html .ge { font-style: italic } /* Generic.Emph */
+    .output_html .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
     .output_html .gr { color: #E40000 } /* Generic.Error */
     .output_html .gh { color: #000080; font-weight: bold } /* Generic.Heading */
     .output_html .gi { color: #008400 } /* Generic.Inserted */
@@ -837,8 +838,8 @@ weights.
 .. parsed-literal::
     :class: output
 
-    [[-26.19487   -34.867805  -24.123579  -20.510454  -18.109478   12.921284
-      -17.47741    -4.981583   -7.2966967  -6.3170156]]
+    [[ 16.49251    -9.319946   -1.3977766  -7.673729  -19.890663  -19.210732
+        7.67327   -26.277052  -10.610297  -29.911194 ]]
 
 
 The main function returns the prediction result, and we can then call
@@ -862,7 +863,7 @@ the class label.
 .. parsed-literal::
     :class: output
 
-    MyModule Prediction: Sandal
+    MyModule Prediction: T-shirt/top
 
 
 Integrate Existing Libraries in the Environment
@@ -993,7 +994,7 @@ that we get the same result.
 .. parsed-literal::
     :class: output
 
-    MyModuleWithExternCall Prediction: Sandal
+    MyModuleWithExternCall Prediction: T-shirt/top
 
 
 Mixing TensorIR Code and Libraries
@@ -1077,7 +1078,7 @@ functions. We can build and run to validate the result.
 .. parsed-literal::
     :class: output
 
-    MyModuleMixture Prediction: Sandal
+    MyModuleMixture Prediction: T-shirt/top
 
 
 Bind Parameters to IRModule
@@ -1122,6 +1123,7 @@ nd_params.
     .output_html .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
     .output_html .gd { color: #A00000 } /* Generic.Deleted */
     .output_html .ge { font-style: italic } /* Generic.Emph */
+    .output_html .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
     .output_html .gr { color: #E40000 } /* Generic.Error */
     .output_html .gh { color: #000080; font-weight: bold } /* Generic.Heading */
     .output_html .gi { color: #008400 } /* Generic.Inserted */
@@ -1250,7 +1252,7 @@ the input data.
 .. parsed-literal::
     :class: output
 
-    MyModuleWithParams Prediction: Sandal
+    MyModuleWithParams Prediction: T-shirt/top
 
 
 Discussions

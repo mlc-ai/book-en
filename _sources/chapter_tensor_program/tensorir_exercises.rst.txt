@@ -69,9 +69,9 @@ computation abstraction (e.g., ``ndarray + ndarray``) to low-level
 python implementation (standard for loops with element access and
 operation)
 
-Notably, the initial value of the o utput array (or buffer) is not
-always ``0``. We need to write or initialize it in our implementation,
-which is important for reduction operator (e.g. matmul and conv)
+Notably, the initial value of the output array (or buffer) is not always
+``0``. We need to write or initialize it in our implementation, which is
+important for reduction operator (e.g. matmul and conv)
 
 .. raw:: latex
 
@@ -315,8 +315,8 @@ Parallel, Vectorize and Unroll
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 First, we introduce some new primitives, ``parallel``, ``vectorize`` and
-``unroll``. These three primitives operates on loops to indicate how
-this loop execute. Here is the example:
+``unroll``. These three primitives operate on loops to indicate how this
+loop executes. Here is the example:
 
 .. raw:: latex
 
@@ -370,6 +370,7 @@ this loop execute. Here is the example:
     .output_html .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
     .output_html .gd { color: #A00000 } /* Generic.Deleted */
     .output_html .ge { font-style: italic } /* Generic.Emph */
+    .output_html .ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
     .output_html .gr { color: #E40000 } /* Generic.Error */
     .output_html .gh { color: #000080; font-weight: bold } /* Generic.Heading */
     .output_html .gi { color: #008400 } /* Generic.Inserted */
@@ -431,7 +432,6 @@ this loop execute. Here is the example:
     <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
         <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;global_symbol&quot;</span><span class="p">:</span> <span class="s2">&quot;add&quot;</span><span class="p">})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="k">for</span> <span class="n">i_0</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">parallel</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
                 <span class="k">for</span> <span class="n">i_1</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">unroll</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
