@@ -1321,8 +1321,8 @@ compare the running performance of different generated functions.
 .. parsed-literal::
     :class: output
 
-    Time cost of MyModule 0.00272919 sec
-    Time cost of transformed sch.mod 0.000687126 sec
+    Time cost of MyModule 0.00307569 sec
+    Time cost of transformed sch.mod 0.000742557 sec
 
 
 It is interesting to see the running time difference between the two
@@ -1643,7 +1643,7 @@ affect the code’s performance.
 .. parsed-literal::
     :class: output
 
-    Time cost of transformed mod_transformed 0.000393904 sec
+    Time cost of transformed mod_transformed 0.000409087 sec
 
 
 

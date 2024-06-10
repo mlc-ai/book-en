@@ -262,7 +262,7 @@ dataset. The following code downloads and prepares the data from
 <div class="figure align-default">
 <img alt="../_images/output_index_e758e2_5_0.png" src="../_images/output_index_e758e2_5_0.png" />
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Class</span><span class="p">:</span> <span class="n">T</span><span class="o">-</span><span class="n">shirt</span><span class="o">/</span><span class="n">top</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Class</span><span class="p">:</span> <span class="n">Ankle</span> <span class="n">boot</span>
 </pre></div>
 </div>
 </div>
@@ -306,10 +306,10 @@ corresponds to the most likely class.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;NumPy-MLP Prediction:&quot;</span><span class="p">,</span> <span class="n">class_names</span><span class="p">[</span><span class="n">pred_kind</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[</span> <span class="mf">16.492514</span>   <span class="o">-</span><span class="mf">9.319946</span>   <span class="o">-</span><span class="mf">1.3977761</span>  <span class="o">-</span><span class="mf">7.6737294</span> <span class="o">-</span><span class="mf">19.890661</span>  <span class="o">-</span><span class="mf">19.210732</span>
-    <span class="mf">7.6732693</span> <span class="o">-</span><span class="mf">26.277058</span>  <span class="o">-</span><span class="mf">10.610296</span>  <span class="o">-</span><span class="mf">29.9112</span>   <span class="p">]]</span>
-<span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">NumPy</span><span class="o">-</span><span class="n">MLP</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">T</span><span class="o">-</span><span class="n">shirt</span><span class="o">/</span><span class="n">top</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="o">-</span><span class="mf">26.264542</span>  <span class="o">-</span><span class="mf">36.405952</span>  <span class="o">-</span><span class="mf">18.544466</span>  <span class="o">-</span><span class="mf">24.694298</span>  <span class="o">-</span><span class="mf">24.956585</span>    <span class="mf">7.3748484</span>
+  <span class="o">-</span><span class="mf">18.479536</span>   <span class="o">-</span><span class="mf">7.323681</span>  <span class="o">-</span><span class="mf">17.176899</span>   <span class="mf">10.937598</span> <span class="p">]]</span>
+<span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+<span class="n">NumPy</span><span class="o">-</span><span class="n">MLP</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Ankle</span> <span class="n">boot</span>
 </pre></div>
 </div>
 <p>The above example code shows the high-level array operations to perform
@@ -381,7 +381,7 @@ model.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Low-level Numpy MLP Prediction:&quot;</span><span class="p">,</span> <span class="n">class_names</span><span class="p">[</span><span class="n">pred_kind</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Low</span><span class="o">-</span><span class="n">level</span> <span class="n">Numpy</span> <span class="n">MLP</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">T</span><span class="o">-</span><span class="n">shirt</span><span class="o">/</span><span class="n">top</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Low</span><span class="o">-</span><span class="n">level</span> <span class="n">Numpy</span> <span class="n">MLP</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Ankle</span> <span class="n">boot</span>
 </pre></div>
 </div>
 </div>
@@ -574,7 +574,7 @@ the low-level numpy execution code as:</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Low-level Numpy with CallTIR Prediction:&quot;</span><span class="p">,</span> <span class="n">class_names</span><span class="p">[</span><span class="n">pred_kind</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Low</span><span class="o">-</span><span class="n">level</span> <span class="n">Numpy</span> <span class="k">with</span> <span class="n">CallTIR</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">T</span><span class="o">-</span><span class="n">shirt</span><span class="o">/</span><span class="n">top</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Low</span><span class="o">-</span><span class="n">level</span> <span class="n">Numpy</span> <span class="k">with</span> <span class="n">CallTIR</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Ankle</span> <span class="n">boot</span>
 </pre></div>
 </div>
 <p>In practice, the lowest-level implementation will have explicit memory
@@ -810,8 +810,8 @@ weights.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">nd_res</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[</span> <span class="mf">16.49251</span>    <span class="o">-</span><span class="mf">9.319946</span>   <span class="o">-</span><span class="mf">1.3977766</span>  <span class="o">-</span><span class="mf">7.673729</span>  <span class="o">-</span><span class="mf">19.890663</span>  <span class="o">-</span><span class="mf">19.210732</span>
-    <span class="mf">7.67327</span>   <span class="o">-</span><span class="mf">26.277052</span>  <span class="o">-</span><span class="mf">10.610297</span>  <span class="o">-</span><span class="mf">29.911194</span> <span class="p">]]</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[[</span><span class="o">-</span><span class="mf">26.26454</span>   <span class="o">-</span><span class="mf">36.40595</span>   <span class="o">-</span><span class="mf">18.544474</span>  <span class="o">-</span><span class="mf">24.694304</span>  <span class="o">-</span><span class="mf">24.956594</span>    <span class="mf">7.37485</span>
+  <span class="o">-</span><span class="mf">18.479532</span>   <span class="o">-</span><span class="mf">7.3236823</span> <span class="o">-</span><span class="mf">17.176897</span>   <span class="mf">10.937594</span> <span class="p">]]</span>
 </pre></div>
 </div>
 <p>The main function returns the prediction result, and we can then call
@@ -821,7 +821,7 @@ the class label.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MyModule Prediction:&quot;</span><span class="p">,</span> <span class="n">class_names</span><span class="p">[</span><span class="n">pred_kind</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MyModule</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">T</span><span class="o">-</span><span class="n">shirt</span><span class="o">/</span><span class="n">top</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MyModule</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Ankle</span> <span class="n">boot</span>
 </pre></div>
 </div>
 </div>
@@ -914,7 +914,7 @@ that we get the same result.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MyModuleWithExternCall Prediction:&quot;</span><span class="p">,</span> <span class="n">class_names</span><span class="p">[</span><span class="n">pred_kind</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MyModuleWithExternCall</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">T</span><span class="o">-</span><span class="n">shirt</span><span class="o">/</span><span class="n">top</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MyModuleWithExternCall</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Ankle</span> <span class="n">boot</span>
 </pre></div>
 </div>
 </div>
@@ -979,7 +979,7 @@ functions. We can build and run to validate the result.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MyModuleMixture Prediction:&quot;</span><span class="p">,</span> <span class="n">class_names</span><span class="p">[</span><span class="n">pred_kind</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MyModuleMixture</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">T</span><span class="o">-</span><span class="n">shirt</span><span class="o">/</span><span class="n">top</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MyModuleMixture</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Ankle</span> <span class="n">boot</span>
 </pre></div>
 </div>
 </div>
@@ -1123,7 +1123,7 @@ the input data.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MyModuleWithParams Prediction:&quot;</span><span class="p">,</span> <span class="n">class_names</span><span class="p">[</span><span class="n">pred_kind</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MyModuleWithParams</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">T</span><span class="o">-</span><span class="n">shirt</span><span class="o">/</span><span class="n">top</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MyModuleWithParams</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Ankle</span> <span class="n">boot</span>
 </pre></div>
 </div>
 </div>
