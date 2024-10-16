@@ -1,6 +1,6 @@
 
-Machine Learning Compilation
-============================
+Machine Learning Compiler
+=========================
 
 Deploying innovative AI models in different production environments
 becomes a common problem as AI applications become more ubiquitous in

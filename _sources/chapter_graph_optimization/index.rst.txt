@@ -720,7 +720,7 @@ Mutator and return the transformed value using ``call_te``.
                     T<span style="color: #AA22FF; font-weight: bold">.</span>reads(x[v_i0, v_k], w[v_k, v_i1])
                     T<span style="color: #AA22FF; font-weight: bold">.</span>writes(T_matmul_NN[v_i0, v_i1])
                     <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>init():
-                        T_matmul_NN[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>)
+                        T_matmul_NN[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0.0</span>)
                     T_matmul_NN[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T_matmul_NN[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">+</span> x[v_i0, v_k] <span style="color: #AA22FF; font-weight: bold">*</span> w[v_k, v_i1]
     
         <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func(private<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">True</span>)
@@ -733,7 +733,7 @@ Mutator and return the transformed value using ``call_te``.
                     T<span style="color: #AA22FF; font-weight: bold">.</span>reads(x[v_i0, v_k], w[v_k, v_i1])
                     T<span style="color: #AA22FF; font-weight: bold">.</span>writes(T_matmul_NN[v_i0, v_i1])
                     <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>init():
-                        T_matmul_NN[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>)
+                        T_matmul_NN[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0.0</span>)
                     T_matmul_NN[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T_matmul_NN[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">+</span> x[v_i0, v_k] <span style="color: #AA22FF; font-weight: bold">*</span> w[v_k, v_i1]
     
         <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func(private<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">True</span>)
@@ -745,7 +745,7 @@ Mutator and return the transformed value using ``call_te``.
                     v_i0, v_i1 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>remap(<span style="color: #BA2121">&quot;SS&quot;</span>, [i0, i1])
                     T<span style="color: #AA22FF; font-weight: bold">.</span>reads(lv2[v_i0, v_i1])
                     T<span style="color: #AA22FF; font-weight: bold">.</span>writes(compute[v_i0, v_i1])
-                    compute[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>max(lv2[v_i0, v_i1], T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>))
+                    compute[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>max(lv2[v_i0, v_i1], T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0.0</span>))
     
         <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func(private<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">True</span>)
         <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">transpose</span>(A: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer((T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>), T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">784</span>)), <span style="color: #BA2121">&quot;float32&quot;</span>), T_transpose: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer((T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">784</span>), T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>)), <span style="color: #BA2121">&quot;float32&quot;</span>)):
@@ -843,7 +843,7 @@ follow-up optimization and code generation phases.
                     T<span style="color: #AA22FF; font-weight: bold">.</span>reads(x[v_i0, v_k], w[v_k, v_i1])
                     T<span style="color: #AA22FF; font-weight: bold">.</span>writes(T_matmul_NN_intermediate[v_i0, v_i1])
                     <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>init():
-                        T_matmul_NN_intermediate[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>)
+                        T_matmul_NN_intermediate[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0.0</span>)
                     T_matmul_NN_intermediate[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T_matmul_NN_intermediate[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">+</span> x[v_i0, v_k] <span style="color: #AA22FF; font-weight: bold">*</span> w[v_k, v_i1]
             <span style="color: #008000; font-weight: bold">for</span> ax0, ax1 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>grid(T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">1</span>), T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>)):
                 <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;T_add&quot;</span>):
@@ -863,7 +863,7 @@ follow-up optimization and code generation phases.
                     T<span style="color: #AA22FF; font-weight: bold">.</span>reads(x[v_i0, v_k], w[v_k, v_i1])
                     T<span style="color: #AA22FF; font-weight: bold">.</span>writes(T_matmul_NN_intermediate[v_i0, v_i1])
                     <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>init():
-                        T_matmul_NN_intermediate[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>)
+                        T_matmul_NN_intermediate[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0.0</span>)
                     T_matmul_NN_intermediate[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T_matmul_NN_intermediate[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">+</span> x[v_i0, v_k] <span style="color: #AA22FF; font-weight: bold">*</span> w[v_k, v_i1]
             <span style="color: #008000; font-weight: bold">for</span> ax0, ax1 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>grid(T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">1</span>), T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">10</span>)):
                 <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;T_add&quot;</span>):
@@ -881,7 +881,7 @@ follow-up optimization and code generation phases.
                     v_i0, v_i1 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>remap(<span style="color: #BA2121">&quot;SS&quot;</span>, [i0, i1])
                     T<span style="color: #AA22FF; font-weight: bold">.</span>reads(lv2[v_i0, v_i1])
                     T<span style="color: #AA22FF; font-weight: bold">.</span>writes(compute[v_i0, v_i1])
-                    compute[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>max(lv2[v_i0, v_i1], T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>))
+                    compute[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>max(lv2[v_i0, v_i1], T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0.0</span>))
     
         <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func(private<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">True</span>)
         <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">transpose</span>(A: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer((T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>), T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">784</span>)), <span style="color: #BA2121">&quot;float32&quot;</span>), T_transpose: T<span style="color: #AA22FF; font-weight: bold">.</span>Buffer((T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">784</span>), T<span style="color: #AA22FF; font-weight: bold">.</span>int64(<span style="color: #008000">128</span>)), <span style="color: #BA2121">&quot;float32&quot;</span>)):
@@ -979,7 +979,7 @@ picture.
 .. parsed-literal::
     :class: output
 
-    Class: Trouser
+    Class: Sandal
 
 
 .. raw:: latex
@@ -1005,7 +1005,7 @@ picture.
 .. parsed-literal::
     :class: output
 
-    MLPModule Prediction: Trouser
+    MLPModule Prediction: Sandal
 
 
 Discussion

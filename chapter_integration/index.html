@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     
-    <title>5. Integration with Machine Learning Frameworks &#8212; Machine Learing Compilation 0.0.1 documentation</title>
+    <title>5. Integration with Machine Learning Frameworks &#8212; Machine Learing Compiler 0.0.1 documentation</title>
 
     <link rel="stylesheet" href="../_static/material-design-lite-1.3.0/material.blue-deep_orange.min.css" type="text/css" />
     <link rel="stylesheet" href="../_static/sphinx_materialdesign_theme.css" type="text/css" />
@@ -91,7 +91,7 @@ Show Source
           <!-- Title -->
       <span class="mdl-layout-title">
           <a class="title" href="../index.html">
-              <img class="logo" src="../_static/mlc-logo-with-text-landscape.svg" alt="Machine Learing Compilation"/>
+              <img class="logo" src="../_static/mlc-logo-with-text-landscape.svg" alt="Machine Learing Compiler"/>
           </a>
       </span>
     
@@ -136,7 +136,7 @@ Show Source
           <!-- Title -->
       <span class="mdl-layout-title">
           <a class="title" href="../index.html">
-              <img class="logo" src="../_static/mlc-logo-with-text-landscape.svg" alt="Machine Learing Compilation"/>
+              <img class="logo" src="../_static/mlc-logo-with-text-landscape.svg" alt="Machine Learing Compiler"/>
           </a>
       </span>
     
@@ -277,7 +277,7 @@ pass in the input and output values.</p>
             T<span style="color: #AA22FF; font-weight: bold">.</span>reads(A[v_i, v_k], B[v_k, v_j])
             T<span style="color: #AA22FF; font-weight: bold">.</span>writes(matmul[v_i, v_j])
             <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>init():
-                matmul[v_i, v_j] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>)
+                matmul[v_i, v_j] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0.0</span>)
             matmul[v_i, v_j] <span style="color: #AA22FF; font-weight: bold">=</span> matmul[v_i, v_j] <span style="color: #AA22FF; font-weight: bold">+</span> A[v_i, v_k] <span style="color: #AA22FF; font-weight: bold">*</span> B[v_k, v_j]
 </pre></div><p>We can create a tensor expression for relu computation in a similar
 fashion. Here we write it in a way so that <code class="docutils literal notranslate"><span class="pre">te_relu</span></code> function can work
@@ -304,7 +304,7 @@ First <code class="docutils literal notranslate"><span class="pre">X1</span></co
             v_i0 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>spatial(<span style="color: #008000">10</span>, i0)
             T<span style="color: #AA22FF; font-weight: bold">.</span>reads(X1[v_i0])
             T<span style="color: #AA22FF; font-weight: bold">.</span>writes(relu[v_i0])
-            relu[v_i0] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>max(X1[v_i0], T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>))
+            relu[v_i0] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>max(X1[v_i0], T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0.0</span>))
 </pre></div><p>Then <code class="docutils literal notranslate"><span class="pre">X2</span></code> with shape <code class="docutils literal notranslate"><span class="pre">(10,</span> <span class="pre">20)</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">X2</span> <span class="o">=</span> <span class="n">te</span><span class="o">.</span><span class="n">placeholder</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;X1&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span>
 <span class="n">Y2</span> <span class="o">=</span> <span class="n">te_relu</span><span class="p">(</span><span class="n">X2</span><span class="p">)</span>
@@ -322,7 +322,7 @@ First <code class="docutils literal notranslate"><span class="pre">X1</span></co
             v_i0, v_i1 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>remap(<span style="color: #BA2121">&quot;SS&quot;</span>, [i0, i1])
             T<span style="color: #AA22FF; font-weight: bold">.</span>reads(X1[v_i0, v_i1])
             T<span style="color: #AA22FF; font-weight: bold">.</span>writes(relu[v_i0, v_i1])
-            relu[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>max(X1[v_i0, v_i1], T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>))
+            relu[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>max(X1[v_i0, v_i1], T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0.0</span>))
 </pre></div><p>One final thing that <code class="docutils literal notranslate"><span class="pre">te</span></code> API allows us to do is to compose operations
 and create “fused” operators. For example, we can take the result of
 matmul and apply relu again.</p>
@@ -350,14 +350,14 @@ function.</p>
             T<span style="color: #AA22FF; font-weight: bold">.</span>reads(A[v_i, v_k], B[v_k, v_j])
             T<span style="color: #AA22FF; font-weight: bold">.</span>writes(matmul[v_i, v_j])
             <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>init():
-                matmul[v_i, v_j] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>)
+                matmul[v_i, v_j] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0.0</span>)
             matmul[v_i, v_j] <span style="color: #AA22FF; font-weight: bold">=</span> matmul[v_i, v_j] <span style="color: #AA22FF; font-weight: bold">+</span> A[v_i, v_k] <span style="color: #AA22FF; font-weight: bold">*</span> B[v_k, v_j]
     <span style="color: #008000; font-weight: bold">for</span> i0, i1 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>grid(<span style="color: #008000">128</span>, <span style="color: #008000">128</span>):
         <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;relu&quot;</span>):
             v_i0, v_i1 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>remap(<span style="color: #BA2121">&quot;SS&quot;</span>, [i0, i1])
             T<span style="color: #AA22FF; font-weight: bold">.</span>reads(matmul[v_i0, v_i1])
             T<span style="color: #AA22FF; font-weight: bold">.</span>writes(relu[v_i0, v_i1])
-            relu[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>max(matmul[v_i0, v_i1], T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>))
+            relu[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>max(matmul[v_i0, v_i1], T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0.0</span>))
 </pre></div><p>We can also pass the intermediate result C into the argument list. In
 this case, the TensorIR function expects us to also pass in the buffer
 of C from the caller side. Normally we recommend only passing in the
@@ -377,14 +377,14 @@ input/output so we can have more advanced fusion inside.</p>
             T<span style="color: #AA22FF; font-weight: bold">.</span>reads(A[v_i, v_k], B[v_k, v_j])
             T<span style="color: #AA22FF; font-weight: bold">.</span>writes(matmul[v_i, v_j])
             <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>init():
-                matmul[v_i, v_j] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>)
+                matmul[v_i, v_j] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0.0</span>)
             matmul[v_i, v_j] <span style="color: #AA22FF; font-weight: bold">=</span> matmul[v_i, v_j] <span style="color: #AA22FF; font-weight: bold">+</span> A[v_i, v_k] <span style="color: #AA22FF; font-weight: bold">*</span> B[v_k, v_j]
     <span style="color: #008000; font-weight: bold">for</span> i0, i1 <span style="color: #008000; font-weight: bold">in</span> T<span style="color: #AA22FF; font-weight: bold">.</span>grid(<span style="color: #008000">128</span>, <span style="color: #008000">128</span>):
         <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>block(<span style="color: #BA2121">&quot;relu&quot;</span>):
             v_i0, v_i1 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>remap(<span style="color: #BA2121">&quot;SS&quot;</span>, [i0, i1])
             T<span style="color: #AA22FF; font-weight: bold">.</span>reads(matmul[v_i0, v_i1])
             T<span style="color: #AA22FF; font-weight: bold">.</span>writes(relu[v_i0, v_i1])
-            relu[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>max(matmul[v_i0, v_i1], T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>))
+            relu[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>max(matmul[v_i0, v_i1], T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0.0</span>))
 </pre></div></div>
 <div class="section" id="use-blockbuilder-to-create-an-irmodule">
 <h3><span class="section-number">5.3.2. </span>Use BlockBuilder to Create an IRModule<a class="headerlink" href="#use-blockbuilder-to-create-an-irmodule" title="Permalink to this heading">¶</a></h3>
@@ -428,7 +428,7 @@ sequence of primitive tensor operations.</p>
                 T<span style="color: #AA22FF; font-weight: bold">.</span>reads(A[v_i, v_k], B[v_k, v_j])
                 T<span style="color: #AA22FF; font-weight: bold">.</span>writes(matmul[v_i, v_j])
                 <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>init():
-                    matmul[v_i, v_j] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>)
+                    matmul[v_i, v_j] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0.0</span>)
                 matmul[v_i, v_j] <span style="color: #AA22FF; font-weight: bold">=</span> matmul[v_i, v_j] <span style="color: #AA22FF; font-weight: bold">+</span> A[v_i, v_k] <span style="color: #AA22FF; font-weight: bold">*</span> B[v_k, v_j]
 
     <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func(private<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">True</span>)
@@ -440,7 +440,7 @@ sequence of primitive tensor operations.</p>
                 v_i0, v_i1 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>remap(<span style="color: #BA2121">&quot;SS&quot;</span>, [i0, i1])
                 T<span style="color: #AA22FF; font-weight: bold">.</span>reads(lv[v_i0, v_i1])
                 T<span style="color: #AA22FF; font-weight: bold">.</span>writes(relu[v_i0, v_i1])
-                relu[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>max(lv[v_i0, v_i1], T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>))
+                relu[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>max(lv[v_i0, v_i1], T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0.0</span>))
 
     <span style="color: #AA22FF">@R</span><span style="color: #AA22FF; font-weight: bold">.</span>function
     <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">main</span>(A: R<span style="color: #AA22FF; font-weight: bold">.</span>Tensor((<span style="color: #008000">128</span>, <span style="color: #008000">128</span>), dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>), B: R<span style="color: #AA22FF; font-weight: bold">.</span>Tensor((<span style="color: #008000">128</span>, <span style="color: #008000">128</span>), dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>)) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> R<span style="color: #AA22FF; font-weight: bold">.</span>Tensor((<span style="color: #008000">128</span>, <span style="color: #008000">128</span>), dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>):
@@ -577,8 +577,8 @@ IRModule.</p>
 <span class="o">-------------</span>  <span class="o">------</span>  <span class="o">---------------------------------------------------------</span>  <span class="o">-----------</span>  <span class="o">--------</span>
 <span class="n">placeholder</span>    <span class="n">x</span>       <span class="n">x</span>                                                          <span class="p">()</span>           <span class="p">{}</span>
 <span class="n">get_attr</span>       <span class="n">weight</span>  <span class="n">weight</span>                                                     <span class="p">()</span>           <span class="p">{}</span>
-<span class="n">call_function</span>  <span class="n">matmul</span>  <span class="o">&lt;</span><span class="n">built</span><span class="o">-</span><span class="ow">in</span> <span class="n">method</span> <span class="n">matmul</span> <span class="n">of</span> <span class="nb">type</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7f78ec985700</span><span class="o">&gt;</span>  <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span>  <span class="p">{}</span>
-<span class="n">call_function</span>  <span class="n">relu</span>    <span class="o">&lt;</span><span class="n">built</span><span class="o">-</span><span class="ow">in</span> <span class="n">method</span> <span class="n">relu</span> <span class="n">of</span> <span class="nb">type</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7f78ec985700</span><span class="o">&gt;</span>    <span class="p">(</span><span class="n">matmul</span><span class="p">,)</span>    <span class="p">{}</span>
+<span class="n">call_function</span>  <span class="n">matmul</span>  <span class="o">&lt;</span><span class="n">built</span><span class="o">-</span><span class="ow">in</span> <span class="n">method</span> <span class="n">matmul</span> <span class="n">of</span> <span class="nb">type</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7f28e7c5c480</span><span class="o">&gt;</span>  <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span>  <span class="p">{}</span>
+<span class="n">call_function</span>  <span class="n">relu</span>    <span class="o">&lt;</span><span class="n">built</span><span class="o">-</span><span class="ow">in</span> <span class="n">method</span> <span class="n">relu</span> <span class="n">of</span> <span class="nb">type</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7f28e7c5c480</span><span class="o">&gt;</span>    <span class="p">(</span><span class="n">matmul</span><span class="p">,)</span>    <span class="p">{}</span>
 <span class="n">output</span>         <span class="n">output</span>  <span class="n">output</span>                                                     <span class="p">(</span><span class="n">relu</span><span class="p">,)</span>      <span class="p">{}</span>
 </pre></div>
 </div>
@@ -687,7 +687,7 @@ the <code class="docutils literal notranslate"><span class="pre">emit_te</span><
                 T<span style="color: #AA22FF; font-weight: bold">.</span>reads(x[v_i, v_k], B[v_k, v_j])
                 T<span style="color: #AA22FF; font-weight: bold">.</span>writes(matmul[v_i, v_j])
                 <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>init():
-                    matmul[v_i, v_j] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>)
+                    matmul[v_i, v_j] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0.0</span>)
                 matmul[v_i, v_j] <span style="color: #AA22FF; font-weight: bold">=</span> matmul[v_i, v_j] <span style="color: #AA22FF; font-weight: bold">+</span> x[v_i, v_k] <span style="color: #AA22FF; font-weight: bold">*</span> B[v_k, v_j]
 
     <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func(private<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">True</span>)
@@ -699,7 +699,7 @@ the <code class="docutils literal notranslate"><span class="pre">emit_te</span><
                 v_i0, v_i1 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>remap(<span style="color: #BA2121">&quot;SS&quot;</span>, [i0, i1])
                 T<span style="color: #AA22FF; font-weight: bold">.</span>reads(lv[v_i0, v_i1])
                 T<span style="color: #AA22FF; font-weight: bold">.</span>writes(relu[v_i0, v_i1])
-                relu[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>max(lv[v_i0, v_i1], T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>))
+                relu[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>max(lv[v_i0, v_i1], T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0.0</span>))
 
     <span style="color: #AA22FF">@R</span><span style="color: #AA22FF; font-weight: bold">.</span>function
     <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">main</span>(x: R<span style="color: #AA22FF; font-weight: bold">.</span>Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">128</span>), dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>)) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> R<span style="color: #AA22FF; font-weight: bold">.</span>Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">128</span>), dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>):
@@ -767,7 +767,7 @@ the <code class="docutils literal notranslate"><span class="pre">emit_te</span><
 <div class="figure align-default">
 <img alt="../_images/output_index_4f28a7_60_0.png" src="../_images/output_index_4f28a7_60_0.png" />
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Class</span><span class="p">:</span> <span class="n">Trouser</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Class</span><span class="p">:</span> <span class="n">Ankle</span> <span class="n">boot</span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span># Hide outputs
@@ -810,7 +810,7 @@ follows.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Torch Prediction:&quot;</span><span class="p">,</span> <span class="n">class_names</span><span class="p">[</span><span class="n">pred_kind</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Torch</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Trouser</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Torch</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Ankle</span> <span class="n">boot</span>
 </pre></div>
 </div>
 <p>Let us try to translate from fx by defining mapping functions for the
@@ -889,7 +889,7 @@ expression.</p>
                 T<span style="color: #AA22FF; font-weight: bold">.</span>reads(x[v_i0, v_k], B[v_i1, v_k])
                 T<span style="color: #AA22FF; font-weight: bold">.</span>writes(T_matmul_NT[v_i0, v_i1])
                 <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>init():
-                    T_matmul_NT[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>)
+                    T_matmul_NT[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0.0</span>)
                 T_matmul_NT[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T_matmul_NT[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">+</span> x[v_i0, v_k] <span style="color: #AA22FF; font-weight: bold">*</span> B[v_i1, v_k]
 
     <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func(private<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">True</span>)
@@ -902,7 +902,7 @@ expression.</p>
                 T<span style="color: #AA22FF; font-weight: bold">.</span>reads(lv2[v_i0, v_k], B[v_i1, v_k])
                 T<span style="color: #AA22FF; font-weight: bold">.</span>writes(T_matmul_NT[v_i0, v_i1])
                 <span style="color: #008000; font-weight: bold">with</span> T<span style="color: #AA22FF; font-weight: bold">.</span>init():
-                    T_matmul_NT[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>)
+                    T_matmul_NT[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0.0</span>)
                 T_matmul_NT[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T_matmul_NT[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">+</span> lv2[v_i0, v_k] <span style="color: #AA22FF; font-weight: bold">*</span> B[v_i1, v_k]
 
     <span style="color: #AA22FF">@T</span><span style="color: #AA22FF; font-weight: bold">.</span>prim_func(private<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #008000; font-weight: bold">True</span>)
@@ -914,7 +914,7 @@ expression.</p>
                 v_i0, v_i1 <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>axis<span style="color: #AA22FF; font-weight: bold">.</span>remap(<span style="color: #BA2121">&quot;SS&quot;</span>, [i0, i1])
                 T<span style="color: #AA22FF; font-weight: bold">.</span>reads(lv1[v_i0, v_i1])
                 T<span style="color: #AA22FF; font-weight: bold">.</span>writes(relu[v_i0, v_i1])
-                relu[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>max(lv1[v_i0, v_i1], T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0</span>))
+                relu[v_i0, v_i1] <span style="color: #AA22FF; font-weight: bold">=</span> T<span style="color: #AA22FF; font-weight: bold">.</span>max(lv1[v_i0, v_i1], T<span style="color: #AA22FF; font-weight: bold">.</span>float32(<span style="color: #008000">0.0</span>))
 
     <span style="color: #AA22FF">@R</span><span style="color: #AA22FF; font-weight: bold">.</span>function
     <span style="color: #008000; font-weight: bold">def</span> <span style="color: #0000FF">main</span>(x: R<span style="color: #AA22FF; font-weight: bold">.</span>Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">784</span>), dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>)) <span style="color: #AA22FF; font-weight: bold">-&gt;</span> R<span style="color: #AA22FF; font-weight: bold">.</span>Tensor((<span style="color: #008000">1</span>, <span style="color: #008000">10</span>), dtype<span style="color: #AA22FF; font-weight: bold">=</span><span style="color: #BA2121">&quot;float32&quot;</span>):
@@ -940,7 +940,7 @@ expression.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MLPModule Prediction:&quot;</span><span class="p">,</span> <span class="n">class_names</span><span class="p">[</span><span class="n">pred_kind</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MLPModule</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Trouser</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MLPModule</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Ankle</span> <span class="n">boot</span>
 </pre></div>
 </div>
 </div>
