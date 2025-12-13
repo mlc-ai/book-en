@@ -5,13 +5,13 @@ End to End Model Execution
 Prelude
 -------
 
-.. figure:: ../img/tensor_func_linear_relu.png
+|image1|
 
 Most of the MLC process can be viewed as transformation among tensor
 functions. The main thing we aim to answer in our following up are:
 
--  What are the possible abstractions to represent the tensor function.
--  What are possible transformations among the tensor functions.
+- What are the possible abstractions to represent the tensor function.
+- What are possible transformations among the tensor functions.
 
 In the last lecture, we focus on the primitive tensor functions. In this
 lecture, we will talk about how to build end-to-end models.
@@ -21,6 +21,8 @@ Preparations
 
 To begin with, we will import necessary dependencies and create helper
 functions.
+
+.. |image1| image:: ../img/tensor_func_linear_relu.png
 
 .. raw:: latex
 
@@ -73,26 +75,10 @@ dataset. The following code downloads and prepares the data from
 .. parsed-literal::
     :class: output
 
-    Downloading http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/train-images-idx3-ubyte.gz
-    Downloading http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/train-images-idx3-ubyte.gz to data/FashionMNIST/raw/train-images-idx3-ubyte.gz
     100.0%
-    Extracting data/FashionMNIST/raw/train-images-idx3-ubyte.gz to data/FashionMNIST/raw
-    
-    Downloading http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/train-labels-idx1-ubyte.gz
-    Downloading http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/train-labels-idx1-ubyte.gz to data/FashionMNIST/raw/train-labels-idx1-ubyte.gz
     100.0%
-    Extracting data/FashionMNIST/raw/train-labels-idx1-ubyte.gz to data/FashionMNIST/raw
-    
-    Downloading http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/t10k-images-idx3-ubyte.gz
-    Downloading http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/t10k-images-idx3-ubyte.gz to data/FashionMNIST/raw/t10k-images-idx3-ubyte.gz
     100.0%
-    Extracting data/FashionMNIST/raw/t10k-images-idx3-ubyte.gz to data/FashionMNIST/raw
-    
-    Downloading http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/t10k-labels-idx1-ubyte.gz
-    Downloading http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/t10k-labels-idx1-ubyte.gz to data/FashionMNIST/raw/t10k-labels-idx1-ubyte.gz
-    100.0%Extracting data/FashionMNIST/raw/t10k-labels-idx1-ubyte.gz to data/FashionMNIST/raw
-    
-    
+    100.0%
 
 
 We can plot out the image instance that we want to be able to predict.
@@ -124,7 +110,7 @@ We can plot out the image instance that we want to be able to predict.
 .. parsed-literal::
     :class: output
 
-    Class: Trouser
+    Class: Ankle boot
 
 
 Download Model Parameters
@@ -148,9 +134,11 @@ relu activation. To keep things simple, we removed the final softmax
 layer. The output score is un-normalized, but still, the maximum value
 corresponds to the most likely class.
 
-.. figure:: ../img/e2e_fashionmnist_mlp_model.png
+|image1|
 
 Let us begin by reviewing a Numpy implementation of the model.
+
+.. |image1| image:: ../img/e2e_fashionmnist_mlp_model.png
 
 .. raw:: latex
 
@@ -191,10 +179,10 @@ Let us begin by reviewing a Numpy implementation of the model.
 .. parsed-literal::
     :class: output
 
-    [[ -7.188178   21.545786  -18.469866   -5.1992307 -10.854906  -29.403358
-      -41.75774   -16.794556  -19.952915  -30.313015 ]]
-    [1]
-    NumPy-MLP Prediction: Trouser
+    [[-15.0903845 -45.634308  -26.743227  -28.143522  -62.205227   -1.5261846
+      -35.692482   -5.2615156 -24.84737    15.321807 ]]
+    [9]
+    NumPy-MLP Prediction: Ankle boot
 
 
 The above example code shows the high-level array operations to perform
@@ -206,10 +194,10 @@ hood of these array computations.
 For the purpose of illustrating details under the hood, we will again
 write examples in low-level numpy:
 
--  We will use a loop instead of array functions when necessary to
-   demonstrate the possible loop computations.
--  When possible, we always explicitly allocate arrays via numpy.empty
-   and pass them around.
+- We will use a loop instead of array functions when necessary to
+  demonstrate the possible loop computations.
+- When possible, we always explicitly allocate arrays via numpy.empty
+  and pass them around.
 
 The code block below shows a low-level numpy implementation of the same
 model.
@@ -282,7 +270,7 @@ model.
 .. parsed-literal::
     :class: output
 
-    Low-level Numpy MLP Prediction: Trouser
+    Low-level Numpy MLP Prediction: Ankle boot
 
 
 Constructing an End to End IRModule in TVMScript
@@ -357,19 +345,18 @@ walk through each of them in detail. Since we already learned about
 primitive tensor functions, we are going to focus on the high-level
 execution part.
 
-.. figure:: ../img/e2e_compare_to_lnumpy.png
+|image1|
 
 Computational Graph View
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. figure:: ../img/e2e_computational_graph_call_tir.png
+|image2|
 
 It is usually helpful to use graph to visualize high-level model
 executions. The above figure is a graph-view of the ``main`` function:
 
--  Each of the box in the graph corresponds to computation operations.
--  The arrows correspond to the input-output of the intermediate
-   tensors.
+- Each of the box in the graph corresponds to computation operations.
+- The arrows correspond to the input-output of the intermediate tensors.
 
 We have seen this kind of visualization in earlier lectures. The graph
 itself can be viewed as a type of abstraction, and it is commonly known
@@ -381,6 +368,9 @@ as **computational graph** in machine learning frameworks.
 One thing that you may have noticed is that each step of operations in
 the computational graph contains an ``R.call_dps_packed`` operation.
 This is the operation that brings in the tensor primitive functions
+
+.. |image1| image:: ../img/e2e_compare_to_lnumpy.png
+.. |image2| image:: ../img/e2e_computational_graph_call_tir.png
 
 .. raw:: latex
 
@@ -461,7 +451,7 @@ computational graph form.
        lnumpy_linear1(lv1, w1, b1, out)
        return out
 
-.. figure:: ../img/e2e_computational_graph_numpy.png
+|image1|
 
 We can certainly try a bit :) The above figure is one possible “failed
 attempt” to fit the ``lnumpy_mlp`` into a “computational graph-like”
@@ -471,11 +461,10 @@ We can find that it lost a few nice properties of the previous
 computational graphs. Specifically, a computational graph usually has
 the following properties
 
--  Every input edge to the box corresponds to the input to the
-   operation.
--  Every outgoing edge corresponds to the output of the operations.
--  Each operation can be reordered arbitrarily up to the topological
-   order of the edges.
+- Every input edge to the box corresponds to the input to the operation.
+- Every outgoing edge corresponds to the output of the operations.
+- Each operation can be reordered arbitrarily up to the topological
+  order of the edges.
 
 Of course, we can still generalize the graph definition by introducing
 the input edge and output edge, and that can complicate the possible
@@ -497,6 +486,8 @@ graph.
 We can also see ``call_dps_packed`` in action in the low-level numpy as
 well. Now we have defined the ``lnumpy_call_dps_packed``, we can rewrite
 the low-level numpy execution code as:
+
+.. |image1| image:: ../img/e2e_computational_graph_numpy.png
 
 .. raw:: latex
 
@@ -528,7 +519,7 @@ the low-level numpy execution code as:
 .. parsed-literal::
     :class: output
 
-    Low-level Numpy with CallTIR Prediction: Trouser
+    Low-level Numpy with CallTIR Prediction: Ankle boot
 
 
 In practice, the lowest-level implementation will have explicit memory
@@ -598,9 +589,9 @@ Section Checkpoint
 So far, we have gone through one example instance of relax program and
 covered most of the elements, including:
 
--  Computational graph view
--  ``call_dps_packed`` construct
--  Dataflow block.
+- Computational graph view
+- ``call_dps_packed`` construct
+- Dataflow block.
 
 These elements should get us started in the end to end model execution
 and compilation. we will also cover new concepts as we encounter them in
@@ -635,9 +626,9 @@ have.
     .output_html .hll { background-color: #ffffcc }
     .output_html { background: #f8f8f8; }
     .output_html .c { color: #3D7B7B; font-style: italic } /* Comment */
-    .output_html .err { border: 1px solid #FF0000 } /* Error */
+    .output_html .err { border: 1px solid #F00 } /* Error */
     .output_html .k { color: #008000; font-weight: bold } /* Keyword */
-    .output_html .o { color: #666666 } /* Operator */
+    .output_html .o { color: #666 } /* Operator */
     .output_html .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
     .output_html .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
     .output_html .cp { color: #9C6500 } /* Comment.Preproc */
@@ -654,34 +645,34 @@ have.
     .output_html .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
     .output_html .gs { font-weight: bold } /* Generic.Strong */
     .output_html .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-    .output_html .gt { color: #0044DD } /* Generic.Traceback */
+    .output_html .gt { color: #04D } /* Generic.Traceback */
     .output_html .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
     .output_html .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
     .output_html .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
     .output_html .kp { color: #008000 } /* Keyword.Pseudo */
     .output_html .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
     .output_html .kt { color: #B00040 } /* Keyword.Type */
-    .output_html .m { color: #666666 } /* Literal.Number */
+    .output_html .m { color: #666 } /* Literal.Number */
     .output_html .s { color: #BA2121 } /* Literal.String */
     .output_html .na { color: #687822 } /* Name.Attribute */
     .output_html .nb { color: #008000 } /* Name.Builtin */
-    .output_html .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-    .output_html .no { color: #880000 } /* Name.Constant */
-    .output_html .nd { color: #AA22FF } /* Name.Decorator */
+    .output_html .nc { color: #00F; font-weight: bold } /* Name.Class */
+    .output_html .no { color: #800 } /* Name.Constant */
+    .output_html .nd { color: #A2F } /* Name.Decorator */
     .output_html .ni { color: #717171; font-weight: bold } /* Name.Entity */
     .output_html .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
-    .output_html .nf { color: #0000FF } /* Name.Function */
+    .output_html .nf { color: #00F } /* Name.Function */
     .output_html .nl { color: #767600 } /* Name.Label */
-    .output_html .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+    .output_html .nn { color: #00F; font-weight: bold } /* Name.Namespace */
     .output_html .nt { color: #008000; font-weight: bold } /* Name.Tag */
     .output_html .nv { color: #19177C } /* Name.Variable */
-    .output_html .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-    .output_html .w { color: #bbbbbb } /* Text.Whitespace */
-    .output_html .mb { color: #666666 } /* Literal.Number.Bin */
-    .output_html .mf { color: #666666 } /* Literal.Number.Float */
-    .output_html .mh { color: #666666 } /* Literal.Number.Hex */
-    .output_html .mi { color: #666666 } /* Literal.Number.Integer */
-    .output_html .mo { color: #666666 } /* Literal.Number.Oct */
+    .output_html .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+    .output_html .w { color: #BBB } /* Text.Whitespace */
+    .output_html .mb { color: #666 } /* Literal.Number.Bin */
+    .output_html .mf { color: #666 } /* Literal.Number.Float */
+    .output_html .mh { color: #666 } /* Literal.Number.Hex */
+    .output_html .mi { color: #666 } /* Literal.Number.Integer */
+    .output_html .mo { color: #666 } /* Literal.Number.Oct */
     .output_html .sa { color: #BA2121 } /* Literal.String.Affix */
     .output_html .sb { color: #BA2121 } /* Literal.String.Backtick */
     .output_html .sc { color: #BA2121 } /* Literal.String.Char */
@@ -696,19 +687,19 @@ have.
     .output_html .s1 { color: #BA2121 } /* Literal.String.Single */
     .output_html .ss { color: #19177C } /* Literal.String.Symbol */
     .output_html .bp { color: #008000 } /* Name.Builtin.Pseudo */
-    .output_html .fm { color: #0000FF } /* Name.Function.Magic */
+    .output_html .fm { color: #00F } /* Name.Function.Magic */
     .output_html .vc { color: #19177C } /* Name.Variable.Class */
     .output_html .vg { color: #19177C } /* Name.Variable.Global */
     .output_html .vi { color: #19177C } /* Name.Variable.Instance */
     .output_html .vm { color: #19177C } /* Name.Variable.Magic */
-    .output_html .il { color: #666666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="c1"># from tvm.script import ir as I</span>
+    .output_html .il { color: #666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="c1"># from tvm.script import ir as I</span>
     <span class="c1"># from tvm.script import tir as T</span>
     <span class="c1"># from tvm.script import relax as R</span>
     
     <span class="nd">@I</span><span class="o">.</span><span class="n">ir_module</span>
-    <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-        <span class="k">def</span> <span class="nf">linear0</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">w</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">handle</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">linear0</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">w</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">handle</span><span class="p">):</span>
             <span class="n">m</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">int64</span><span class="p">()</span>
             <span class="n">X</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">match_buffer</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">m</span><span class="p">))</span>
             <span class="n">n</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">int64</span><span class="p">()</span>
@@ -733,7 +724,7 @@ have.
                     <span class="n">Z</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">+</span> <span class="n">B</span><span class="p">[</span><span class="n">vj</span><span class="p">]</span>
     
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-        <span class="k">def</span> <span class="nf">relu0</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">handle</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">relu0</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">handle</span><span class="p">):</span>
             <span class="n">n</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">int64</span><span class="p">()</span>
             <span class="n">X</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">match_buffer</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
             <span class="n">Y</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">match_buffer</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
@@ -746,7 +737,7 @@ have.
                     <span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">],</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="mf">0.0</span><span class="p">))</span>
     
         <span class="nd">@R</span><span class="o">.</span><span class="n">function</span>
-        <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">R</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;m&quot;</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">w0</span><span class="p">:</span> <span class="n">R</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;m&quot;</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">b0</span><span class="p">:</span> <span class="n">R</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="s2">&quot;n&quot;</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">w1</span><span class="p">:</span> <span class="n">R</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">b1</span><span class="p">:</span> <span class="n">R</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="s2">&quot;k&quot;</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">R</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;k&quot;</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">R</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;m&quot;</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">w0</span><span class="p">:</span> <span class="n">R</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;m&quot;</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">b0</span><span class="p">:</span> <span class="n">R</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="s2">&quot;n&quot;</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">w1</span><span class="p">:</span> <span class="n">R</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">b1</span><span class="p">:</span> <span class="n">R</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="s2">&quot;k&quot;</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">R</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;k&quot;</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">):</span>
             <span class="n">k</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">int64</span><span class="p">()</span>
             <span class="n">m</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">int64</span><span class="p">()</span>
             <span class="n">n</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">int64</span><span class="p">()</span>
@@ -761,7 +752,7 @@ have.
 
 
 
-We call ``relax.build`` to build this function. Relax is still under
+We call ``tvm.compile`` to build this function. Relax is still under
 development, so some of the APIs may change. Our main goal, though, is
 to get familiar with the overall MLC flow (Construct, transform, build)
 for end-to-end models.
@@ -772,7 +763,8 @@ for end-to-end models.
 
 .. code:: python
 
-    ex = relax.build(MyModule, target="llvm")
+    target = tvm.target.Target("llvm", host="llvm")
+    ex = tvm.compile(MyModule, target)
     type(ex)
 
 
@@ -785,7 +777,7 @@ for end-to-end models.
 .. parsed-literal::
     :class: output
 
-    tvm.relax.vm_build.Executable
+    tvm.relax.vm_build.VMExecutable
 
 
 
@@ -811,8 +803,8 @@ that contains input data and weights.
 
 .. code:: python
 
-    data_nd = tvm.nd.array(img.reshape(1, 784))
-    nd_params = {k: tvm.nd.array(v) for k, v in mlp_params.items()}
+    data_nd = tvm.runtime.tensor(img.reshape(1, 784))
+    nd_params = {k: tvm.runtime.tensor(v) for k, v in mlp_params.items()}
 
 Then we can run the main function by passing in the input arguments and
 weights.
@@ -838,8 +830,8 @@ weights.
 .. parsed-literal::
     :class: output
 
-    [[ -7.188178  21.545788 -18.46987   -5.199234 -10.854907 -29.403357
-      -41.757736 -16.79456  -19.952917 -30.313023]]
+    [[-15.090393  -45.634304  -26.743216  -28.143505  -62.20522    -1.5261855
+      -35.69248    -5.2615113 -24.847364   15.321808 ]]
 
 
 The main function returns the prediction result, and we can then call
@@ -863,7 +855,7 @@ the class label.
 .. parsed-literal::
     :class: output
 
-    MyModule Prediction: Trouser
+    MyModule Prediction: Ankle boot
 
 
 Integrate Existing Libraries in the Environment
@@ -925,11 +917,11 @@ block below registers two implementations of the functions.
 
 .. code:: python
 
-    @tvm.register_func("env.linear", override=True)
-    def torch_linear(x: tvm.nd.NDArray,
-                     w: tvm.nd.NDArray,
-                     b: tvm.nd.NDArray,
-                     out: tvm.nd.NDArray):
+    @tvm.register_global_func("env.linear", override=True)
+    def torch_linear(x: tvm.runtime.Tensor,
+                     w: tvm.runtime.Tensor,
+                     b: tvm.runtime.Tensor,
+                     out: tvm.runtime.Tensor):
         x_torch = torch.from_dlpack(x)
         w_torch = torch.from_dlpack(w)
         b_torch = torch.from_dlpack(b)
@@ -937,9 +929,9 @@ block below registers two implementations of the functions.
         torch.mm(x_torch, w_torch.T, out=out_torch)
         torch.add(out_torch, b_torch, out=out_torch)
     
-    @tvm.register_func("env.relu", override=True)
-    def lnumpy_relu(x: tvm.nd.NDArray,
-                    out: tvm.nd.NDArray):
+    @tvm.register_global_func("env.relu", override=True)
+    def lnumpy_relu(x: tvm.runtime.Tensor,
+                    out: tvm.runtime.Tensor):
         x_torch = torch.from_dlpack(x)
         out_torch = torch.from_dlpack(out)
         torch.maximum(x_torch, torch.Tensor([0.0]), out=out_torch)
@@ -974,7 +966,8 @@ that we get the same result.
 
 .. code:: python
 
-    ex = relax.build(MyModuleWithExternCall, target="llvm")
+    target = tvm.target.Target("llvm", host="llvm")
+    ex = tvm.compile(MyModuleWithExternCall, target)
     vm = relax.VirtualMachine(ex, tvm.cpu())
     
     nd_res = vm["main"](data_nd,
@@ -994,7 +987,7 @@ that we get the same result.
 .. parsed-literal::
     :class: output
 
-    MyModuleWithExternCall Prediction: Trouser
+    MyModuleWithExternCall Prediction: Ankle boot
 
 
 Mixing TensorIR Code and Libraries
@@ -1058,7 +1051,8 @@ functions. We can build and run to validate the result.
 
 .. code:: python
 
-    ex = relax.build(MyModuleMixture, target="llvm")
+    target = tvm.target.Target("llvm", host="llvm")
+    ex = tvm.compile(MyModuleMixture, target)
     vm = relax.VirtualMachine(ex, tvm.cpu())
     
     nd_res = vm["main"](data_nd,
@@ -1078,7 +1072,7 @@ functions. We can build and run to validate the result.
 .. parsed-literal::
     :class: output
 
-    MyModuleMixture Prediction: Trouser
+    MyModuleMixture Prediction: Ankle boot
 
 
 Bind Parameters to IRModule
@@ -1112,9 +1106,9 @@ nd_params.
     .output_html .hll { background-color: #ffffcc }
     .output_html { background: #f8f8f8; }
     .output_html .c { color: #3D7B7B; font-style: italic } /* Comment */
-    .output_html .err { border: 1px solid #FF0000 } /* Error */
+    .output_html .err { border: 1px solid #F00 } /* Error */
     .output_html .k { color: #008000; font-weight: bold } /* Keyword */
-    .output_html .o { color: #666666 } /* Operator */
+    .output_html .o { color: #666 } /* Operator */
     .output_html .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
     .output_html .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
     .output_html .cp { color: #9C6500 } /* Comment.Preproc */
@@ -1131,34 +1125,34 @@ nd_params.
     .output_html .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
     .output_html .gs { font-weight: bold } /* Generic.Strong */
     .output_html .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-    .output_html .gt { color: #0044DD } /* Generic.Traceback */
+    .output_html .gt { color: #04D } /* Generic.Traceback */
     .output_html .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
     .output_html .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
     .output_html .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
     .output_html .kp { color: #008000 } /* Keyword.Pseudo */
     .output_html .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
     .output_html .kt { color: #B00040 } /* Keyword.Type */
-    .output_html .m { color: #666666 } /* Literal.Number */
+    .output_html .m { color: #666 } /* Literal.Number */
     .output_html .s { color: #BA2121 } /* Literal.String */
     .output_html .na { color: #687822 } /* Name.Attribute */
     .output_html .nb { color: #008000 } /* Name.Builtin */
-    .output_html .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-    .output_html .no { color: #880000 } /* Name.Constant */
-    .output_html .nd { color: #AA22FF } /* Name.Decorator */
+    .output_html .nc { color: #00F; font-weight: bold } /* Name.Class */
+    .output_html .no { color: #800 } /* Name.Constant */
+    .output_html .nd { color: #A2F } /* Name.Decorator */
     .output_html .ni { color: #717171; font-weight: bold } /* Name.Entity */
     .output_html .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
-    .output_html .nf { color: #0000FF } /* Name.Function */
+    .output_html .nf { color: #00F } /* Name.Function */
     .output_html .nl { color: #767600 } /* Name.Label */
-    .output_html .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+    .output_html .nn { color: #00F; font-weight: bold } /* Name.Namespace */
     .output_html .nt { color: #008000; font-weight: bold } /* Name.Tag */
     .output_html .nv { color: #19177C } /* Name.Variable */
-    .output_html .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-    .output_html .w { color: #bbbbbb } /* Text.Whitespace */
-    .output_html .mb { color: #666666 } /* Literal.Number.Bin */
-    .output_html .mf { color: #666666 } /* Literal.Number.Float */
-    .output_html .mh { color: #666666 } /* Literal.Number.Hex */
-    .output_html .mi { color: #666666 } /* Literal.Number.Integer */
-    .output_html .mo { color: #666666 } /* Literal.Number.Oct */
+    .output_html .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+    .output_html .w { color: #BBB } /* Text.Whitespace */
+    .output_html .mb { color: #666 } /* Literal.Number.Bin */
+    .output_html .mf { color: #666 } /* Literal.Number.Float */
+    .output_html .mh { color: #666 } /* Literal.Number.Hex */
+    .output_html .mi { color: #666 } /* Literal.Number.Integer */
+    .output_html .mo { color: #666 } /* Literal.Number.Oct */
     .output_html .sa { color: #BA2121 } /* Literal.String.Affix */
     .output_html .sb { color: #BA2121 } /* Literal.String.Backtick */
     .output_html .sc { color: #BA2121 } /* Literal.String.Char */
@@ -1173,19 +1167,19 @@ nd_params.
     .output_html .s1 { color: #BA2121 } /* Literal.String.Single */
     .output_html .ss { color: #19177C } /* Literal.String.Symbol */
     .output_html .bp { color: #008000 } /* Name.Builtin.Pseudo */
-    .output_html .fm { color: #0000FF } /* Name.Function.Magic */
+    .output_html .fm { color: #00F } /* Name.Function.Magic */
     .output_html .vc { color: #19177C } /* Name.Variable.Class */
     .output_html .vg { color: #19177C } /* Name.Variable.Global */
     .output_html .vi { color: #19177C } /* Name.Variable.Instance */
     .output_html .vm { color: #19177C } /* Name.Variable.Magic */
-    .output_html .il { color: #666666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="c1"># from tvm.script import ir as I</span>
+    .output_html .il { color: #666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="c1"># from tvm.script import ir as I</span>
     <span class="c1"># from tvm.script import tir as T</span>
     <span class="c1"># from tvm.script import relax as R</span>
     
     <span class="nd">@I</span><span class="o">.</span><span class="n">ir_module</span>
-    <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-        <span class="k">def</span> <span class="nf">linear0</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">w</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">handle</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">linear0</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">w</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">handle</span><span class="p">):</span>
             <span class="n">m</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">int64</span><span class="p">()</span>
             <span class="n">X</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">match_buffer</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">m</span><span class="p">))</span>
             <span class="n">n</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">int64</span><span class="p">()</span>
@@ -1210,7 +1204,7 @@ nd_params.
                     <span class="n">Z</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">+</span> <span class="n">B</span><span class="p">[</span><span class="n">vj</span><span class="p">]</span>
     
         <span class="nd">@R</span><span class="o">.</span><span class="n">function</span>
-        <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">R</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">784</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">R</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">R</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">784</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">R</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">):</span>
             <span class="k">with</span> <span class="n">R</span><span class="o">.</span><span class="n">dataflow</span><span class="p">():</span>
                 <span class="n">lv0</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">call_dps_packed</span><span class="p">(</span><span class="s2">&quot;linear0&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;relax.expr.Constant&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;relax.expr.Constant&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]),</span> <span class="n">out_sinfo</span><span class="o">=</span><span class="n">R</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">))</span>
                 <span class="n">lv1</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">call_dps_packed</span><span class="p">(</span><span class="s2">&quot;env.relu&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">lv0</span><span class="p">,),</span> <span class="n">out_sinfo</span><span class="o">=</span><span class="n">R</span><span class="o">.</span><span class="n">Tensor</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">))</span>
@@ -1236,7 +1230,8 @@ the input data.
 
 .. code:: python
 
-    ex = relax.build(MyModuleWithParams, target="llvm")
+    target = tvm.target.Target("llvm", host="llvm")
+    ex = tvm.compile(MyModuleWithParams, target)
     vm = relax.VirtualMachine(ex, tvm.cpu())
     
     nd_res = vm["main"](data_nd)
@@ -1252,7 +1247,7 @@ the input data.
 .. parsed-literal::
     :class: output
 
-    MyModuleWithParams Prediction: Trouser
+    MyModuleWithParams Prediction: Ankle boot
 
 
 Discussions
@@ -1262,18 +1257,18 @@ In this chapter, we have discussed many ways to describe the end-to-end
 model execution. One thing we may have noticed is that we are coming
 back to the theme of **abstraction and implementation**
 
--  Both the TensorIR function and library functions follow the same
-   destination passing style. As a result, we can simply replace
-   invocation from one to another in our examples.
--  We may use different ways to represent the computation at different
-   stages of the MLC process.
+- Both the TensorIR function and library functions follow the same
+  destination passing style. As a result, we can simply replace
+  invocation from one to another in our examples.
+- We may use different ways to represent the computation at different
+  stages of the MLC process.
 
 So far, we have touched on a few ways to transform the end-to-end
 IRModule (e.g. parameter binding). Let us come back to the following
 common theme of MLC: MLC process is about representing the execution in
 possibly different abstractions and transforming among them.
 
-.. figure:: ../img/mlc_process.png
+|image1|
 
 There are many possible transformations in the end-to-end execution. For
 example, we can take the TensorIR function in MyModuleMixture and change
@@ -1296,13 +1291,15 @@ programmatically.
 Summary
 -------
 
--  Computational graph abstraction helps to stitch primitive tensor
-   functions together for end-to-end execution.
--  Key elements of relax abstraction include
+- Computational graph abstraction helps to stitch primitive tensor
+  functions together for end-to-end execution.
+- Key elements of relax abstraction include
 
-   -  call_dps_packed construct that embeds destination passing style
-      primitive function into the computational graph
-   -  dataflow block
+  - call_dps_packed construct that embeds destination passing style
+    primitive function into the computational graph
+  - dataflow block
 
--  Computational graph allows call into both environment library
-   functions and TensorIR functions.
+- Computational graph allows call into both environment library
+  functions and TensorIR functions.
+
+.. |image1| image:: ../img/mlc_process.png

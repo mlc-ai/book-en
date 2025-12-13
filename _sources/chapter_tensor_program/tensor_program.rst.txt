@@ -112,18 +112,18 @@ we visit all the index elements from ``0`` to ``128``.
 Summary
 -------
 
--  Primitive tensor function refers to the single unit of computation in
-   model execution.
+- Primitive tensor function refers to the single unit of computation in
+  model execution.
 
-   -  A MLC process can choose to transform implementation of primitive
-      tensor functions.
+  - A MLC process can choose to transform implementation of primitive
+    tensor functions.
 
--  Tensor program is an effective abstraction to represent primitive
-   tensor functions.
+- Tensor program is an effective abstraction to represent primitive
+  tensor functions.
 
-   -  Key elements include: multi-dimensional buffer, loop nests,
-      computation statement.
-   -  Program-based transformations can be used to optimize tensor
-      programs.
-   -  Extra structure can help to provide more information to the
-      transformations.
+  - Key elements include: multi-dimensional buffer, loop nests,
+    computation statement.
+  - Program-based transformations can be used to optimize tensor
+    programs.
+  - Extra structure can help to provide more information to the
+    transformations.

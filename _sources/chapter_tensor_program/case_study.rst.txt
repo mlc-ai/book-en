@@ -16,20 +16,20 @@ course.
 
 .. code:: bash
 
-   python3 -m  pip install mlc-ai-nightly -f https://mlc.ai/wheels
+   python -m pip install --pre -U -f https://mlc.ai/wheels mlc-ai-nightly-cpu
 
 Prelude
 ~~~~~~~
 
-.. figure:: ../img/tensor_func_linear_relu.png
+|image1|
 
 To begin today’s lecture, let us recap the key principle of the MLC
 process. Most of the MLC process can be viewed as transformation among
 tensor functions. The main thing we aim to answer in our following up
 are:
 
--  What are the possible abstractions to represent the tensor function.
--  What are possible transformations among the tensor functions.
+- What are the possible abstractions to represent the tensor function.
+- What are possible transformations among the tensor functions.
 
 Today we are going to cover part of that by focusing on primitive tensor
 functions.
@@ -44,6 +44,8 @@ Now we are ready to learn one specific instance of tensor program
 abstraction called TensorIR. TensorIR is the tensor program abstraction
 in Apache TVM, which is one of the standard machine learning compilation
 frameworks.
+
+.. |image1| image:: ../img/tensor_func_linear_relu.png
 
 .. raw:: latex
 
@@ -66,8 +68,8 @@ computations as a motivating example.
 Specifically, for two :math:`128 \times 128` matrices A and B, let us
 perform the following two steps of tensor computations.
 
--  :math:`Y_{i, j} = \sum_k A_{i, k} \times B_{k, j}`
--  :math:`C_{i, j} = \mathbb{relu}(Y_{i, j}) = \mathbb{max}(Y_{i, j}, 0)`
+- :math:`Y_{i, j} = \sum_k A_{i, k} \times B_{k, j}`
+- :math:`C_{i, j} = \mathbb{relu}(Y_{i, j}) = \mathbb{max}(Y_{i, j}, 0)`
 
 The above computations resemble a typical primitive tensor function
 commonly seen in neural networks – a linear layer with relu activation.
@@ -99,10 +101,10 @@ For the purpose of illustrating details under the hood, we will write
 examples in a restricted subset of NumPy API – which we call **low-level
 numpy** that uses the following conventions:
 
--  We will use a loop instead of array functions when necessary to
-   demonstrate the possible loop computations.
--  When possible, we always explicitly allocate arrays via numpy.empty
-   and pass them around.
+- We will use a loop instead of array functions when necessary to
+  demonstrate the possible loop computations.
+- When possible, we always explicitly allocate arrays via numpy.empty
+  and pass them around.
 
 Note that this is not how one would typically write NumPy programs.
 Still, they closely resemble what happens under the hood – most
@@ -159,9 +161,9 @@ slower because of the python interpreter. Nevertheless, the example
 numpy code contains all the possible elements we will use in real-world
 implementations of those computations.
 
--  Multi-dimensional buffer (arrays).
--  Loops over array dimensions.
--  Computations statements are executed under the loops.
+- Multi-dimensional buffer (arrays).
+- Loops over array dimensions.
+- Computations statements are executed under the loops.
 
 With the low-level NumPy example in mind, now we are ready to introduce
 TensorIR. The code block below shows a TensorIR implementation of
@@ -200,7 +202,7 @@ It is helpful to be able to see the numpy code and the TensorIR code
 side-by-side and check the corresponding elements, and we are going to
 walk through each of them in detail.
 
-.. figure:: ../img/tensor_func_and_numpy.png
+|image1|
 
 Let us first start by reviewing elements that have a direct
 correspondence between the numpy and TensorIR side. Then we will come
@@ -213,6 +215,8 @@ Function Parameters and Buffers
 First, let us see the function parameters. The function parameters
 correspond to the same set of parameters on the numpy function.
 
+.. |image1| image:: ../img/tensor_func_and_numpy.png
+
 .. raw:: latex
 
    \diilbookstyleinputcell
@@ -220,9 +224,9 @@ correspond to the same set of parameters on the numpy function.
 .. code:: python
 
    # TensorIR
-   def mm_relu(A: T.Buffer[(128, 128), "float32"],
-               B: T.Buffer[(128, 128), "float32"],
-               C: T.Buffer[(128, 128), "float32"]):
+   def mm_relu(A: T.Buffer((128, 128), "float32"),
+               B: T.Buffer((128, 128), "float32"),
+               C: T.Buffer((128, 128), "float32")):
        ...
    # numpy
    def lnumpy_mm_relu(A: np.ndarray, B: np.ndarray, C: np.ndarray):
@@ -318,12 +322,10 @@ the following syntax.
 
 The three lines contain the following information:
 
--  They define where should vi, vj, vk be bound to (in this case i, j
-   k).
--  They declare the original range that the vi, vj, vk are supposed to
-   be (the ``128`` in ``T.axis.spatial(128, i)``)
--  They declare the properties of the iterators (``spatial``,
-   ``reduce``)
+- They define where should vi, vj, vk be bound to (in this case i, j k).
+- They declare the original range that the vi, vj, vk are supposed to be
+  (the ``128`` in ``T.axis.spatial(128, i)``)
+- They declare the properties of the iterators (``spatial``, ``reduce``)
 
 Let us walk through those property one by one. First of all, in terms of
 the bounding relation. ``vi = T.axis.spatial(128, i)`` effectively
@@ -342,7 +344,7 @@ and the read write relations of block Y. Note that strictly speaking the
 block is doing (reduction) updates to ``Y``, we mark this as write for
 now as we don’t need value of ``Y`` from another block.
 
-.. figure:: ../img/tensor_ir_block_axis.png
+|image1|
 
 In our example, block Y computes the result ``Y[vi, vj]`` by reading
 values from ``A[vi, vk]`` and ``B[vk, vj]`` and perform sum over all
@@ -372,6 +374,8 @@ us validate the correctness of the external loops used to carry out the
 computation. For example, the code block below will result in an error
 because the loop expects an iterator of size ``128``, but we only bound
 it to a for loop of size ``127``.
+
+.. |image1| image:: ../img/tensor_ir_block_axis.png
 
 .. raw:: latex
 
@@ -561,9 +565,9 @@ Section Checkpoint
 So far, we have gone through one example instance of TensorIR program
 and covered most of the elements, including:
 
--  Buffer declarations in parameters and intermediate temporary memory.
--  For loop iterations.
--  **Blocks** and block axes properties.
+- Buffer declarations in parameters and intermediate temporary memory.
+- For loop iterations.
+- Blocks and block axes properties.
 
 In this section, we have gone through one example instance of TensorIR
 that covers the most common elements in MLC.
@@ -617,8 +621,8 @@ transformations.
 The above code block shows a slightly different variation of
 ``mm_relu``. To see the relation to the original program
 
--  We replace the ``j`` loop with two loops, ``j0`` and ``j1``.
--  The order of iterations changes slightly
+- We replace the ``j`` loop with two loops, ``j0`` and ``j1``.
+- The order of iterations changes slightly
 
 In order to get ``lnumpy_mm_relu_v2``, we have to rewrite it into a new
 function (or manually copy-paste and edit). TensorIR introduces a
@@ -649,9 +653,9 @@ To remind ourselves, let us look again at the current MyModule content.
     .output_html .hll { background-color: #ffffcc }
     .output_html { background: #f8f8f8; }
     .output_html .c { color: #3D7B7B; font-style: italic } /* Comment */
-    .output_html .err { border: 1px solid #FF0000 } /* Error */
+    .output_html .err { border: 1px solid #F00 } /* Error */
     .output_html .k { color: #008000; font-weight: bold } /* Keyword */
-    .output_html .o { color: #666666 } /* Operator */
+    .output_html .o { color: #666 } /* Operator */
     .output_html .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
     .output_html .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
     .output_html .cp { color: #9C6500 } /* Comment.Preproc */
@@ -668,34 +672,34 @@ To remind ourselves, let us look again at the current MyModule content.
     .output_html .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
     .output_html .gs { font-weight: bold } /* Generic.Strong */
     .output_html .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-    .output_html .gt { color: #0044DD } /* Generic.Traceback */
+    .output_html .gt { color: #04D } /* Generic.Traceback */
     .output_html .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
     .output_html .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
     .output_html .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
     .output_html .kp { color: #008000 } /* Keyword.Pseudo */
     .output_html .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
     .output_html .kt { color: #B00040 } /* Keyword.Type */
-    .output_html .m { color: #666666 } /* Literal.Number */
+    .output_html .m { color: #666 } /* Literal.Number */
     .output_html .s { color: #BA2121 } /* Literal.String */
     .output_html .na { color: #687822 } /* Name.Attribute */
     .output_html .nb { color: #008000 } /* Name.Builtin */
-    .output_html .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-    .output_html .no { color: #880000 } /* Name.Constant */
-    .output_html .nd { color: #AA22FF } /* Name.Decorator */
+    .output_html .nc { color: #00F; font-weight: bold } /* Name.Class */
+    .output_html .no { color: #800 } /* Name.Constant */
+    .output_html .nd { color: #A2F } /* Name.Decorator */
     .output_html .ni { color: #717171; font-weight: bold } /* Name.Entity */
     .output_html .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
-    .output_html .nf { color: #0000FF } /* Name.Function */
+    .output_html .nf { color: #00F } /* Name.Function */
     .output_html .nl { color: #767600 } /* Name.Label */
-    .output_html .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+    .output_html .nn { color: #00F; font-weight: bold } /* Name.Namespace */
     .output_html .nt { color: #008000; font-weight: bold } /* Name.Tag */
     .output_html .nv { color: #19177C } /* Name.Variable */
-    .output_html .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-    .output_html .w { color: #bbbbbb } /* Text.Whitespace */
-    .output_html .mb { color: #666666 } /* Literal.Number.Bin */
-    .output_html .mf { color: #666666 } /* Literal.Number.Float */
-    .output_html .mh { color: #666666 } /* Literal.Number.Hex */
-    .output_html .mi { color: #666666 } /* Literal.Number.Integer */
-    .output_html .mo { color: #666666 } /* Literal.Number.Oct */
+    .output_html .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+    .output_html .w { color: #BBB } /* Text.Whitespace */
+    .output_html .mb { color: #666 } /* Literal.Number.Bin */
+    .output_html .mf { color: #666 } /* Literal.Number.Float */
+    .output_html .mh { color: #666 } /* Literal.Number.Hex */
+    .output_html .mi { color: #666 } /* Literal.Number.Integer */
+    .output_html .mo { color: #666 } /* Literal.Number.Oct */
     .output_html .sa { color: #BA2121 } /* Literal.String.Affix */
     .output_html .sb { color: #BA2121 } /* Literal.String.Backtick */
     .output_html .sc { color: #BA2121 } /* Literal.String.Char */
@@ -710,19 +714,19 @@ To remind ourselves, let us look again at the current MyModule content.
     .output_html .s1 { color: #BA2121 } /* Literal.String.Single */
     .output_html .ss { color: #19177C } /* Literal.String.Symbol */
     .output_html .bp { color: #008000 } /* Name.Builtin.Pseudo */
-    .output_html .fm { color: #0000FF } /* Name.Function.Magic */
+    .output_html .fm { color: #00F } /* Name.Function.Magic */
     .output_html .vc { color: #19177C } /* Name.Variable.Class */
     .output_html .vg { color: #19177C } /* Name.Variable.Global */
     .output_html .vi { color: #19177C } /* Name.Variable.Instance */
     .output_html .vm { color: #19177C } /* Name.Variable.Magic */
-    .output_html .il { color: #666666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="c1"># from tvm.script import ir as I</span>
+    .output_html .il { color: #666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="c1"># from tvm.script import ir as I</span>
     <span class="c1"># from tvm.script import tir as T</span>
     
     <span class="nd">@I</span><span class="o">.</span><span class="n">ir_module</span>
-    <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-        <span class="k">def</span> <span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="n">Y</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">):</span>
@@ -807,9 +811,9 @@ We can look at the result of the transformation, which is stored at
     .output_html .hll { background-color: #ffffcc }
     .output_html { background: #f8f8f8; }
     .output_html .c { color: #3D7B7B; font-style: italic } /* Comment */
-    .output_html .err { border: 1px solid #FF0000 } /* Error */
+    .output_html .err { border: 1px solid #F00 } /* Error */
     .output_html .k { color: #008000; font-weight: bold } /* Keyword */
-    .output_html .o { color: #666666 } /* Operator */
+    .output_html .o { color: #666 } /* Operator */
     .output_html .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
     .output_html .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
     .output_html .cp { color: #9C6500 } /* Comment.Preproc */
@@ -826,34 +830,34 @@ We can look at the result of the transformation, which is stored at
     .output_html .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
     .output_html .gs { font-weight: bold } /* Generic.Strong */
     .output_html .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-    .output_html .gt { color: #0044DD } /* Generic.Traceback */
+    .output_html .gt { color: #04D } /* Generic.Traceback */
     .output_html .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
     .output_html .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
     .output_html .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
     .output_html .kp { color: #008000 } /* Keyword.Pseudo */
     .output_html .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
     .output_html .kt { color: #B00040 } /* Keyword.Type */
-    .output_html .m { color: #666666 } /* Literal.Number */
+    .output_html .m { color: #666 } /* Literal.Number */
     .output_html .s { color: #BA2121 } /* Literal.String */
     .output_html .na { color: #687822 } /* Name.Attribute */
     .output_html .nb { color: #008000 } /* Name.Builtin */
-    .output_html .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-    .output_html .no { color: #880000 } /* Name.Constant */
-    .output_html .nd { color: #AA22FF } /* Name.Decorator */
+    .output_html .nc { color: #00F; font-weight: bold } /* Name.Class */
+    .output_html .no { color: #800 } /* Name.Constant */
+    .output_html .nd { color: #A2F } /* Name.Decorator */
     .output_html .ni { color: #717171; font-weight: bold } /* Name.Entity */
     .output_html .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
-    .output_html .nf { color: #0000FF } /* Name.Function */
+    .output_html .nf { color: #00F } /* Name.Function */
     .output_html .nl { color: #767600 } /* Name.Label */
-    .output_html .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+    .output_html .nn { color: #00F; font-weight: bold } /* Name.Namespace */
     .output_html .nt { color: #008000; font-weight: bold } /* Name.Tag */
     .output_html .nv { color: #19177C } /* Name.Variable */
-    .output_html .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-    .output_html .w { color: #bbbbbb } /* Text.Whitespace */
-    .output_html .mb { color: #666666 } /* Literal.Number.Bin */
-    .output_html .mf { color: #666666 } /* Literal.Number.Float */
-    .output_html .mh { color: #666666 } /* Literal.Number.Hex */
-    .output_html .mi { color: #666666 } /* Literal.Number.Integer */
-    .output_html .mo { color: #666666 } /* Literal.Number.Oct */
+    .output_html .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+    .output_html .w { color: #BBB } /* Text.Whitespace */
+    .output_html .mb { color: #666 } /* Literal.Number.Bin */
+    .output_html .mf { color: #666 } /* Literal.Number.Float */
+    .output_html .mh { color: #666 } /* Literal.Number.Hex */
+    .output_html .mi { color: #666 } /* Literal.Number.Integer */
+    .output_html .mo { color: #666 } /* Literal.Number.Oct */
     .output_html .sa { color: #BA2121 } /* Literal.String.Affix */
     .output_html .sb { color: #BA2121 } /* Literal.String.Backtick */
     .output_html .sc { color: #BA2121 } /* Literal.String.Char */
@@ -868,19 +872,19 @@ We can look at the result of the transformation, which is stored at
     .output_html .s1 { color: #BA2121 } /* Literal.String.Single */
     .output_html .ss { color: #19177C } /* Literal.String.Symbol */
     .output_html .bp { color: #008000 } /* Name.Builtin.Pseudo */
-    .output_html .fm { color: #0000FF } /* Name.Function.Magic */
+    .output_html .fm { color: #00F } /* Name.Function.Magic */
     .output_html .vc { color: #19177C } /* Name.Variable.Class */
     .output_html .vg { color: #19177C } /* Name.Variable.Global */
     .output_html .vi { color: #19177C } /* Name.Variable.Instance */
     .output_html .vm { color: #19177C } /* Name.Variable.Magic */
-    .output_html .il { color: #666666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="c1"># from tvm.script import ir as I</span>
+    .output_html .il { color: #666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="c1"># from tvm.script import ir as I</span>
     <span class="c1"># from tvm.script import tir as T</span>
     
     <span class="nd">@I</span><span class="o">.</span><span class="n">ir_module</span>
-    <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-        <span class="k">def</span> <span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="n">Y</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j_0</span><span class="p">,</span> <span class="n">j_1</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">128</span><span class="p">):</span>
@@ -930,9 +934,9 @@ would be to reorder the two loops.
     .output_html .hll { background-color: #ffffcc }
     .output_html { background: #f8f8f8; }
     .output_html .c { color: #3D7B7B; font-style: italic } /* Comment */
-    .output_html .err { border: 1px solid #FF0000 } /* Error */
+    .output_html .err { border: 1px solid #F00 } /* Error */
     .output_html .k { color: #008000; font-weight: bold } /* Keyword */
-    .output_html .o { color: #666666 } /* Operator */
+    .output_html .o { color: #666 } /* Operator */
     .output_html .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
     .output_html .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
     .output_html .cp { color: #9C6500 } /* Comment.Preproc */
@@ -949,34 +953,34 @@ would be to reorder the two loops.
     .output_html .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
     .output_html .gs { font-weight: bold } /* Generic.Strong */
     .output_html .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-    .output_html .gt { color: #0044DD } /* Generic.Traceback */
+    .output_html .gt { color: #04D } /* Generic.Traceback */
     .output_html .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
     .output_html .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
     .output_html .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
     .output_html .kp { color: #008000 } /* Keyword.Pseudo */
     .output_html .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
     .output_html .kt { color: #B00040 } /* Keyword.Type */
-    .output_html .m { color: #666666 } /* Literal.Number */
+    .output_html .m { color: #666 } /* Literal.Number */
     .output_html .s { color: #BA2121 } /* Literal.String */
     .output_html .na { color: #687822 } /* Name.Attribute */
     .output_html .nb { color: #008000 } /* Name.Builtin */
-    .output_html .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-    .output_html .no { color: #880000 } /* Name.Constant */
-    .output_html .nd { color: #AA22FF } /* Name.Decorator */
+    .output_html .nc { color: #00F; font-weight: bold } /* Name.Class */
+    .output_html .no { color: #800 } /* Name.Constant */
+    .output_html .nd { color: #A2F } /* Name.Decorator */
     .output_html .ni { color: #717171; font-weight: bold } /* Name.Entity */
     .output_html .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
-    .output_html .nf { color: #0000FF } /* Name.Function */
+    .output_html .nf { color: #00F } /* Name.Function */
     .output_html .nl { color: #767600 } /* Name.Label */
-    .output_html .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+    .output_html .nn { color: #00F; font-weight: bold } /* Name.Namespace */
     .output_html .nt { color: #008000; font-weight: bold } /* Name.Tag */
     .output_html .nv { color: #19177C } /* Name.Variable */
-    .output_html .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-    .output_html .w { color: #bbbbbb } /* Text.Whitespace */
-    .output_html .mb { color: #666666 } /* Literal.Number.Bin */
-    .output_html .mf { color: #666666 } /* Literal.Number.Float */
-    .output_html .mh { color: #666666 } /* Literal.Number.Hex */
-    .output_html .mi { color: #666666 } /* Literal.Number.Integer */
-    .output_html .mo { color: #666666 } /* Literal.Number.Oct */
+    .output_html .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+    .output_html .w { color: #BBB } /* Text.Whitespace */
+    .output_html .mb { color: #666 } /* Literal.Number.Bin */
+    .output_html .mf { color: #666 } /* Literal.Number.Float */
+    .output_html .mh { color: #666 } /* Literal.Number.Hex */
+    .output_html .mi { color: #666 } /* Literal.Number.Integer */
+    .output_html .mo { color: #666 } /* Literal.Number.Oct */
     .output_html .sa { color: #BA2121 } /* Literal.String.Affix */
     .output_html .sb { color: #BA2121 } /* Literal.String.Backtick */
     .output_html .sc { color: #BA2121 } /* Literal.String.Char */
@@ -991,19 +995,19 @@ would be to reorder the two loops.
     .output_html .s1 { color: #BA2121 } /* Literal.String.Single */
     .output_html .ss { color: #19177C } /* Literal.String.Symbol */
     .output_html .bp { color: #008000 } /* Name.Builtin.Pseudo */
-    .output_html .fm { color: #0000FF } /* Name.Function.Magic */
+    .output_html .fm { color: #00F } /* Name.Function.Magic */
     .output_html .vc { color: #19177C } /* Name.Variable.Class */
     .output_html .vg { color: #19177C } /* Name.Variable.Global */
     .output_html .vi { color: #19177C } /* Name.Variable.Instance */
     .output_html .vm { color: #19177C } /* Name.Variable.Magic */
-    .output_html .il { color: #666666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="c1"># from tvm.script import ir as I</span>
+    .output_html .il { color: #666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="c1"># from tvm.script import ir as I</span>
     <span class="c1"># from tvm.script import tir as T</span>
     
     <span class="nd">@I</span><span class="o">.</span><span class="n">ir_module</span>
-    <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-        <span class="k">def</span> <span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="n">Y</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j_0</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">j_1</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
@@ -1059,9 +1063,9 @@ called ``reverse_compute_at`` to move block C to an inner loop of ``Y``.
     .output_html .hll { background-color: #ffffcc }
     .output_html { background: #f8f8f8; }
     .output_html .c { color: #3D7B7B; font-style: italic } /* Comment */
-    .output_html .err { border: 1px solid #FF0000 } /* Error */
+    .output_html .err { border: 1px solid #F00 } /* Error */
     .output_html .k { color: #008000; font-weight: bold } /* Keyword */
-    .output_html .o { color: #666666 } /* Operator */
+    .output_html .o { color: #666 } /* Operator */
     .output_html .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
     .output_html .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
     .output_html .cp { color: #9C6500 } /* Comment.Preproc */
@@ -1078,34 +1082,34 @@ called ``reverse_compute_at`` to move block C to an inner loop of ``Y``.
     .output_html .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
     .output_html .gs { font-weight: bold } /* Generic.Strong */
     .output_html .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-    .output_html .gt { color: #0044DD } /* Generic.Traceback */
+    .output_html .gt { color: #04D } /* Generic.Traceback */
     .output_html .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
     .output_html .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
     .output_html .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
     .output_html .kp { color: #008000 } /* Keyword.Pseudo */
     .output_html .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
     .output_html .kt { color: #B00040 } /* Keyword.Type */
-    .output_html .m { color: #666666 } /* Literal.Number */
+    .output_html .m { color: #666 } /* Literal.Number */
     .output_html .s { color: #BA2121 } /* Literal.String */
     .output_html .na { color: #687822 } /* Name.Attribute */
     .output_html .nb { color: #008000 } /* Name.Builtin */
-    .output_html .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-    .output_html .no { color: #880000 } /* Name.Constant */
-    .output_html .nd { color: #AA22FF } /* Name.Decorator */
+    .output_html .nc { color: #00F; font-weight: bold } /* Name.Class */
+    .output_html .no { color: #800 } /* Name.Constant */
+    .output_html .nd { color: #A2F } /* Name.Decorator */
     .output_html .ni { color: #717171; font-weight: bold } /* Name.Entity */
     .output_html .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
-    .output_html .nf { color: #0000FF } /* Name.Function */
+    .output_html .nf { color: #00F } /* Name.Function */
     .output_html .nl { color: #767600 } /* Name.Label */
-    .output_html .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+    .output_html .nn { color: #00F; font-weight: bold } /* Name.Namespace */
     .output_html .nt { color: #008000; font-weight: bold } /* Name.Tag */
     .output_html .nv { color: #19177C } /* Name.Variable */
-    .output_html .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-    .output_html .w { color: #bbbbbb } /* Text.Whitespace */
-    .output_html .mb { color: #666666 } /* Literal.Number.Bin */
-    .output_html .mf { color: #666666 } /* Literal.Number.Float */
-    .output_html .mh { color: #666666 } /* Literal.Number.Hex */
-    .output_html .mi { color: #666666 } /* Literal.Number.Integer */
-    .output_html .mo { color: #666666 } /* Literal.Number.Oct */
+    .output_html .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+    .output_html .w { color: #BBB } /* Text.Whitespace */
+    .output_html .mb { color: #666 } /* Literal.Number.Bin */
+    .output_html .mf { color: #666 } /* Literal.Number.Float */
+    .output_html .mh { color: #666 } /* Literal.Number.Hex */
+    .output_html .mi { color: #666 } /* Literal.Number.Integer */
+    .output_html .mo { color: #666 } /* Literal.Number.Oct */
     .output_html .sa { color: #BA2121 } /* Literal.String.Affix */
     .output_html .sb { color: #BA2121 } /* Literal.String.Backtick */
     .output_html .sc { color: #BA2121 } /* Literal.String.Char */
@@ -1120,19 +1124,19 @@ called ``reverse_compute_at`` to move block C to an inner loop of ``Y``.
     .output_html .s1 { color: #BA2121 } /* Literal.String.Single */
     .output_html .ss { color: #19177C } /* Literal.String.Symbol */
     .output_html .bp { color: #008000 } /* Name.Builtin.Pseudo */
-    .output_html .fm { color: #0000FF } /* Name.Function.Magic */
+    .output_html .fm { color: #00F } /* Name.Function.Magic */
     .output_html .vc { color: #19177C } /* Name.Variable.Class */
     .output_html .vg { color: #19177C } /* Name.Variable.Global */
     .output_html .vi { color: #19177C } /* Name.Variable.Instance */
     .output_html .vm { color: #19177C } /* Name.Variable.Magic */
-    .output_html .il { color: #666666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="c1"># from tvm.script import ir as I</span>
+    .output_html .il { color: #666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="c1"># from tvm.script import ir as I</span>
     <span class="c1"># from tvm.script import tir as T</span>
     
     <span class="nd">@I</span><span class="o">.</span><span class="n">ir_module</span>
-    <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-        <span class="k">def</span> <span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="n">Y</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j_0</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">32</span><span class="p">):</span>
@@ -1240,7 +1244,7 @@ to deploy to those environments.
 
 .. code:: python
 
-    rt_lib = tvm.build(MyModule, target="llvm")
+    rt_lib = tvm.compile(MyModule, target="llvm")
 
 Then, we will create three tvm ndarrays that are used to hold inputs and
 the output.
@@ -1251,9 +1255,9 @@ the output.
 
 .. code:: python
 
-    a_nd = tvm.nd.array(a_np)
-    b_nd = tvm.nd.array(b_np)
-    c_nd = tvm.nd.empty((128, 128), dtype="float32")
+    a_nd = tvm.runtime.tensor(a_np)
+    b_nd = tvm.runtime.tensor(b_np)
+    c_nd = tvm.runtime.tensor(np.empty((128, 128), dtype="float32"))
     type(c_nd)
 
 
@@ -1266,7 +1270,7 @@ the output.
 .. parsed-literal::
     :class: output
 
-    tvm.runtime.ndarray.NDArray
+    tvm.runtime._tensor.Tensor
 
 
 
@@ -1294,7 +1298,7 @@ transformed program.
 
 .. code:: python
 
-    rt_lib_after = tvm.build(sch.mod, target="llvm")
+    rt_lib_after = tvm.compile(sch.mod, target="llvm")
     rt_lib_after["mm_relu"](a_nd, b_nd, c_nd)
     np.testing.assert_allclose(c_mm_relu, c_nd.numpy(), rtol=1e-5)
 
@@ -1308,9 +1312,9 @@ compare the running performance of different generated functions.
 
 .. code:: python
 
-    f_timer_before = rt_lib.time_evaluator("mm_relu", tvm.cpu())
+    f_timer_before = rt_lib.mod.time_evaluator("mm_relu", tvm.cpu())
     print("Time cost of MyModule %g sec" % f_timer_before(a_nd, b_nd, c_nd).mean)
-    f_timer_after = rt_lib_after.time_evaluator("mm_relu", tvm.cpu())
+    f_timer_after = rt_lib_after.mod.time_evaluator("mm_relu", tvm.cpu())
     print("Time cost of transformed sch.mod %g sec" % f_timer_after(a_nd, b_nd, c_nd).mean)
 
 
@@ -1321,8 +1325,8 @@ compare the running performance of different generated functions.
 .. parsed-literal::
     :class: output
 
-    Time cost of MyModule 0.00252932 sec
-    Time cost of transformed sch.mod 0.000657921 sec
+    Time cost of MyModule 0.00252872 sec
+    Time cost of transformed sch.mod 0.000679511 sec
 
 
 It is interesting to see the running time difference between the two
@@ -1353,9 +1357,9 @@ of the code.
     .output_html .hll { background-color: #ffffcc }
     .output_html { background: #f8f8f8; }
     .output_html .c { color: #3D7B7B; font-style: italic } /* Comment */
-    .output_html .err { border: 1px solid #FF0000 } /* Error */
+    .output_html .err { border: 1px solid #F00 } /* Error */
     .output_html .k { color: #008000; font-weight: bold } /* Keyword */
-    .output_html .o { color: #666666 } /* Operator */
+    .output_html .o { color: #666 } /* Operator */
     .output_html .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
     .output_html .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
     .output_html .cp { color: #9C6500 } /* Comment.Preproc */
@@ -1372,34 +1376,34 @@ of the code.
     .output_html .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
     .output_html .gs { font-weight: bold } /* Generic.Strong */
     .output_html .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-    .output_html .gt { color: #0044DD } /* Generic.Traceback */
+    .output_html .gt { color: #04D } /* Generic.Traceback */
     .output_html .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
     .output_html .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
     .output_html .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
     .output_html .kp { color: #008000 } /* Keyword.Pseudo */
     .output_html .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
     .output_html .kt { color: #B00040 } /* Keyword.Type */
-    .output_html .m { color: #666666 } /* Literal.Number */
+    .output_html .m { color: #666 } /* Literal.Number */
     .output_html .s { color: #BA2121 } /* Literal.String */
     .output_html .na { color: #687822 } /* Name.Attribute */
     .output_html .nb { color: #008000 } /* Name.Builtin */
-    .output_html .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-    .output_html .no { color: #880000 } /* Name.Constant */
-    .output_html .nd { color: #AA22FF } /* Name.Decorator */
+    .output_html .nc { color: #00F; font-weight: bold } /* Name.Class */
+    .output_html .no { color: #800 } /* Name.Constant */
+    .output_html .nd { color: #A2F } /* Name.Decorator */
     .output_html .ni { color: #717171; font-weight: bold } /* Name.Entity */
     .output_html .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
-    .output_html .nf { color: #0000FF } /* Name.Function */
+    .output_html .nf { color: #00F } /* Name.Function */
     .output_html .nl { color: #767600 } /* Name.Label */
-    .output_html .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+    .output_html .nn { color: #00F; font-weight: bold } /* Name.Namespace */
     .output_html .nt { color: #008000; font-weight: bold } /* Name.Tag */
     .output_html .nv { color: #19177C } /* Name.Variable */
-    .output_html .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-    .output_html .w { color: #bbbbbb } /* Text.Whitespace */
-    .output_html .mb { color: #666666 } /* Literal.Number.Bin */
-    .output_html .mf { color: #666666 } /* Literal.Number.Float */
-    .output_html .mh { color: #666666 } /* Literal.Number.Hex */
-    .output_html .mi { color: #666666 } /* Literal.Number.Integer */
-    .output_html .mo { color: #666666 } /* Literal.Number.Oct */
+    .output_html .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+    .output_html .w { color: #BBB } /* Text.Whitespace */
+    .output_html .mb { color: #666 } /* Literal.Number.Bin */
+    .output_html .mf { color: #666 } /* Literal.Number.Float */
+    .output_html .mh { color: #666 } /* Literal.Number.Hex */
+    .output_html .mi { color: #666 } /* Literal.Number.Integer */
+    .output_html .mo { color: #666 } /* Literal.Number.Oct */
     .output_html .sa { color: #BA2121 } /* Literal.String.Affix */
     .output_html .sb { color: #BA2121 } /* Literal.String.Backtick */
     .output_html .sc { color: #BA2121 } /* Literal.String.Char */
@@ -1414,19 +1418,19 @@ of the code.
     .output_html .s1 { color: #BA2121 } /* Literal.String.Single */
     .output_html .ss { color: #19177C } /* Literal.String.Symbol */
     .output_html .bp { color: #008000 } /* Name.Builtin.Pseudo */
-    .output_html .fm { color: #0000FF } /* Name.Function.Magic */
+    .output_html .fm { color: #00F } /* Name.Function.Magic */
     .output_html .vc { color: #19177C } /* Name.Variable.Class */
     .output_html .vg { color: #19177C } /* Name.Variable.Global */
     .output_html .vi { color: #19177C } /* Name.Variable.Instance */
     .output_html .vm { color: #19177C } /* Name.Variable.Magic */
-    .output_html .il { color: #666666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="c1"># from tvm.script import ir as I</span>
+    .output_html .il { color: #666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="c1"># from tvm.script import ir as I</span>
     <span class="c1"># from tvm.script import tir as T</span>
     
     <span class="nd">@I</span><span class="o">.</span><span class="n">ir_module</span>
-    <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-        <span class="k">def</span> <span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="n">Y</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">):</span>
@@ -1469,9 +1473,9 @@ of the code.
     .output_html .hll { background-color: #ffffcc }
     .output_html { background: #f8f8f8; }
     .output_html .c { color: #3D7B7B; font-style: italic } /* Comment */
-    .output_html .err { border: 1px solid #FF0000 } /* Error */
+    .output_html .err { border: 1px solid #F00 } /* Error */
     .output_html .k { color: #008000; font-weight: bold } /* Keyword */
-    .output_html .o { color: #666666 } /* Operator */
+    .output_html .o { color: #666 } /* Operator */
     .output_html .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
     .output_html .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
     .output_html .cp { color: #9C6500 } /* Comment.Preproc */
@@ -1488,34 +1492,34 @@ of the code.
     .output_html .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
     .output_html .gs { font-weight: bold } /* Generic.Strong */
     .output_html .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-    .output_html .gt { color: #0044DD } /* Generic.Traceback */
+    .output_html .gt { color: #04D } /* Generic.Traceback */
     .output_html .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
     .output_html .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
     .output_html .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
     .output_html .kp { color: #008000 } /* Keyword.Pseudo */
     .output_html .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
     .output_html .kt { color: #B00040 } /* Keyword.Type */
-    .output_html .m { color: #666666 } /* Literal.Number */
+    .output_html .m { color: #666 } /* Literal.Number */
     .output_html .s { color: #BA2121 } /* Literal.String */
     .output_html .na { color: #687822 } /* Name.Attribute */
     .output_html .nb { color: #008000 } /* Name.Builtin */
-    .output_html .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-    .output_html .no { color: #880000 } /* Name.Constant */
-    .output_html .nd { color: #AA22FF } /* Name.Decorator */
+    .output_html .nc { color: #00F; font-weight: bold } /* Name.Class */
+    .output_html .no { color: #800 } /* Name.Constant */
+    .output_html .nd { color: #A2F } /* Name.Decorator */
     .output_html .ni { color: #717171; font-weight: bold } /* Name.Entity */
     .output_html .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
-    .output_html .nf { color: #0000FF } /* Name.Function */
+    .output_html .nf { color: #00F } /* Name.Function */
     .output_html .nl { color: #767600 } /* Name.Label */
-    .output_html .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+    .output_html .nn { color: #00F; font-weight: bold } /* Name.Namespace */
     .output_html .nt { color: #008000; font-weight: bold } /* Name.Tag */
     .output_html .nv { color: #19177C } /* Name.Variable */
-    .output_html .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-    .output_html .w { color: #bbbbbb } /* Text.Whitespace */
-    .output_html .mb { color: #666666 } /* Literal.Number.Bin */
-    .output_html .mf { color: #666666 } /* Literal.Number.Float */
-    .output_html .mh { color: #666666 } /* Literal.Number.Hex */
-    .output_html .mi { color: #666666 } /* Literal.Number.Integer */
-    .output_html .mo { color: #666666 } /* Literal.Number.Oct */
+    .output_html .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+    .output_html .w { color: #BBB } /* Text.Whitespace */
+    .output_html .mb { color: #666 } /* Literal.Number.Bin */
+    .output_html .mf { color: #666 } /* Literal.Number.Float */
+    .output_html .mh { color: #666 } /* Literal.Number.Hex */
+    .output_html .mi { color: #666 } /* Literal.Number.Integer */
+    .output_html .mo { color: #666 } /* Literal.Number.Oct */
     .output_html .sa { color: #BA2121 } /* Literal.String.Affix */
     .output_html .sb { color: #BA2121 } /* Literal.String.Backtick */
     .output_html .sc { color: #BA2121 } /* Literal.String.Char */
@@ -1530,19 +1534,19 @@ of the code.
     .output_html .s1 { color: #BA2121 } /* Literal.String.Single */
     .output_html .ss { color: #19177C } /* Literal.String.Symbol */
     .output_html .bp { color: #008000 } /* Name.Builtin.Pseudo */
-    .output_html .fm { color: #0000FF } /* Name.Function.Magic */
+    .output_html .fm { color: #00F } /* Name.Function.Magic */
     .output_html .vc { color: #19177C } /* Name.Variable.Class */
     .output_html .vg { color: #19177C } /* Name.Variable.Global */
     .output_html .vi { color: #19177C } /* Name.Variable.Instance */
     .output_html .vm { color: #19177C } /* Name.Variable.Magic */
-    .output_html .il { color: #666666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="c1"># from tvm.script import ir as I</span>
+    .output_html .il { color: #666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="c1"># from tvm.script import ir as I</span>
     <span class="c1"># from tvm.script import tir as T</span>
     
     <span class="nd">@I</span><span class="o">.</span><span class="n">ir_module</span>
-    <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-        <span class="k">def</span> <span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="n">Y</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j_0</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">32</span><span class="p">):</span>
@@ -1568,7 +1572,7 @@ of the code.
 
 
 
-.. figure:: ../img/cpu_arch.png
+|image1|
 
 To see why different loop variants result in different performances, we
 need to review the fact that it is not uniformly fast to access any
@@ -1584,7 +1588,7 @@ the next element, it is already in the cache. As a result, code with
 continuous memory access is usually faster than code that randomly
 accesses different parts of the memory.
 
-.. figure:: ../img/tensor_func_loop_order.png
+|image2|
 
 Now let us look at the above visualization of iterations and analyze
 what is going on. In this analysis, let us focus on two inner-most
@@ -1611,6 +1615,9 @@ Exercise
 As an exercise, try different ``j_factor`` choices and see how they
 affect the code’s performance.
 
+.. |image1| image:: ../img/cpu_arch.png
+.. |image2| image:: ../img/tensor_func_loop_order.png
+
 .. raw:: latex
 
    \diilbookstyleinputcell
@@ -1629,8 +1636,8 @@ affect the code’s performance.
     
     mod_transformed = transform(MyModule, jfactor=8)
     
-    rt_lib_transformed = tvm.build(mod_transformed, "llvm")
-    f_timer_transformed = rt_lib_transformed.time_evaluator("mm_relu", tvm.cpu())
+    rt_lib_transformed = tvm.compile(mod_transformed, "llvm")
+    f_timer_transformed = rt_lib_transformed.mod.time_evaluator("mm_relu", tvm.cpu())
     print("Time cost of transformed mod_transformed %g sec" % f_timer_transformed(a_nd, b_nd, c_nd).mean)
     # display the code below
     IPython.display.Code(mod_transformed.script(), language="python")
@@ -1643,7 +1650,7 @@ affect the code’s performance.
 .. parsed-literal::
     :class: output
 
-    Time cost of transformed mod_transformed 0.000380994 sec
+    Time cost of transformed mod_transformed 0.000377585 sec
 
 
 
@@ -1658,9 +1665,9 @@ affect the code’s performance.
     .output_html .hll { background-color: #ffffcc }
     .output_html { background: #f8f8f8; }
     .output_html .c { color: #3D7B7B; font-style: italic } /* Comment */
-    .output_html .err { border: 1px solid #FF0000 } /* Error */
+    .output_html .err { border: 1px solid #F00 } /* Error */
     .output_html .k { color: #008000; font-weight: bold } /* Keyword */
-    .output_html .o { color: #666666 } /* Operator */
+    .output_html .o { color: #666 } /* Operator */
     .output_html .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
     .output_html .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
     .output_html .cp { color: #9C6500 } /* Comment.Preproc */
@@ -1677,34 +1684,34 @@ affect the code’s performance.
     .output_html .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
     .output_html .gs { font-weight: bold } /* Generic.Strong */
     .output_html .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-    .output_html .gt { color: #0044DD } /* Generic.Traceback */
+    .output_html .gt { color: #04D } /* Generic.Traceback */
     .output_html .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
     .output_html .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
     .output_html .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
     .output_html .kp { color: #008000 } /* Keyword.Pseudo */
     .output_html .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
     .output_html .kt { color: #B00040 } /* Keyword.Type */
-    .output_html .m { color: #666666 } /* Literal.Number */
+    .output_html .m { color: #666 } /* Literal.Number */
     .output_html .s { color: #BA2121 } /* Literal.String */
     .output_html .na { color: #687822 } /* Name.Attribute */
     .output_html .nb { color: #008000 } /* Name.Builtin */
-    .output_html .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-    .output_html .no { color: #880000 } /* Name.Constant */
-    .output_html .nd { color: #AA22FF } /* Name.Decorator */
+    .output_html .nc { color: #00F; font-weight: bold } /* Name.Class */
+    .output_html .no { color: #800 } /* Name.Constant */
+    .output_html .nd { color: #A2F } /* Name.Decorator */
     .output_html .ni { color: #717171; font-weight: bold } /* Name.Entity */
     .output_html .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
-    .output_html .nf { color: #0000FF } /* Name.Function */
+    .output_html .nf { color: #00F } /* Name.Function */
     .output_html .nl { color: #767600 } /* Name.Label */
-    .output_html .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+    .output_html .nn { color: #00F; font-weight: bold } /* Name.Namespace */
     .output_html .nt { color: #008000; font-weight: bold } /* Name.Tag */
     .output_html .nv { color: #19177C } /* Name.Variable */
-    .output_html .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-    .output_html .w { color: #bbbbbb } /* Text.Whitespace */
-    .output_html .mb { color: #666666 } /* Literal.Number.Bin */
-    .output_html .mf { color: #666666 } /* Literal.Number.Float */
-    .output_html .mh { color: #666666 } /* Literal.Number.Hex */
-    .output_html .mi { color: #666666 } /* Literal.Number.Integer */
-    .output_html .mo { color: #666666 } /* Literal.Number.Oct */
+    .output_html .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+    .output_html .w { color: #BBB } /* Text.Whitespace */
+    .output_html .mb { color: #666 } /* Literal.Number.Bin */
+    .output_html .mf { color: #666 } /* Literal.Number.Float */
+    .output_html .mh { color: #666 } /* Literal.Number.Hex */
+    .output_html .mi { color: #666 } /* Literal.Number.Integer */
+    .output_html .mo { color: #666 } /* Literal.Number.Oct */
     .output_html .sa { color: #BA2121 } /* Literal.String.Affix */
     .output_html .sb { color: #BA2121 } /* Literal.String.Backtick */
     .output_html .sc { color: #BA2121 } /* Literal.String.Char */
@@ -1719,19 +1726,19 @@ affect the code’s performance.
     .output_html .s1 { color: #BA2121 } /* Literal.String.Single */
     .output_html .ss { color: #19177C } /* Literal.String.Symbol */
     .output_html .bp { color: #008000 } /* Name.Builtin.Pseudo */
-    .output_html .fm { color: #0000FF } /* Name.Function.Magic */
+    .output_html .fm { color: #00F } /* Name.Function.Magic */
     .output_html .vc { color: #19177C } /* Name.Variable.Class */
     .output_html .vg { color: #19177C } /* Name.Variable.Global */
     .output_html .vi { color: #19177C } /* Name.Variable.Instance */
     .output_html .vm { color: #19177C } /* Name.Variable.Magic */
-    .output_html .il { color: #666666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="c1"># from tvm.script import ir as I</span>
+    .output_html .il { color: #666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="c1"># from tvm.script import ir as I</span>
     <span class="c1"># from tvm.script import tir as T</span>
     
     <span class="nd">@I</span><span class="o">.</span><span class="n">ir_module</span>
-    <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-        <span class="k">def</span> <span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="n">Y</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j_0</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">16</span><span class="p">):</span>
@@ -1847,9 +1854,9 @@ with two input parameters (A, B) and one output parameter (C).
     .output_html .hll { background-color: #ffffcc }
     .output_html { background: #f8f8f8; }
     .output_html .c { color: #3D7B7B; font-style: italic } /* Comment */
-    .output_html .err { border: 1px solid #FF0000 } /* Error */
+    .output_html .err { border: 1px solid #F00 } /* Error */
     .output_html .k { color: #008000; font-weight: bold } /* Keyword */
-    .output_html .o { color: #666666 } /* Operator */
+    .output_html .o { color: #666 } /* Operator */
     .output_html .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
     .output_html .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
     .output_html .cp { color: #9C6500 } /* Comment.Preproc */
@@ -1866,34 +1873,34 @@ with two input parameters (A, B) and one output parameter (C).
     .output_html .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
     .output_html .gs { font-weight: bold } /* Generic.Strong */
     .output_html .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-    .output_html .gt { color: #0044DD } /* Generic.Traceback */
+    .output_html .gt { color: #04D } /* Generic.Traceback */
     .output_html .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
     .output_html .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
     .output_html .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
     .output_html .kp { color: #008000 } /* Keyword.Pseudo */
     .output_html .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
     .output_html .kt { color: #B00040 } /* Keyword.Type */
-    .output_html .m { color: #666666 } /* Literal.Number */
+    .output_html .m { color: #666 } /* Literal.Number */
     .output_html .s { color: #BA2121 } /* Literal.String */
     .output_html .na { color: #687822 } /* Name.Attribute */
     .output_html .nb { color: #008000 } /* Name.Builtin */
-    .output_html .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-    .output_html .no { color: #880000 } /* Name.Constant */
-    .output_html .nd { color: #AA22FF } /* Name.Decorator */
+    .output_html .nc { color: #00F; font-weight: bold } /* Name.Class */
+    .output_html .no { color: #800 } /* Name.Constant */
+    .output_html .nd { color: #A2F } /* Name.Decorator */
     .output_html .ni { color: #717171; font-weight: bold } /* Name.Entity */
     .output_html .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
-    .output_html .nf { color: #0000FF } /* Name.Function */
+    .output_html .nf { color: #00F } /* Name.Function */
     .output_html .nl { color: #767600 } /* Name.Label */
-    .output_html .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+    .output_html .nn { color: #00F; font-weight: bold } /* Name.Namespace */
     .output_html .nt { color: #008000; font-weight: bold } /* Name.Tag */
     .output_html .nv { color: #19177C } /* Name.Variable */
-    .output_html .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-    .output_html .w { color: #bbbbbb } /* Text.Whitespace */
-    .output_html .mb { color: #666666 } /* Literal.Number.Bin */
-    .output_html .mf { color: #666666 } /* Literal.Number.Float */
-    .output_html .mh { color: #666666 } /* Literal.Number.Hex */
-    .output_html .mi { color: #666666 } /* Literal.Number.Integer */
-    .output_html .mo { color: #666666 } /* Literal.Number.Oct */
+    .output_html .ow { color: #A2F; font-weight: bold } /* Operator.Word */
+    .output_html .w { color: #BBB } /* Text.Whitespace */
+    .output_html .mb { color: #666 } /* Literal.Number.Bin */
+    .output_html .mf { color: #666 } /* Literal.Number.Float */
+    .output_html .mh { color: #666 } /* Literal.Number.Hex */
+    .output_html .mi { color: #666 } /* Literal.Number.Integer */
+    .output_html .mo { color: #666 } /* Literal.Number.Oct */
     .output_html .sa { color: #BA2121 } /* Literal.String.Affix */
     .output_html .sb { color: #BA2121 } /* Literal.String.Backtick */
     .output_html .sc { color: #BA2121 } /* Literal.String.Char */
@@ -1908,19 +1915,19 @@ with two input parameters (A, B) and one output parameter (C).
     .output_html .s1 { color: #BA2121 } /* Literal.String.Single */
     .output_html .ss { color: #19177C } /* Literal.String.Symbol */
     .output_html .bp { color: #008000 } /* Name.Builtin.Pseudo */
-    .output_html .fm { color: #0000FF } /* Name.Function.Magic */
+    .output_html .fm { color: #00F } /* Name.Function.Magic */
     .output_html .vc { color: #19177C } /* Name.Variable.Class */
     .output_html .vg { color: #19177C } /* Name.Variable.Global */
     .output_html .vi { color: #19177C } /* Name.Variable.Instance */
     .output_html .vm { color: #19177C } /* Name.Variable.Magic */
-    .output_html .il { color: #666666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="c1"># from tvm.script import ir as I</span>
+    .output_html .il { color: #666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="c1"># from tvm.script import ir as I</span>
     <span class="c1"># from tvm.script import tir as T</span>
     
     <span class="nd">@I</span><span class="o">.</span><span class="n">ir_module</span>
-    <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
-        <span class="k">def</span> <span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
-            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">bool</span><span class="p">(</span><span class="kc">True</span><span class="p">)})</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">mm_relu</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="s2">&quot;float32&quot;</span><span class="p">)):</span>
+            <span class="n">T</span><span class="o">.</span><span class="n">func_attr</span><span class="p">({</span><span class="s2">&quot;tir.noalias&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
             <span class="c1"># with T.block(&quot;root&quot;):</span>
             <span class="n">Y</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">alloc_buffer</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">):</span>
@@ -1962,7 +1969,7 @@ common MLC process follows a sequence of program transformations. It is
 interesting to compare the TensorIR transformation process to the
 low-level numpy reference development process.
 
-.. figure:: ../img/standard_process.png
+|image1|
 
 The above figure shows the standard development process. We need to
 repeat the process of developing different program variants and then
@@ -1980,7 +1987,7 @@ development costs and introduce more automation to the process. This
 section covered a specific perspective on primitive tensor functions via
 TensorIR, and we will cover more perspectives in the future.
 
-.. figure:: ../img/mlc_process.png
+|image2|
 
 Notably, direct code development and transformations are equally
 important in practice: We can still leverage a lot of domain expertise
@@ -1991,12 +1998,15 @@ two practices in future chapters.
 Summary
 ~~~~~~~
 
--  TensorIR abstraction
+- TensorIR abstraction
 
-   -  Contains common elements such as loops, multi-dimensional buffers
-   -  Introduced a new construct **Block** that encapsulates the loop
-      computation requirements.
-   -  Can be constructed in python AST(via TVMScript)
+  - Contains common elements such as loops, multi-dimensional buffers
+  - Introduced a new construct **Block** that encapsulates the loop
+    computation requirements.
+  - Can be constructed in python AST(via TVMScript)
 
--  We can use transformations to create different variants of TensorIR.
--  Common MLC flow: develop, transform, build.
+- We can use transformations to create different variants of TensorIR.
+- Common MLC flow: develop, transform, build.
+
+.. |image1| image:: ../img/standard_process.png
+.. |image2| image:: ../img/mlc_process.png

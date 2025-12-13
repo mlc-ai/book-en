@@ -255,19 +255,19 @@ work together to solve the challenges in machine learning deployment.
 Summary
 -------
 
--  Goals of machine learning compilation
+- Goals of machine learning compilation
 
-   -  Integration and dependency minimization
-   -  Leveraging hardware native acceleration
-   -  Optimization in general
+  - Integration and dependency minimization
+  - Leveraging hardware native acceleration
+  - Optimization in general
 
--  Why study ML compilation
+- Why study ML compilation
 
-   -  Build ML deployment solutions.
-   -  In-depth view of existing ML frameworks.
-   -  Build up software stack for emerging hardware.
+  - Build ML deployment solutions.
+  - In-depth view of existing ML frameworks.
+  - Build up software stack for emerging hardware.
 
--  Key elements of ML compilation
+- Key elements of ML compilation
 
-   -  Tensor and tensor functions.
-   -  Abstraction and implementation are useful tools to think
+  - Tensor and tensor functions.
+  - Abstraction and implementation are useful tools to think

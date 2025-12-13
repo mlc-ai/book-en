@@ -3,7 +3,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -178,17 +179,19 @@ Show Source
     <div class="document">
         <div class="page-content" role="main">
         
-  <div class="section" id="primitive-tensor-function">
+  <section id="primitive-tensor-function">
 <h1><span class="section-number">2.1. </span>Primitive Tensor Function<a class="headerlink" href="#primitive-tensor-function" title="Permalink to this heading">¶</a></h1>
 <p>The introductory overview showed that the MLC process could be viewed as
 transformations among tensor functions. A typical model execution
 involves several computation steps that transform tensors from input to
 the final prediction, and each unit step is called a primitive tensor
 function.</p>
-<div class="figure align-default" id="id1">
+<figure class="align-default" id="id1">
 <span id="fig-primitive-tensor-func"></span><img alt="../_images/primitive_tensor_func.png" src="../_images/primitive_tensor_func.png" />
-<p class="caption"><span class="caption-number">Fig. 2.1.1 </span><span class="caption-text">Primitive Tensor Function</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
-</div>
+<figcaption>
+<p><span class="caption-number">Fig. 2.1.1 </span><span class="caption-text">Primitive Tensor Function</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>In the above figure, the tensor operator linear, add, relu, and softmax
 are all primitive tensor functions. Notably, many different abstractions
 can represent (and implement) the same primitive tensor function add (as
@@ -197,25 +200,29 @@ framework libraries(e.g. torch.add or numpy.add), and leverage an
 implementation in python. In practice, primitive functions are
 implemented in low-level languages such as C/C++ with sometimes a
 mixture of assembly code.</p>
-<div class="figure align-default" id="id2">
+<figure class="align-default" id="id2">
 <span id="fig-tensor-func-abstractions"></span><img alt="../_images/tensor_func_abstractions.png" src="../_images/tensor_func_abstractions.png" />
-<p class="caption"><span class="caption-number">Fig. 2.1.2 </span><span class="caption-text">Different forms of the same primitive tensor function</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
-</div>
+<figcaption>
+<p><span class="caption-number">Fig. 2.1.2 </span><span class="caption-text">Different forms of the same primitive tensor function</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>Many frameworks offer machine learning compilation procedures to
 transform primitive tensor functions into more specialized ones for the
 particular workload and deployment environment.</p>
-<div class="figure align-default" id="id3">
+<figure class="align-default" id="id3">
 <span id="fig-tensor-func-transformation"></span><img alt="../_images/tensor_func_transformation.png" src="../_images/tensor_func_transformation.png" />
-<p class="caption"><span class="caption-number">Fig. 2.1.3 </span><span class="caption-text">Transformations between primitive tensor functions</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
-</div>
+<figcaption>
+<p><span class="caption-number">Fig. 2.1.3 </span><span class="caption-text">Transformations between primitive tensor functions</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>The above figure shows an example where the implementation of the
 primitive tensor function add gets transformed into a different
 implementation. The particular code on the right is a pseudo-code
 representing possible set optimizations: the loop gets split into units
 of length <code class="docutils literal notranslate"><span class="pre">4</span></code> where <code class="docutils literal notranslate"><span class="pre">f32x4</span></code> add corresponds to a special vector add
 function that carries out the computation.</p>
-</div>
-<div class="section" id="tensor-program-abstraction">
+</section>
+<section id="tensor-program-abstraction">
 <h1><span class="section-number">2.2. </span>Tensor Program Abstraction<a class="headerlink" href="#tensor-program-abstraction" title="Permalink to this heading">¶</a></h1>
 <p>The last section talks about the need to transform primitive tensor
 functions. In order for us to effectively do so, we need an effective
@@ -224,21 +231,25 @@ abstraction to represent the programs.</p>
 implementation contains the following elements: multi-dimensional
 buffers, loop nests that drive the tensor computations, and finally, the
 compute statements themselves.</p>
-<div class="figure align-default" id="id4">
+<figure class="align-default" id="id4">
 <span id="fig-tensor-func-elements"></span><img alt="../_images/tensor_func_elements.png" src="../_images/tensor_func_elements.png" />
-<p class="caption"><span class="caption-number">Fig. 2.2.1 </span><span class="caption-text">The typical elements in a primitive tensor function</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
-</div>
+<figcaption>
+<p><span class="caption-number">Fig. 2.2.1 </span><span class="caption-text">The typical elements in a primitive tensor function</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>We call this type of abstraction tensor program abstraction. One
 important property of tensor program abstraction is the ability to
 change the program through a sequence of transformations pragmatically.</p>
-<div class="figure align-default" id="id5">
+<figure class="align-default" id="id5">
 <span id="fig-tensor-func-seq-transform"></span><img alt="../_images/tensor_func_seq_transform.png" src="../_images/tensor_func_seq_transform.png" />
-<p class="caption"><span class="caption-number">Fig. 2.2.2 </span><span class="caption-text">Sequential transformations on a primitive tensor function</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
-</div>
+<figcaption>
+<p><span class="caption-number">Fig. 2.2.2 </span><span class="caption-text">Sequential transformations on a primitive tensor function</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>For example, we should be able to use a set of transformation
 primitives(split, parallelize, vectorize) to take the initial loop
 program and transform it into the program on the right-hand side.</p>
-<div class="section" id="extra-structure-in-tensor-program-abstraction">
+<section id="extra-structure-in-tensor-program-abstraction">
 <h2><span class="section-number">2.2.1. </span>Extra Structure in Tensor Program Abstraction<a class="headerlink" href="#extra-structure-in-tensor-program-abstraction" title="Permalink to this heading">¶</a></h2>
 <p>Importantly, we cannot perform arbitrary transformations on the program
 as some computations depend on the order of the loop. Luckily, most
@@ -246,10 +257,12 @@ primitive tensor functions we are interested in have good properties
 (such as independence among loop iterations).</p>
 <p>Tensor programs can incorporate this extra information as part of the
 program to facilitate program transformations.</p>
-<div class="figure align-default" id="id6">
+<figure class="align-default" id="id6">
 <span id="fig-tensor-func-iteration"></span><img alt="../_images/tensor_func_iteration.png" src="../_images/tensor_func_iteration.png" />
-<p class="caption"><span class="caption-number">Fig. 2.2.3 </span><span class="caption-text">Iteration is the extra information for tensor programs</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
-</div>
+<figcaption>
+<p><span class="caption-number">Fig. 2.2.3 </span><span class="caption-text">Iteration is the extra information for tensor programs</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>For example, the above program contains the additional
 <code class="docutils literal notranslate"><span class="pre">T.axis.spatial</span></code> annotation, which shows that the particular variable
 <code class="docutils literal notranslate"><span class="pre">vi</span></code> is mapped to <code class="docutils literal notranslate"><span class="pre">i</span></code>, and all the iterations are independent. This
@@ -257,9 +270,9 @@ information is not necessary to execute the particular program but comes
 in handy when we transform the program. In this case, we will know that
 we can safely parallelize or reorder loops related to <code class="docutils literal notranslate"><span class="pre">vi</span></code> as long as
 we visit all the index elements from <code class="docutils literal notranslate"><span class="pre">0</span></code> to <code class="docutils literal notranslate"><span class="pre">128</span></code>.</p>
-</div>
-</div>
-<div class="section" id="summary">
+</section>
+</section>
+<section id="summary">
 <h1><span class="section-number">2.3. </span>Summary<a class="headerlink" href="#summary" title="Permalink to this heading">¶</a></h1>
 <ul class="simple">
 <li><p>Primitive tensor function refers to the single unit of computation in
@@ -281,7 +294,7 @@ transformations.</p></li>
 </ul>
 </li>
 </ul>
-</div>
+</section>
 
 
         </div>
