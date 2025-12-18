@@ -691,8 +691,8 @@ IRModule.
     -------------  ------  ---------------------------------------------------------  -----------  --------
     placeholder    x       x                                                          ()           {}
     get_attr       weight  weight                                                     ()           {}
-    call_function  matmul  <built-in method matmul of type object at 0x7f8f245d6c20>  (x, weight)  {}
-    call_function  relu    <built-in method relu of type object at 0x7f8f245d6c20>    (matmul,)    {}
+    call_function  matmul  <built-in method matmul of type object at 0x7f4f917d6c20>  (x, weight)  {}
+    call_function  relu    <built-in method relu of type object at 0x7f4f917d6c20>    (matmul,)    {}
     output         output  output                                                     (relu,)      {}
 
 
@@ -912,7 +912,7 @@ Coming back to FashionMNIST Example
 .. parsed-literal::
     :class: output
 
-    Class: Shirt
+    Class: Pullover
 
 
 .. raw:: latex
@@ -985,7 +985,7 @@ follows.
 .. parsed-literal::
     :class: output
 
-    Torch Prediction: T-shirt/top
+    Torch Prediction: Pullover
 
 
 Let us try to translate from fx by defining mapping functions for the
@@ -1142,7 +1142,7 @@ expression.
 .. parsed-literal::
     :class: output
 
-    MLPModule Prediction: T-shirt/top
+    MLPModule Prediction: Pullover
 
 
 Remark: Translating into High-level Operators

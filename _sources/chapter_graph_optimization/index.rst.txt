@@ -983,7 +983,7 @@ picture.
 .. parsed-literal::
     :class: output
 
-    Class: T-shirt/top
+    Class: Ankle boot
 
 
 .. raw:: latex
@@ -1010,7 +1010,7 @@ picture.
 .. parsed-literal::
     :class: output
 
-    MLPModule Prediction: T-shirt/top
+    MLPModule Prediction: Ankle boot
 
 
 Discussion
