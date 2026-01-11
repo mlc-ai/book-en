@@ -5,7 +5,9 @@ End to End Model Execution
 Prelude
 -------
 
-|image1|
+.. figure:: ../img/tensor_func_linear_relu.png
+
+   Linear ReLU transformation
 
 Most of the MLC process can be viewed as transformation among tensor
 functions. The main thing we aim to answer in our following up are:
@@ -21,8 +23,6 @@ Preparations
 
 To begin with, we will import necessary dependencies and create helper
 functions.
-
-.. |image1| image:: ../img/tensor_func_linear_relu.png
 
 .. raw:: latex
 
@@ -110,7 +110,7 @@ We can plot out the image instance that we want to be able to predict.
 .. parsed-literal::
     :class: output
 
-    Class: Trouser
+    Class: T-shirt/top
 
 
 Download Model Parameters
@@ -134,11 +134,11 @@ relu activation. To keep things simple, we removed the final softmax
 layer. The output score is un-normalized, but still, the maximum value
 corresponds to the most likely class.
 
-|image1|
+.. figure:: ../img/e2e_fashionmnist_mlp_model.png
+
+   FashionMNIST MLP model
 
 Let us begin by reviewing a Numpy implementation of the model.
-
-.. |image1| image:: ../img/e2e_fashionmnist_mlp_model.png
 
 .. raw:: latex
 
@@ -179,10 +179,10 @@ Let us begin by reviewing a Numpy implementation of the model.
 .. parsed-literal::
     :class: output
 
-    [[ -0.46065214  10.232741   -16.232086     2.566837   -13.805163
-      -35.23136    -43.117874   -28.035297   -28.128225   -36.551434  ]]
-    [1]
-    NumPy-MLP Prediction: Trouser
+    [[ 16.66299   -19.13391    -3.945042  -15.747312  -43.78616   -57.369133
+        3.9752774 -44.17259   -21.83907   -30.863462 ]]
+    [0]
+    NumPy-MLP Prediction: T-shirt/top
 
 
 The above example code shows the high-level array operations to perform
@@ -270,7 +270,7 @@ model.
 .. parsed-literal::
     :class: output
 
-    Low-level Numpy MLP Prediction: Trouser
+    Low-level Numpy MLP Prediction: T-shirt/top
 
 
 Constructing an End to End IRModule in TVMScript
@@ -345,12 +345,16 @@ walk through each of them in detail. Since we already learned about
 primitive tensor functions, we are going to focus on the high-level
 execution part.
 
-|image1|
+.. figure:: ../img/e2e_compare_to_lnumpy.png
+
+   TVMScript vs low-level NumPy
 
 Computational Graph View
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-|image2|
+.. figure:: ../img/e2e_computational_graph_call_tir.png
+
+   TensorIR computational graph
 
 It is usually helpful to use graph to visualize high-level model
 executions. The above figure is a graph-view of the ``main`` function:
@@ -368,9 +372,6 @@ as **computational graph** in machine learning frameworks.
 One thing that you may have noticed is that each step of operations in
 the computational graph contains an ``R.call_dps_packed`` operation.
 This is the operation that brings in the tensor primitive functions
-
-.. |image1| image:: ../img/e2e_compare_to_lnumpy.png
-.. |image2| image:: ../img/e2e_computational_graph_call_tir.png
 
 .. raw:: latex
 
@@ -451,7 +452,9 @@ computational graph form.
        lnumpy_linear1(lv1, w1, b1, out)
        return out
 
-|image1|
+.. figure:: ../img/e2e_computational_graph_numpy.png
+
+   NumPy computational graph
 
 We can certainly try a bit :) The above figure is one possible “failed
 attempt” to fit the ``lnumpy_mlp`` into a “computational graph-like”
@@ -487,8 +490,6 @@ We can also see ``call_dps_packed`` in action in the low-level numpy as
 well. Now we have defined the ``lnumpy_call_dps_packed``, we can rewrite
 the low-level numpy execution code as:
 
-.. |image1| image:: ../img/e2e_computational_graph_numpy.png
-
 .. raw:: latex
 
    \diilbookstyleinputcell
@@ -519,7 +520,7 @@ the low-level numpy execution code as:
 .. parsed-literal::
     :class: output
 
-    Low-level Numpy with CallTIR Prediction: Trouser
+    Low-level Numpy with CallTIR Prediction: T-shirt/top
 
 
 In practice, the lowest-level implementation will have explicit memory
@@ -830,8 +831,8 @@ weights.
 .. parsed-literal::
     :class: output
 
-    [[ -0.46065143  10.232738   -16.232084     2.5668383  -13.805161
-      -35.231365   -43.117863   -28.035303   -28.128222   -36.551434  ]]
+    [[ 16.662992  -19.13391    -3.945052  -15.74731   -43.786148  -57.369137
+        3.9752731 -44.172596  -21.839064  -30.863466 ]]
 
 
 The main function returns the prediction result, and we can then call
@@ -855,7 +856,7 @@ the class label.
 .. parsed-literal::
     :class: output
 
-    MyModule Prediction: Trouser
+    MyModule Prediction: T-shirt/top
 
 
 Integrate Existing Libraries in the Environment
@@ -987,7 +988,7 @@ that we get the same result.
 .. parsed-literal::
     :class: output
 
-    MyModuleWithExternCall Prediction: Trouser
+    MyModuleWithExternCall Prediction: T-shirt/top
 
 
 Mixing TensorIR Code and Libraries
@@ -1072,7 +1073,7 @@ functions. We can build and run to validate the result.
 .. parsed-literal::
     :class: output
 
-    MyModuleMixture Prediction: Trouser
+    MyModuleMixture Prediction: T-shirt/top
 
 
 Bind Parameters to IRModule
@@ -1247,7 +1248,7 @@ the input data.
 .. parsed-literal::
     :class: output
 
-    MyModuleWithParams Prediction: Trouser
+    MyModuleWithParams Prediction: T-shirt/top
 
 
 Discussions
@@ -1268,7 +1269,9 @@ IRModule (e.g. parameter binding). Let us come back to the following
 common theme of MLC: MLC process is about representing the execution in
 possibly different abstractions and transforming among them.
 
-|image1|
+.. figure:: ../img/mlc_process.png
+
+   MLC process
 
 There are many possible transformations in the end-to-end execution. For
 example, we can take the TensorIR function in MyModuleMixture and change
@@ -1301,5 +1304,3 @@ Summary
 
 - Computational graph allows call into both environment library
   functions and TensorIR functions.
-
-.. |image1| image:: ../img/mlc_process.png

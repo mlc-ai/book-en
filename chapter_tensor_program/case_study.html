@@ -194,7 +194,12 @@ course.</p>
 </section>
 <section id="prelude">
 <h2><span class="section-number">2.4.2. </span>Prelude<a class="headerlink" href="#prelude" title="Permalink to this heading">¶</a></h2>
-<p><img alt="image1" src="../_images/standard_process.png" /></p>
+<figure class="align-default" id="id1">
+<img alt="../_images/tensor_func_linear_relu.png" src="../_images/tensor_func_linear_relu.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 2.4.1 </span><span class="caption-text">Linear ReLU transformation</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>To begin today’s lecture, let us recap the key principle of the MLC
 process. Most of the MLC process can be viewed as transformation among
 tensor functions. The main thing we aim to answer in our following up
@@ -334,7 +339,12 @@ TVMScript, which is a domain-specific dialect embedded in python AST.</p>
 <p>It is helpful to be able to see the numpy code and the TensorIR code
 side-by-side and check the corresponding elements, and we are going to
 walk through each of them in detail.</p>
-<p><img alt="image1" src="../_images/standard_process.png" /></p>
+<figure class="align-default" id="id2">
+<img alt="../_images/tensor_func_and_numpy.png" src="../_images/tensor_func_and_numpy.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 2.4.2 </span><span class="caption-text">TensorIR vs NumPy</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>Let us first start by reviewing elements that have a direct
 correspondence between the numpy and TensorIR side. Then we will come
 back and review additional elements that are not part of the numpy
@@ -436,7 +446,12 @@ being performed. The figure below summarizes the block (iteration) axes
 and the read write relations of block Y. Note that strictly speaking the
 block is doing (reduction) updates to <code class="docutils literal notranslate"><span class="pre">Y</span></code>, we mark this as write for
 now as we don’t need value of <code class="docutils literal notranslate"><span class="pre">Y</span></code> from another block.</p>
-<p><img alt="image1" src="../_images/standard_process.png" /></p>
+<figure class="align-default" id="id3">
+<img alt="../_images/tensor_ir_block_axis.png" src="../_images/tensor_ir_block_axis.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 2.4.3 </span><span class="caption-text">TensorIR block axis</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>In our example, block Y computes the result <code class="docutils literal notranslate"><span class="pre">Y[vi,</span> <span class="pre">vj]</span></code> by reading
 values from <code class="docutils literal notranslate"><span class="pre">A[vi,</span> <span class="pre">vk]</span></code> and <code class="docutils literal notranslate"><span class="pre">B[vk,</span> <span class="pre">vj]</span></code> and perform sum over all
 possible <code class="docutils literal notranslate"><span class="pre">vk</span></code>. In this particular example, if we fix <code class="docutils literal notranslate"><span class="pre">vi</span></code>, <code class="docutils literal notranslate"><span class="pre">vj</span></code> to
@@ -1183,8 +1198,8 @@ compare the running performance of different generated functions.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time cost of transformed sch.mod </span><span class="si">%g</span><span class="s2"> sec&quot;</span> <span class="o">%</span> <span class="n">f_timer_after</span><span class="p">(</span><span class="n">a_nd</span><span class="p">,</span> <span class="n">b_nd</span><span class="p">,</span> <span class="n">c_nd</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">MyModule</span> <span class="mf">0.00271154</span> <span class="n">sec</span>
-<span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">transformed</span> <span class="n">sch</span><span class="o">.</span><span class="n">mod</span> <span class="mf">0.000686222</span> <span class="n">sec</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">MyModule</span> <span class="mf">0.00258362</span> <span class="n">sec</span>
+<span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">transformed</span> <span class="n">sch</span><span class="o">.</span><span class="n">mod</span> <span class="mf">0.000687664</span> <span class="n">sec</span>
 </pre></div>
 </div>
 <p>It is interesting to see the running time difference between the two
@@ -1399,7 +1414,12 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
                     <span class="n">T</span><span class="o">.</span><span class="n">reads</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
                     <span class="n">T</span><span class="o">.</span><span class="n">writes</span><span class="p">(</span><span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
                     <span class="n">C</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">]</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">],</span> <span class="n">T</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="mf">0.0</span><span class="p">))</span>
-</pre></div><p><img alt="image1" src="../_images/standard_process.png" /></p>
+</pre></div><figure class="align-default" id="id4">
+<img alt="../_images/cpu_arch.png" src="../_images/cpu_arch.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 2.4.4 </span><span class="caption-text">Memory hierarchy in computer architecture</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>To see why different loop variants result in different performances, we
 need to review the fact that it is not uniformly fast to access any
 piece of memory in <code class="docutils literal notranslate"><span class="pre">A</span></code> and <code class="docutils literal notranslate"><span class="pre">B</span></code>. Modern CPU comes with multiple
@@ -1412,7 +1432,12 @@ close by (formally known as cache-line) to the cache. So when you read
 the next element, it is already in the cache. As a result, code with
 continuous memory access is usually faster than code that randomly
 accesses different parts of the memory.</p>
-<p><img alt="image2" src="../_images/mlc_process.png" /></p>
+<figure class="align-default" id="id5">
+<img alt="../_images/tensor_func_loop_order.png" src="../_images/tensor_func_loop_order.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 2.4.5 </span><span class="caption-text">Tensor function loop order</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>Now let us look at the above visualization of iterations and analyze
 what is going on. In this analysis, let us focus on two inner-most
 loops: <code class="docutils literal notranslate"><span class="pre">k</span></code> and <code class="docutils literal notranslate"><span class="pre">j1</span></code>. The highlighted cover shows the corresponding
@@ -1452,7 +1477,7 @@ affect the code’s performance.</p>
 <span class="n">IPython</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">Code</span><span class="p">(</span><span class="n">mod_transformed</span><span class="o">.</span><span class="n">script</span><span class="p">(),</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">transformed</span> <span class="n">mod_transformed</span> <span class="mf">0.00037174</span> <span class="n">sec</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Time</span> <span class="n">cost</span> <span class="n">of</span> <span class="n">transformed</span> <span class="n">mod_transformed</span> <span class="mf">0.00038399</span> <span class="n">sec</span>
 </pre></div>
 </div>
 <style>pre { line-height: 125%; }
@@ -1728,7 +1753,12 @@ will cover the details in future chapters.</p>
 common MLC process follows a sequence of program transformations. It is
 interesting to compare the TensorIR transformation process to the
 low-level numpy reference development process.</p>
-<p><img alt="image1" src="../_images/standard_process.png" /></p>
+<figure class="align-default" id="id6">
+<img alt="../_images/standard_process.png" src="../_images/standard_process.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 2.4.6 </span><span class="caption-text">Standard development process</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>The above figure shows the standard development process. We need to
 repeat the process of developing different program variants and then
 (build if it is a compiled language) run them on the platform of
@@ -1742,7 +1772,12 @@ variants by transforming the tensor programs.</p>
 development costs and introduce more automation to the process. This
 section covered a specific perspective on primitive tensor functions via
 TensorIR, and we will cover more perspectives in the future.</p>
-<p><img alt="image2" src="../_images/mlc_process.png" /></p>
+<figure class="align-default" id="id7">
+<img alt="../_images/mlc_process.png" src="../_images/mlc_process.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 2.4.7 </span><span class="caption-text">MLC process</span><a class="headerlink" href="#id7" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>Notably, direct code development and transformations are equally
 important in practice: We can still leverage a lot of domain expertise
 to develop and optimize part of the programs and then combine that with

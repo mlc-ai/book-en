@@ -10,14 +10,14 @@ functions. In the past chapters, we studied how to transform each
 primitive tensor functions individually. In this chapter, let us talk
 about high-level transformations among computational graphs.
 
-|image1|
+.. figure:: ../img/mlc-elem-transform.png
+
+   Example MLC Process as Tensor Function Transformations.
 
 Preparations
 ------------
 
 To begin with, let us import the necessary dependencies.
-
-.. |image1| image:: ../img/mlc-elem-transform.png
 
 .. raw:: latex
 
@@ -280,7 +280,9 @@ call into a primitive function.
 
 
 
-|image1|
+.. figure:: ../img/relax_func_data_structure.png
+
+   ``relax`` function data structure
 
 The above figure summarizes the data structure involved in this
 particular function.
@@ -291,8 +293,6 @@ using the python API available. However, we can use extra tooling
 support to simplify the process. The following code block follows a
 design pattern called **visitor pattern** that allows us to visit each
 AST node and rewrite them to transformed versions.
-
-.. |image1| image:: ../img/relax_func_data_structure.png
 
 .. raw:: latex
 
@@ -983,7 +983,7 @@ picture.
 .. parsed-literal::
     :class: output
 
-    Class: Ankle boot
+    Class: Trouser
 
 
 .. raw:: latex
@@ -1010,7 +1010,7 @@ picture.
 .. parsed-literal::
     :class: output
 
-    MLPModule Prediction: Ankle boot
+    MLPModule Prediction: Trouser
 
 
 Discussion
@@ -1035,7 +1035,9 @@ For example, we can choose to use our version of customized fusor to
 support additional new fusion patterns that we want to explore and then
 feed into an existing fusor to handle the rest of the steps.
 
-|image1|
+.. figure:: ../img/mlc_process.png
+
+   MLC process
 
 Summary
 -------
@@ -1045,5 +1047,3 @@ Summary
 - Visitor pattern to rewrite call nodes.
 - We can perform computational graph transformations, such as fusion and
   loop-level program lowering.
-
-.. |image1| image:: ../img/mlc_process.png

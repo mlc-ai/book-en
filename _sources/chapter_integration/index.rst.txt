@@ -458,14 +458,14 @@ Deep Dive into Block Builder APIs
 Now let us do a deep dive into each block builder API. It is helpful to
 put the block builder code and the resulting module side by side.
 
-|image1|
+.. figure:: ../img/integration_block_builder.png
+
+   Block builder code and the resulting module
 
 The block builder comes with scopes that correspond to the scopes in the
 relax function. For example, ``bb.dataflow()`` creates a dataflow block
 where all the block builder calls inside the scope belonging to the
 dataflow scope.
-
-.. |image1| image:: ../img/integration_block_builder.png
 
 .. raw:: latex
 
@@ -691,8 +691,8 @@ IRModule.
     -------------  ------  ---------------------------------------------------------  -----------  --------
     placeholder    x       x                                                          ()           {}
     get_attr       weight  weight                                                     ()           {}
-    call_function  matmul  <built-in method matmul of type object at 0x7f4f917d6c20>  (x, weight)  {}
-    call_function  relu    <built-in method relu of type object at 0x7f4f917d6c20>    (matmul,)    {}
+    call_function  matmul  <built-in method matmul of type object at 0x7f6376dd6c20>  (x, weight)  {}
+    call_function  relu    <built-in method relu of type object at 0x7f6376dd6c20>    (matmul,)    {}
     output         output  output                                                     (relu,)      {}
 
 
@@ -912,7 +912,7 @@ Coming back to FashionMNIST Example
 .. parsed-literal::
     :class: output
 
-    Class: Pullover
+    Class: Bag
 
 
 .. raw:: latex
@@ -924,12 +924,12 @@ Coming back to FashionMNIST Example
     # Hide outputs
     !wget -nc https://github.com/mlc-ai/web-data/raw/main/models/fasionmnist_mlp_params.pkl
 
-|image1|
+.. figure:: ../img/e2e_fashionmnist_mlp_model.png
+
+   FashionMNIST MLP model
 
 The above is our model of interest, we can build the PyTorch model as
 follows.
-
-.. |image1| image:: ../img/e2e_fashionmnist_mlp_model.png
 
 .. raw:: latex
 
@@ -985,7 +985,7 @@ follows.
 .. parsed-literal::
     :class: output
 
-    Torch Prediction: Pullover
+    Torch Prediction: Bag
 
 
 Let us try to translate from fx by defining mapping functions for the
@@ -1142,7 +1142,7 @@ expression.
 .. parsed-literal::
     :class: output
 
-    MLPModule Prediction: Pullover
+    MLPModule Prediction: Bag
 
 
 Remark: Translating into High-level Operators
@@ -1237,7 +1237,9 @@ transformations on primitive functions and computational graph
 functions. A good MLC process composes these transformations together to
 form an end deployment form.
 
-|image1|
+.. figure:: ../img/mlc_process.png
+
+   MLC process
 
 Summary
 -------
@@ -1248,5 +1250,3 @@ Summary
   functions.
 - Integrate with existing machine learning frameworks by transforming
   models into an IRModule.
-
-.. |image1| image:: ../img/mlc_process.png

@@ -198,7 +198,12 @@ models for specialized hardware backends.</p>
 </section>
 <section id="hardware-specialization-trend">
 <h2><span class="section-number">6.2.2. </span>Hardware Specialization Trend<a class="headerlink" href="#hardware-specialization-trend" title="Permalink to this heading">¶</a></h2>
-<p><img alt="image1" src="../_images/hardware_specialization_abc.png" /></p>
+<figure class="align-default" id="id1">
+<img alt="../_images/hardware_specialization.png" src="../_images/hardware_specialization.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 6.2.1 </span><span class="caption-text">Hardware Specialization Trend</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>If we look at the machine learning hardware landscape, one emerging
 theme recently is specialization. Traditionally, we build our solutions
 on generic scalar processors, where we can perform operations on one
@@ -239,7 +244,12 @@ operations that can happen in a specialized hardware backend.</p>
             <span class="n">accel_dma_copy</span><span class="p">(</span><span class="n">C</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="mi">16</span> <span class="p">:</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">16</span> <span class="o">+</span> <span class="mi">16</span><span class="p">,</span> <span class="n">j</span> <span class="o">*</span> <span class="mi">16</span> <span class="p">:</span> <span class="n">j</span> <span class="o">*</span> <span class="mi">16</span> <span class="o">+</span> <span class="mi">16</span><span class="p">],</span> <span class="n">C_accumulator</span><span class="p">[:,:])</span>
 </pre></div>
 </div>
-<p><img alt="image1" src="../_images/hardware_specialization_abc.png" /></p>
+<figure class="align-default" id="id2">
+<img alt="../_images/hardware_specialization_abc.png" src="../_images/hardware_specialization_abc.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 6.2.2 </span><span class="caption-text">Data flow across specialized hardware memory regions</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>The above low-level NumPy program contains the following key elements:</p>
 <ul class="simple">
 <li><p>The basic unit of computation is a 16x16x16 matrix multiplication
@@ -554,7 +564,12 @@ acceleration.</p>
                     T<span style="color: #A2F; font-weight: bold">.</span>reads(C_global_accumulator[v0, v1])
                     T<span style="color: #A2F; font-weight: bold">.</span>writes(C[v0, v1])
                     C[v0, v1] <span style="color: #A2F; font-weight: bold">=</span> C_global_accumulator[v0, v1]
-</pre></div><p><img alt="image1" src="../_images/hardware_specialization_abc.png" /></p>
+</pre></div><figure class="align-default" id="id3">
+<img alt="../_images/hardware_specialization_abc.png" src="../_images/hardware_specialization_abc.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 6.2.3 </span><span class="caption-text">Data flow across specialized hardware memory regions</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>Here <code class="docutils literal notranslate"><span class="pre">global.A_reg</span></code> contains two parts. <code class="docutils literal notranslate"><span class="pre">global</span></code> indicates that all
 threads can globally access the memory, and <code class="docutils literal notranslate"><span class="pre">A_reg</span></code> is a <strong>scope tag</strong>
 of the memory, which provides opportunities for follow-up compilation to

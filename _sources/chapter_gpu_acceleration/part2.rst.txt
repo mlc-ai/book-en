@@ -27,7 +27,9 @@ To begin with, let us import the necessary dependencies.
 Hardware Specialization Trend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-|image1|
+.. figure:: ../img/hardware_specialization.png
+
+   Hardware Specialization Trend
 
 If we look at the machine learning hardware landscape, one emerging
 theme recently is specialization. Traditionally, we build our solutions
@@ -47,8 +49,6 @@ To help us better understand elements of specialized hardware
 programming, let us first study the following **low-level NumPy** code.
 While this code still runs in python, it resembles a set of possible
 operations that can happen in a specialized hardware backend.
-
-.. |image1| image:: ../img/hardware_specialization.png
 
 .. raw:: latex
 
@@ -80,7 +80,9 @@ operations that can happen in a specialized hardware backend.
                     accel_tmm_add(C_accumulator[:,:], A_reg, B_reg)
                 accel_dma_copy(C[i * 16 : i * 16 + 16, j * 16 : j * 16 + 16], C_accumulator[:,:])
 
-|image1|
+.. figure:: ../img/hardware_specialization_abc.png
+
+   Data flow across specialized hardware memory regions
 
 The above low-level NumPy program contains the following key elements:
 
@@ -101,8 +103,6 @@ implementation provided by the vendor.
 
 We can run the following code block to confirm the low-level NumPy code
 runs correctly.
-
-.. |image1| image:: ../img/hardware_specialization_abc.png
 
 .. raw:: latex
 
@@ -503,7 +503,9 @@ We can use cache_read and write to create intermediate memory stages.
 
 
 
-|image1|
+.. figure:: ../img/hardware_specialization_abc.png
+
+   Data flow across specialized hardware memory regions
 
 Here ``global.A_reg`` contains two parts. ``global`` indicates that all
 threads can globally access the memory, and ``A_reg`` is a **scope tag**
@@ -526,8 +528,6 @@ implementation.
 The system will use the description to find relevant regions that match
 the computation, while implementation maps the computation to
 accelerated hardware instructions.
-
-.. |image1| image:: ../img/hardware_specialization_abc.png
 
 .. raw:: latex
 

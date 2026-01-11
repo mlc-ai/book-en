@@ -457,7 +457,12 @@ sequence of primitive tensor operations.</p>
 <h3><span class="section-number">5.3.3. </span>Deep Dive into Block Builder APIs<a class="headerlink" href="#deep-dive-into-block-builder-apis" title="Permalink to this heading">¶</a></h3>
 <p>Now let us do a deep dive into each block builder API. It is helpful to
 put the block builder code and the resulting module side by side.</p>
-<p><img alt="image1" src="../_images/mlc_process.png" /></p>
+<figure class="align-default" id="id1">
+<img alt="../_images/integration_block_builder.png" src="../_images/integration_block_builder.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 5.3.1 </span><span class="caption-text">Block builder code and the resulting module</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>The block builder comes with scopes that correspond to the scopes in the
 relax function. For example, <code class="docutils literal notranslate"><span class="pre">bb.dataflow()</span></code> creates a dataflow block
 where all the block builder calls inside the scope belonging to the
@@ -576,8 +581,8 @@ IRModule.</p>
 <span class="o">-------------</span>  <span class="o">------</span>  <span class="o">---------------------------------------------------------</span>  <span class="o">-----------</span>  <span class="o">--------</span>
 <span class="n">placeholder</span>    <span class="n">x</span>       <span class="n">x</span>                                                          <span class="p">()</span>           <span class="p">{}</span>
 <span class="n">get_attr</span>       <span class="n">weight</span>  <span class="n">weight</span>                                                     <span class="p">()</span>           <span class="p">{}</span>
-<span class="n">call_function</span>  <span class="n">matmul</span>  <span class="o">&lt;</span><span class="n">built</span><span class="o">-</span><span class="ow">in</span> <span class="n">method</span> <span class="n">matmul</span> <span class="n">of</span> <span class="nb">type</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7f4f917d6c20</span><span class="o">&gt;</span>  <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span>  <span class="p">{}</span>
-<span class="n">call_function</span>  <span class="n">relu</span>    <span class="o">&lt;</span><span class="n">built</span><span class="o">-</span><span class="ow">in</span> <span class="n">method</span> <span class="n">relu</span> <span class="n">of</span> <span class="nb">type</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7f4f917d6c20</span><span class="o">&gt;</span>    <span class="p">(</span><span class="n">matmul</span><span class="p">,)</span>    <span class="p">{}</span>
+<span class="n">call_function</span>  <span class="n">matmul</span>  <span class="o">&lt;</span><span class="n">built</span><span class="o">-</span><span class="ow">in</span> <span class="n">method</span> <span class="n">matmul</span> <span class="n">of</span> <span class="nb">type</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7f6376dd6c20</span><span class="o">&gt;</span>  <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span>  <span class="p">{}</span>
+<span class="n">call_function</span>  <span class="n">relu</span>    <span class="o">&lt;</span><span class="n">built</span><span class="o">-</span><span class="ow">in</span> <span class="n">method</span> <span class="n">relu</span> <span class="n">of</span> <span class="nb">type</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7f6376dd6c20</span><span class="o">&gt;</span>    <span class="p">(</span><span class="n">matmul</span><span class="p">,)</span>    <span class="p">{}</span>
 <span class="n">output</span>         <span class="n">output</span>  <span class="n">output</span>                                                     <span class="p">(</span><span class="n">relu</span><span class="p">,)</span>      <span class="p">{}</span>
 </pre></div>
 </div>
@@ -752,14 +757,19 @@ the <code class="docutils literal notranslate"><span class="pre">emit_te</span><
 <figure class="align-default">
 <img alt="../_images/output_index_4f28a7_60_0.png" src="../_images/output_index_4f28a7_60_0.png" />
 </figure>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Class</span><span class="p">:</span> <span class="n">Pullover</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Class</span><span class="p">:</span> <span class="n">Bag</span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span># Hide outputs
 !wget -nc https://github.com/mlc-ai/web-data/raw/main/models/fasionmnist_mlp_params.pkl
 </pre></div>
 </div>
-<p><img alt="image1" src="../_images/mlc_process.png" /></p>
+<figure class="align-default" id="id2">
+<img alt="../_images/e2e_fashionmnist_mlp_model.png" src="../_images/e2e_fashionmnist_mlp_model.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 5.5.1 </span><span class="caption-text">FashionMNIST MLP model</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>The above is our model of interest, we can build the PyTorch model as
 follows.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MLP</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -793,7 +803,7 @@ follows.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Torch Prediction:&quot;</span><span class="p">,</span> <span class="n">class_names</span><span class="p">[</span><span class="n">pred_kind</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Torch</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Pullover</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Torch</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Bag</span>
 </pre></div>
 </div>
 <p>Let us try to translate from fx by defining mapping functions for the
@@ -924,7 +934,7 @@ expression.</p>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MLPModule Prediction:&quot;</span><span class="p">,</span> <span class="n">class_names</span><span class="p">[</span><span class="n">pred_kind</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
 </pre></div>
 </div>
-<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MLPModule</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Pullover</span>
+<div class="output highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MLPModule</span> <span class="n">Prediction</span><span class="p">:</span> <span class="n">Bag</span>
 </pre></div>
 </div>
 </section>
@@ -1001,7 +1011,12 @@ operators.</p>
 transformations on primitive functions and computational graph
 functions. A good MLC process composes these transformations together to
 form an end deployment form.</p>
-<p><img alt="image1" src="../_images/mlc_process.png" /></p>
+<figure class="align-default" id="id3">
+<img alt="../_images/mlc_process.png" src="../_images/mlc_process.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 5.7.1 </span><span class="caption-text">MLC process</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 </section>
 <section id="summary">
 <h2><span class="section-number">5.8. </span>Summary<a class="headerlink" href="#summary" title="Permalink to this heading">¶</a></h2>

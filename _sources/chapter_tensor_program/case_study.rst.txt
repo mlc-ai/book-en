@@ -21,7 +21,9 @@ course.
 Prelude
 ~~~~~~~
 
-|image1|
+.. figure:: ../img/tensor_func_linear_relu.png
+
+   Linear ReLU transformation
 
 To begin today’s lecture, let us recap the key principle of the MLC
 process. Most of the MLC process can be viewed as transformation among
@@ -44,8 +46,6 @@ Now we are ready to learn one specific instance of tensor program
 abstraction called TensorIR. TensorIR is the tensor program abstraction
 in Apache TVM, which is one of the standard machine learning compilation
 frameworks.
-
-.. |image1| image:: ../img/tensor_func_linear_relu.png
 
 .. raw:: latex
 
@@ -202,7 +202,9 @@ It is helpful to be able to see the numpy code and the TensorIR code
 side-by-side and check the corresponding elements, and we are going to
 walk through each of them in detail.
 
-|image1|
+.. figure:: ../img/tensor_func_and_numpy.png
+
+   TensorIR vs NumPy
 
 Let us first start by reviewing elements that have a direct
 correspondence between the numpy and TensorIR side. Then we will come
@@ -214,8 +216,6 @@ Function Parameters and Buffers
 
 First, let us see the function parameters. The function parameters
 correspond to the same set of parameters on the numpy function.
-
-.. |image1| image:: ../img/tensor_func_and_numpy.png
 
 .. raw:: latex
 
@@ -344,7 +344,9 @@ and the read write relations of block Y. Note that strictly speaking the
 block is doing (reduction) updates to ``Y``, we mark this as write for
 now as we don’t need value of ``Y`` from another block.
 
-|image1|
+.. figure:: ../img/tensor_ir_block_axis.png
+
+   TensorIR block axis
 
 In our example, block Y computes the result ``Y[vi, vj]`` by reading
 values from ``A[vi, vk]`` and ``B[vk, vj]`` and perform sum over all
@@ -374,8 +376,6 @@ us validate the correctness of the external loops used to carry out the
 computation. For example, the code block below will result in an error
 because the loop expects an iterator of size ``128``, but we only bound
 it to a for loop of size ``127``.
-
-.. |image1| image:: ../img/tensor_ir_block_axis.png
 
 .. raw:: latex
 
@@ -1325,8 +1325,8 @@ compare the running performance of different generated functions.
 .. parsed-literal::
     :class: output
 
-    Time cost of MyModule 0.00271154 sec
-    Time cost of transformed sch.mod 0.000686222 sec
+    Time cost of MyModule 0.00258362 sec
+    Time cost of transformed sch.mod 0.000687664 sec
 
 
 It is interesting to see the running time difference between the two
@@ -1572,7 +1572,9 @@ of the code.
 
 
 
-|image1|
+.. figure:: ../img/cpu_arch.png
+
+   Memory hierarchy in computer architecture
 
 To see why different loop variants result in different performances, we
 need to review the fact that it is not uniformly fast to access any
@@ -1588,7 +1590,9 @@ the next element, it is already in the cache. As a result, code with
 continuous memory access is usually faster than code that randomly
 accesses different parts of the memory.
 
-|image2|
+.. figure:: ../img/tensor_func_loop_order.png
+
+   Tensor function loop order
 
 Now let us look at the above visualization of iterations and analyze
 what is going on. In this analysis, let us focus on two inner-most
@@ -1614,9 +1618,6 @@ Exercise
 
 As an exercise, try different ``j_factor`` choices and see how they
 affect the code’s performance.
-
-.. |image1| image:: ../img/cpu_arch.png
-.. |image2| image:: ../img/tensor_func_loop_order.png
 
 .. raw:: latex
 
@@ -1650,7 +1651,7 @@ affect the code’s performance.
 .. parsed-literal::
     :class: output
 
-    Time cost of transformed mod_transformed 0.00037174 sec
+    Time cost of transformed mod_transformed 0.00038399 sec
 
 
 
@@ -1969,7 +1970,9 @@ common MLC process follows a sequence of program transformations. It is
 interesting to compare the TensorIR transformation process to the
 low-level numpy reference development process.
 
-|image1|
+.. figure:: ../img/standard_process.png
+
+   Standard development process
 
 The above figure shows the standard development process. We need to
 repeat the process of developing different program variants and then
@@ -1987,7 +1990,9 @@ development costs and introduce more automation to the process. This
 section covered a specific perspective on primitive tensor functions via
 TensorIR, and we will cover more perspectives in the future.
 
-|image2|
+.. figure:: ../img/mlc_process.png
+
+   MLC process
 
 Notably, direct code development and transformations are equally
 important in practice: We can still leverage a lot of domain expertise
@@ -2007,6 +2012,3 @@ Summary
 
 - We can use transformations to create different variants of TensorIR.
 - Common MLC flow: develop, transform, build.
-
-.. |image1| image:: ../img/standard_process.png
-.. |image2| image:: ../img/mlc_process.png

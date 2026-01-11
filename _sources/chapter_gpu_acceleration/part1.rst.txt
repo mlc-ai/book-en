@@ -52,20 +52,21 @@ GPU contains a collection of stream multi-processors, and each
 multi-processor has many cores. A GPU device is massively parallel and
 allows us to execute many tasks concurrently.
 
-|image1|
+.. figure:: ../img/gpu_arch.png
+
+   GPU Architecture
 
 To program a GPU, we need to create a set of thread blocks, with each
 thread mapping to the cores and the thread block map to the stream
 multiprocessors.
 
-|image2|
+.. figure:: ../img/gpu_stream_processors.png
+
+   GPU stream processors
 
 Let us start GPU programming using a vector add example. The following
 TensorIR program takes two vectors, A and B, performs element-wise add,
 and stores the result in C.
-
-.. |image1| image:: ../img/gpu_arch.png
-.. |image2| image:: ../img/gpu_stream_processors.png
 
 .. raw:: latex
 
@@ -130,9 +131,9 @@ parameterized by two indices – ``threadIdx.x`` and ``blockIdx.x``. In
 practice, we can have multiple dimensional thread indices, but we keep
 them simple as one dimension.
 
-|image1|
+.. figure:: ../img/gpu_thread_blocks.png
 
-.. |image1| image:: ../img/gpu_thread_blocks.png
+   GPU Thread Blocks
 
 .. raw:: latex
 
@@ -200,9 +201,9 @@ can be viewed as a basic version of “convolution” with a predefined
 weight ``[1,1,1]``. We are taking sliding over the input and add three
 neighboring values together.
 
-|image1|
+.. figure:: ../img/window_sum.png
 
-.. |image1| image:: ../img/window_sum.png
+   Window sum
 
 .. raw:: latex
 
@@ -262,15 +263,15 @@ First, we can bind the loop to GPU threads.
 
 
 
-|image1|
+.. figure:: ../img/gpu_stream_processors.png
+
+   GPU stream processors
 
 Importantly, in this case, there are reuse opportunities. Remember that
 each GPU thread block contains shared memory that all threads can access
 within the block. We use ``cache_read`` to add an intermediate stage
 that caches segments (in green below) onto the shared memory. After the
 caching is finished, the threads can then read from the shared memory.
-
-.. |image1| image:: ../img/gpu_stream_processors.png
 
 .. raw:: latex
 
@@ -431,7 +432,9 @@ techniques for GPU performance optimization.
 Local Blocking
 ^^^^^^^^^^^^^^
 
-|image1|
+.. figure:: ../img/gpu_local_blocking.png
+
+   GPU Local Blocking
 
 To increase overall memory reuse. We can tile the loops. In particular,
 we introduce local tiles such that we only need to load stripe of data
@@ -440,8 +443,6 @@ multiplication result.
 
 This local tiling helps to reduce the memory pressure, as each element
 in the stripe is reused ``V`` times.
-
-.. |image1| image:: ../img/gpu_local_blocking.png
 
 .. raw:: latex
 
@@ -548,15 +549,15 @@ in the stripe is reused ``V`` times.
 Shared Memory Blocking
 ~~~~~~~~~~~~~~~~~~~~~~
 
-|image1|
+.. figure:: ../img/gpu_shared_blocking.png
+
+   GPU Shared Memory Blocking
 
 Our first attempt did not consider the neighboring threads which sit in
 the same GPU thread block, and we can load the data they commonly need
 into a piece of shared memory.
 
 The following transformation does that.
-
-.. |image1| image:: ../img/gpu_shared_blocking.png
 
 .. raw:: latex
 
