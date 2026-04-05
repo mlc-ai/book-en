@@ -12,7 +12,7 @@ Exercises for TensorIR
     import numpy as np
     import tvm
     from tvm.ir.module import IRModule
-    from tvm.script import tir as T
+    from tvm.script import tirx as T
 
 Section 1: How to Write TensorIR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -123,7 +123,7 @@ into TensorIR. And compare the result with it comes from NumPy.
               C: T.Buffer((4, 4), "int64")):
         T.func_attr({"global_symbol": "add"})
         for i, j in T.grid(4, 4):
-          with T.block("C"):
+          with T.sblock("C"):
             vi = T.axis.spatial(4, i)
             vj = T.axis.spatial(4, j)
             C[vi, vj] = A[vi, vj] + B[vi, vj]
@@ -193,7 +193,7 @@ your implementation.
    class MyAdd:
      @T.prim_func
      def add():
-       T.func_attr({"global_symbol": "add", "tir.noalias": True})
+       T.func_attr({"global_symbol": "add", "tirx.noalias": True})
        # TODO
        ...
 
@@ -291,7 +291,7 @@ check your implementation.
    class MyConv:
      @T.prim_func
      def conv():
-       T.func_attr({"global_symbol": "conv", "tir.noalias": True})
+       T.func_attr({"global_symbol": "conv", "tirx.noalias": True})
        # TODO
        ...
 
@@ -332,13 +332,13 @@ loop executes. Here is the example:
               C: T.Buffer((4, 4), "int64")):
         T.func_attr({"global_symbol": "add"})
         for i, j in T.grid(4, 4):
-          with T.block("C"):
+          with T.sblock("C"):
             vi = T.axis.spatial(4, i)
             vj = T.axis.spatial(4, j)
             C[vi, vj] = A[vi, vj] + B[vi, vj]
     
-    sch = tvm.tir.Schedule(MyAdd)
-    block = sch.get_block("C", func_name="add")
+    sch = tvm.s_tir.Schedule(MyAdd)
+    block = sch.get_sblock("C", func_name="add")
     i, j = sch.get_loops(block)
     i0, i1 = sch.split(i, factors=[2, 2])
     sch.parallel(i0)
@@ -426,17 +426,17 @@ loop executes. Here is the example:
     .output_html .vi { color: #19177C } /* Name.Variable.Instance */
     .output_html .vm { color: #19177C } /* Name.Variable.Magic */
     .output_html .il { color: #666 } /* Literal.Number.Integer.Long */</style><div class="highlight"><pre><span></span><span class="c1"># from tvm.script import ir as I</span>
-    <span class="c1"># from tvm.script import tir as T</span>
+    <span class="c1"># from tvm.script import tirx as T</span>
     
     <span class="nd">@I</span><span class="o">.</span><span class="n">ir_module</span>
     <span class="k">class</span><span class="w"> </span><span class="nc">Module</span><span class="p">:</span>
         <span class="nd">@T</span><span class="o">.</span><span class="n">prim_func</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="n">A</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">),</span> <span class="n">B</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">),</span> <span class="n">C</span><span class="p">:</span> <span class="n">T</span><span class="o">.</span><span class="n">Buffer</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;int64&quot;</span><span class="p">)):</span>
-            <span class="c1"># with T.block(&quot;root&quot;):</span>
+            <span class="c1"># with T.sblock(&quot;root&quot;):</span>
             <span class="k">for</span> <span class="n">i_0</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">parallel</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
                 <span class="k">for</span> <span class="n">i_1</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">unroll</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
                     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">T</span><span class="o">.</span><span class="n">vectorized</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
-                        <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">):</span>
+                        <span class="k">with</span> <span class="n">T</span><span class="o">.</span><span class="n">sblock</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">):</span>
                             <span class="n">vi</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">i_0</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">i_1</span><span class="p">)</span>
                             <span class="n">vj</span> <span class="o">=</span> <span class="n">T</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">spatial</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
                             <span class="n">T</span><span class="o">.</span><span class="n">reads</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">],</span> <span class="n">B</span><span class="p">[</span><span class="n">vi</span><span class="p">,</span> <span class="n">vj</span><span class="p">])</span>
@@ -489,11 +489,11 @@ lnumpy func as hint:
    class MyBmmRelu:
      @T.prim_func
      def bmm_relu():
-       T.func_attr({"global_symbol": "bmm_relu", "tir.noalias": True})
+       T.func_attr({"global_symbol": "bmm_relu", "tirx.noalias": True})
        # TODO
        ...
 
-   sch = tvm.tir.Schedule(MyBmmRelu)
+   sch = tvm.s_tir.Schedule(MyBmmRelu)
    IPython.display.Code(sch.mod.script(), language="python")
    # Also please validate your result
 
@@ -513,25 +513,25 @@ target program:
     class TargetModule:
         @T.prim_func
         def bmm_relu(A: T.Buffer((16, 128, 128), "float32"), B: T.Buffer((16, 128, 128), "float32"), C: T.Buffer((16, 128, 128), "float32")) -> None:
-            T.func_attr({"global_symbol": "bmm_relu", "tir.noalias": True})
+            T.func_attr({"global_symbol": "bmm_relu", "tirx.noalias": True})
             Y = T.alloc_buffer([16, 128, 128], dtype="float32")
             for i0 in T.parallel(16):
                 for i1, i2_0 in T.grid(128, 16):
                     for ax0_init in T.vectorized(8):
-                        with T.block("Y_init"):
+                        with T.sblock("Y_init"):
                             n, i = T.axis.remap("SS", [i0, i1])
                             j = T.axis.spatial(128, i2_0 * 8 + ax0_init)
                             Y[n, i, j] = T.float32(0)
                     for ax1_0 in T.serial(32):
                         for ax1_1 in T.unroll(4):
                             for ax0 in T.serial(8):
-                                with T.block("Y_update"):
+                                with T.sblock("Y_update"):
                                     n, i = T.axis.remap("SS", [i0, i1])
                                     j = T.axis.spatial(128, i2_0 * 8 + ax0)
                                     k = T.axis.reduce(128, ax1_0 * 4 + ax1_1)
                                     Y[n, i, j] = Y[n, i, j] + A[n, i, k] * B[n, k, j]
                     for i2_1 in T.vectorized(8):
-                        with T.block("C"):
+                        with T.sblock("C"):
                             n, i = T.axis.remap("SS", [i0, i1])
                             j = T.axis.spatial(128, i2_0 * 8 + i2_1)
                             C[n, i, j] = T.max(Y[n, i, j], T.float32(0))
@@ -544,7 +544,7 @@ Your task is to transform the original program to the target program.
 
 .. code:: python
 
-   sch = tvm.tir.Schedule(MyBmmRelu)
+   sch = tvm.s_tir.Schedule(MyBmmRelu)
    # TODO: transformations
    # Hints: you can use
    # `IPython.display.Code(sch.mod.script(), language="python")`
@@ -552,7 +552,7 @@ Your task is to transform the original program to the target program.
    # to show the current program at any time during the transformation.
 
    # Step 1. Get blocks
-   Y = sch.get_block("Y", func_name="bmm_relu")
+   Y = sch.get_sblock("Y", func_name="bmm_relu")
    ...
 
    # Step 2. Get loops
